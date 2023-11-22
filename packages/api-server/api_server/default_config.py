@@ -15,19 +15,23 @@ config = {
     # a user that is automatically given admin privileges, note that this does not guarantee that the user exists in the identity provider.
     "builtin_admin": "admin",
     # path to a PEM encoded RSA public key which is used to verify JWT tokens, if the path is relative, it is based on the working dir.
-    "jwt_public_key": None,
+    # "jwt_public_key": None,
+    "jwt_public_key": '/home/tannhat/nhat_ws/monorepo/rmf-web/packages/api-server/jwt-key/keycloak-public.key',
     # url to the oidc endpoint, used to authenticate rest requests, it should point to the well known endpoint, e.g.
     # http://localhost:8080/auth/realms/rmf-web/.well-known/openid-configuration.
     # NOTE: This is ONLY used for documentation purposes, the "jwt_public_key" will be the
     # only key used to verify a token.
-    "oidc_url": None,
+    # "oidc_url": None,
+    "oidc_url": 'http://localhost:8080/auth/realms/rmf-web/.well-known/openid-configuration',
     # Audience the access token is meant for. Can also be an array.
     # Used to verify the "aud" claim.
-    "aud": "rmf_api_server",
+    # "aud": "rmf_api_server",
+    "aud": "account",
     # url or string that identifies the entity that issued the jwt token
     # Used to verify the "iss" claim
     # If iss is set to None, it means that authentication should be disabled
-    "iss": None,
+    # "iss": None,
+    "iss": 'http://localhost:8080/auth/realms/rmf-web',
     # list of arguments passed to the ros node, "--ros-args" is automatically prepended to the list.
     # e.g.
     #   Run with sim time: ["-p", "use_sim_time:=true"]
