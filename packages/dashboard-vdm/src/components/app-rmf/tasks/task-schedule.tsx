@@ -21,8 +21,8 @@ import {
 import { useCreateTaskFormData } from 'hooks/useCreateTaskForm';
 import useGetUsername from 'hooks/useFetchUser';
 import { AppControllerContext } from 'contexts/app-contexts';
-import { AppEvents } from 'components/app/app-events';
-import { RmfAppContext } from 'components/rmf-app';
+import { AppEvents } from '../app-events';
+import { RmfAppContext } from '../rmf-app';
 import { toApiSchedule } from './utils';
 import {
   apiScheduleToSchedule,

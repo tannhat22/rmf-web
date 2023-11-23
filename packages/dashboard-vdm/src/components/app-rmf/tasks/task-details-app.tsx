@@ -5,10 +5,10 @@ import { TaskInfo } from 'react-components';
 import { UserProfileContext } from 'rmf-auth';
 import { of, switchMap } from 'rxjs';
 import { AppControllerContext } from 'contexts/app-contexts';
-import { AppEvents } from 'components/app/app-events';
-import { createMicroApp } from 'components/app/micro-app';
+import { AppEvents } from '../app-events';
+import { createMicroApp } from '../micro-app';
 import { Enforcer } from 'auth/permissions';
-import { RmfAppContext } from 'components/rmf-app';
+import { RmfAppContext } from '../rmf-app';
 
 export const TaskDetailsApp = createMicroApp('Task Details', () => {
   const theme = useTheme();

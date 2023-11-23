@@ -24,7 +24,7 @@ import { MenuOrientation } from 'types/config';
 import appConfig from 'app-config';
 import ResourceManager from 'managers/resource-manager';
 import { ResourcesContext } from 'contexts/app-contexts';
-import { RmfApp } from 'components/rmf-app';
+import { RmfApp } from 'components/app-rmf/rmf-app';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 

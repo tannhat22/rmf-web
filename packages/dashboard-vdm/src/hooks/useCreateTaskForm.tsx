@@ -1,7 +1,7 @@
 import React from 'react';
 import { getPlaces } from 'react-components';
 import { Subscription } from 'rxjs';
-import { RmfIngress } from 'components/rmf-app';
+import { RmfIngress } from 'components/app-rmf/rmf-app';
 
 export const useCreateTaskFormData = (rmf: RmfIngress | undefined) => {
   const [waypointNames, setWaypointNames] = React.useState<string[]>([]);

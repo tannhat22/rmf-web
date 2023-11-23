@@ -8,7 +8,7 @@ import {
   Tier,
 } from 'api-client';
 import { AppControllerContext } from 'contexts/app-contexts';
-import { RmfAppContext } from 'components/rmf-app';
+import { RmfAppContext } from '../rmf-app';
 import { AlertContent, AlertDialog } from 'react-components';
 import { base } from 'react-components';
 import { TaskInspector } from './task-inspector';

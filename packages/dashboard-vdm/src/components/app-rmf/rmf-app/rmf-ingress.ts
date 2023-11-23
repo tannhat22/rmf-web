@@ -30,12 +30,12 @@ import {
 import axios from 'axios';
 import { Authenticator } from 'rmf-auth';
 import { map, Observable, shareReplay } from 'rxjs';
-import appConfig from '../../app-config';
-import { NegotiationStatusManager } from '../../managers/negotiation-status-manager';
+import appConfig from 'app-config';
+import { NegotiationStatusManager } from 'managers/negotiation-status-manager';
 import {
   DefaultTrajectoryManager,
   RobotTrajectoryManager,
-} from '../../managers/robot-trajectory-manager';
+} from 'managers/robot-trajectory-manager';
 
 type Alert = ApiServerModelsTortoiseModelsAlertsAlertLeaf;
 type FleetState = ApiServerModelsRmfApiFleetStateFleetState;

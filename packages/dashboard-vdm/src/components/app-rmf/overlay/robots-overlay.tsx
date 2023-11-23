@@ -13,7 +13,7 @@ import {
   WithLabelProps,
 } from 'react-components';
 import { EMPTY, mergeMap, of } from 'rxjs';
-import { RmfAppContext } from 'components/rmf-app';
+import { RmfAppContext } from '../rmf-app';
 
 export interface RobotData {
   fleet: string;

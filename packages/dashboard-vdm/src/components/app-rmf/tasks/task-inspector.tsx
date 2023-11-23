@@ -12,8 +12,8 @@ import { CardContent, useTheme } from '@mui/material';
 import { TaskEventLog, TaskState } from 'api-client';
 import React from 'react';
 import { AppControllerContext } from 'contexts/app-contexts';
-import { AppEvents } from 'components/app/app-events';
-import { RmfAppContext } from 'components/rmf-app';
+import { AppEvents } from '../app-events';
+import { RmfAppContext } from '../rmf-app';
 import { TaskInfo } from 'react-components';
 import { UserProfileContext } from 'rmf-auth';
 import { Enforcer } from 'auth/permissions';
@@ -109,7 +109,7 @@ export function TaskInspector({ task, onClose }: TableDataGridState): JSX.Elemen
             </Grid>
           </Grid>
           <DialogContent style={{ height: 700 }} dividers={true}>
-            <Box sx={{ position: 'relative' }}>
+            <Box component="div" sx={{ position: 'relative' }}>
               <Grid container direction="row" wrap="nowrap" height="100%">
                 <Grid item xs={6}>
                   {taskState ? (

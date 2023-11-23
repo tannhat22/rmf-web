@@ -22,9 +22,9 @@ import {
   Window,
 } from 'react-components';
 import { Subscription } from 'rxjs';
-import { AppEvents } from 'components/app/app-events';
-import { MicroAppProps } from 'components/app/micro-app';
-import { RmfAppContext } from 'components/rmf-app';
+import { AppEvents } from '../app-events';
+import { MicroAppProps } from '../micro-app';
+import { RmfAppContext } from '../rmf-app';
 import { TaskSchedule } from './task-schedule';
 import { TaskSummary } from './task-summary';
 import { downloadCsvFull, downloadCsvMinimal } from './utils';
@@ -60,7 +60,11 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={tabId(index)}
       {...other}
     >
-      {selectedTabIndex === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {selectedTabIndex === index && (
+        <Box component="div" sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }

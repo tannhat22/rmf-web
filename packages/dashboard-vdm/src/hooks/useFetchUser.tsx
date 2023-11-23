@@ -1,5 +1,5 @@
 import React from 'react';
-import { RmfIngress } from 'components/rmf-app';
+import { RmfIngress } from 'components/app-rmf/rmf-app';
 
 const useGetUsername = (rmf: RmfIngress | undefined) => {
   const [username, setUsername] = React.useState<string | null>(null);

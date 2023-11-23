@@ -1,9 +1,9 @@
 import { CardContent } from '@mui/material';
 import { TaskEventLog, TaskState } from 'api-client';
 import React from 'react';
-import { AppEvents } from 'components/app/app-events';
-import { createMicroApp } from 'components/app/micro-app';
-import { RmfAppContext } from 'components/rmf-app';
+import { AppEvents } from '../app-events';
+import { createMicroApp } from '../micro-app';
+import { RmfAppContext } from '../rmf-app';
 import { TaskLogs } from './task-logs';
 
 export const TaskLogsApp = createMicroApp('Task Logs', () => {
