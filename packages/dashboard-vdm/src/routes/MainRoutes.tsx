@@ -16,8 +16,8 @@ const MaintenanceUnderConstruction = Loadable(
 const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/coming-soon')));
 
 // render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
-// const MapPage = Loadable(lazy(() => import('pages/map/map-page')));
+// const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
+const MapPage = Loadable(lazy(() => import('pages/dashboard/map-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -34,7 +34,19 @@ const MainRoutes = {
       children: [
         {
           path: PATH_DASHBOARD.root,
-          element: <SamplePage />,
+          element: <MapPage />,
+        },
+        {
+          path: PATH_DASHBOARD.map,
+          element: <MapPage />,
+        },
+        {
+          path: PATH_DASHBOARD.robots,
+          element: <MapPage />,
+        },
+        {
+          path: PATH_DASHBOARD.tasks,
+          element: <MapPage />,
         },
       ],
     },

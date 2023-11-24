@@ -8,9 +8,9 @@ import { PATH_ROOT } from './paths';
 
 // render - login
 const AuthLogin = Loadable(lazy(() => import('pages/auth/loginPage')));
-const AuthCheckMail = Loadable(lazy(() => import('pages/auth/check-mail')));
-const AuthResetPassword = Loadable(lazy(() => import('pages/auth/reset-password')));
-const AuthCodeVerification = Loadable(lazy(() => import('pages/auth/code-verification')));
+// const AuthCheckMail = Loadable(lazy(() => import('pages/auth/check-mail')));
+// const AuthResetPassword = Loadable(lazy(() => import('pages/auth/reset-password')));
+// const AuthCodeVerification = Loadable(lazy(() => import('pages/auth/code-verification')));
 
 // ==============================|| AUTH ROUTING ||============================== //
 

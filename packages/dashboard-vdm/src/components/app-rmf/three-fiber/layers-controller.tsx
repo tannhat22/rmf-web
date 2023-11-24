@@ -40,8 +40,8 @@ export const LayersController = ({
       component="div"
       sx={{
         position: 'absolute',
-        top: '60px',
-        left: '4px',
+        // top: '60px',
+        left: '8px',
         width: 'auto',
         height: 'auto',
         zIndex: '1',

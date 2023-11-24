@@ -92,6 +92,7 @@ const FooterBlock = ({ isFull }: showProps) => {
     <>
       {isFull && (
         <Box
+          component="div"
           sx={{
             position: 'relative',
             bgcolor: theme.palette.grey.A700,
@@ -169,7 +170,7 @@ const FooterBlock = ({ isFull }: showProps) => {
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sx={{ my: 2 }}>
-                    <Box sx={{ display: 'inline-block' }}>
+                    <Box component="div" sx={{ display: 'inline-block' }}>
                       <AnimateButton>
                         <Button
                           size="large"
@@ -191,7 +192,7 @@ const FooterBlock = ({ isFull }: showProps) => {
         </Box>
       )}
 
-      <Box sx={{ pt: isFull ? 0 : 10, pb: 10, bgcolor: theme.palette.grey.A700 }}>
+      <Box component="div" sx={{ pt: isFull ? 0 : 10, pb: 10, bgcolor: theme.palette.grey.A700 }}>
         <Container>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
@@ -341,6 +342,7 @@ const FooterBlock = ({ isFull }: showProps) => {
       </Box>
       <Divider sx={{ borderColor: 'grey.700' }} />
       <Box
+        component="div"
         sx={{
           py: 1.5,
           bgcolor:

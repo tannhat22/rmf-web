@@ -140,7 +140,7 @@ const Header = ({ handleDrawerOpen, layout = 'landing', ...others }: Props) => {
               >
                 Documentation
               </Link>
-              <Box sx={{ display: 'inline-block' }}>
+              <Box component="div" sx={{ display: 'inline-block' }}>
                 <AnimateButton>
                   <Button
                     component={Link}
@@ -155,6 +155,7 @@ const Header = ({ handleDrawerOpen, layout = 'landing', ...others }: Props) => {
               </Box>
             </Stack>
             <Box
+              component="div"
               sx={{
                 width: '100%',
                 alignItems: 'center',
@@ -220,6 +221,7 @@ const Header = ({ handleDrawerOpen, layout = 'landing', ...others }: Props) => {
                 sx={{ '& .MuiDrawer-paper': { backgroundImage: 'none' } }}
               >
                 <Box
+                  component="div"
                   sx={{
                     width: 'auto',
                     '& .MuiListItemIcon-root': {

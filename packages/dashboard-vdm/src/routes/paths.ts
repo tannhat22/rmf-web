@@ -22,6 +22,9 @@ export const PATH_AUTH = {
 
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
+  map: path(ROOTS_DASHBOARD, 'map'),
+  robots: path(ROOTS_DASHBOARD, 'robots'),
+  tasks: path(ROOTS_DASHBOARD, 'tasks'),
 };
 
 export const PATH_MAINTENANCE = {

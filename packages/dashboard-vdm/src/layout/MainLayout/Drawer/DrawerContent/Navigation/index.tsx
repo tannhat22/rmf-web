@@ -80,6 +80,7 @@ const Navigation = () => {
   });
   return (
     <Box
+      component="div"
       sx={{
         pt: drawerOpen ? (isHorizontal ? 0 : 2) : 0,
         '& > ul:first-of-type': { mt: 0 },

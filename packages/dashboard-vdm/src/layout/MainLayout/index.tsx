@@ -66,7 +66,7 @@ const MainLayout = () => {
   return appReady ? (
     <ResourcesContext.Provider value={resourceManager.current}>
       <RmfApp>
-        <Box sx={{ display: 'flex', width: '100%' }}>
+        <Box component="div" sx={{ display: 'flex', width: '100%' }}>
           <Header />
           {!isHorizontal ? <Drawer /> : <HorizontalBar />}
 

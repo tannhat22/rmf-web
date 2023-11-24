@@ -55,7 +55,7 @@ const CustomAppBar = () => {
         }}
       >
         <Container maxWidth={container ? 'xl' : false}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box component="div" sx={{ display: 'flex', alignItems: 'center' }}>
             <Navigation />
           </Box>
         </Container>
