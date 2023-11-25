@@ -18,6 +18,7 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 // render - sample page
 // const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const MapPage = Loadable(lazy(() => import('pages/dashboard/map-page')));
+const RobotPage = Loadable(lazy(() => import('pages/dashboard/robot-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -42,7 +43,7 @@ const MainRoutes = {
         },
         {
           path: PATH_DASHBOARD.robots,
-          element: <MapPage />,
+          element: <RobotPage />,
         },
         {
           path: PATH_DASHBOARD.tasks,

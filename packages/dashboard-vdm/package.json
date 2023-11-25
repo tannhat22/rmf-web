@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "concurrently npm:start:rmf-server npm:start:react",
+    "start:react": "pnpm run --filter {.}^... build && react-app-rewired start",
+    "start:rmf-server": "RMF_SERVER_USE_SIM_TIME=true npm --prefix ../api-server start",
     "build": "react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -121,6 +123,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "canvas": "^2.6.1",
     "chalk": "^4.1.0",
+    "concurrently": "^5.3.0",
     "immutable": "^4.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.8.0",

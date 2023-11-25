@@ -590,6 +590,9 @@ importers:
       chalk:
         specifier: ^4.1.0
         version: 4.1.2
+      concurrently:
+        specifier: ^5.3.0
+        version: 5.3.0
       eslint:
         specifier: ^7.32.0
         version: 7.32.0
@@ -1167,7 +1170,7 @@ packages:
       gensync: 1.0.0-beta.2
       json5: 2.2.1
       lodash: 4.17.21
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 5.7.1
       source-map: 0.5.7
     transitivePeerDependencies:
@@ -1296,7 +1299,7 @@ packages:
       '@babel/traverse': 7.18.6(supports-color@5.5.0)
       debug: 4.3.4(supports-color@5.5.0)
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -1314,7 +1317,7 @@ packages:
       '@babel/traverse': 7.18.6(supports-color@5.5.0)
       debug: 4.3.4(supports-color@5.5.0)
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -5179,7 +5182,7 @@ packages:
       builtin-modules: 3.3.0
       deepmerge: 4.2.2
       is-module: 1.0.0
-      resolve: 1.22.1
+      resolve: 1.22.8
       rollup: 2.79.1
 
   /@rollup/plugin-replace@2.4.2(rollup@2.79.1):
@@ -9997,7 +10000,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.4
       cosmiconfig: 6.0.0
-      resolve: 1.22.1
+      resolve: 1.22.8
 
   /babel-plugin-macros@3.1.0:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
@@ -10005,7 +10008,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.4
       cosmiconfig: 7.0.1
-      resolve: 1.22.1
+      resolve: 1.22.8
 
   /babel-plugin-named-asset-import@0.3.8(@babel/core@7.18.6):
     resolution: {integrity: sha512-WXiAc++qo7XcJ1ZnTYGtLxmBCVbddAml3CEXgWaBzNzLNoxtQ8AiGEFDMOhot9XjTCQbvP5E77Fj9Gk924f00Q==}
@@ -16625,7 +16628,7 @@ packages:
       jest-pnp-resolver: 1.2.2(jest-resolve@26.6.2)
       jest-util: 26.6.2
       read-pkg-up: 7.0.1
-      resolve: 1.22.1
+      resolve: 1.22.8
       slash: 3.0.0
     dev: true
 
@@ -17878,7 +17881,7 @@ packages:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
     engines: {node: '>=8'}
     dependencies:
-      semver: 6.3.0
+      semver: 6.3.1
 
   /make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
