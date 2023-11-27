@@ -24,6 +24,8 @@ export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   map: path(ROOTS_DASHBOARD, 'map'),
   robots: path(ROOTS_DASHBOARD, 'robots'),
+  doors: path(ROOTS_DASHBOARD, 'doors'),
+  lifts: path(ROOTS_DASHBOARD, 'lifts'),
   tasks: path(ROOTS_DASHBOARD, 'tasks'),
 };
 

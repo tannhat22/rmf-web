@@ -18,7 +18,9 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 // render - sample page
 // const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
 const MapPage = Loadable(lazy(() => import('pages/dashboard/map-page')));
-const RobotPage = Loadable(lazy(() => import('pages/dashboard/robot-page')));
+const RobotsPage = Loadable(lazy(() => import('pages/system-overview/robots-page')));
+const DoorsPage = Loadable(lazy(() => import('pages/system-overview/doors-page')));
+const LiftsPage = Loadable(lazy(() => import('pages/system-overview/lifts-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -35,18 +37,22 @@ const MainRoutes = {
       children: [
         {
           path: PATH_DASHBOARD.root,
-          element: <MapPage />,
-        },
-        {
-          path: PATH_DASHBOARD.map,
-          element: <MapPage />,
+          element: <RobotsPage />,
         },
         {
           path: PATH_DASHBOARD.robots,
-          element: <RobotPage />,
+          element: <RobotsPage />,
         },
         {
-          path: PATH_DASHBOARD.tasks,
+          path: PATH_DASHBOARD.doors,
+          element: <DoorsPage />,
+        },
+        {
+          path: PATH_DASHBOARD.lifts,
+          element: <LiftsPage />,
+        },
+        {
+          path: PATH_DASHBOARD.map,
           element: <MapPage />,
         },
       ],

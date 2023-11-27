@@ -265,7 +265,7 @@ const NavGroup = ({
           subheader={
             item.title &&
             drawerOpen && (
-              <Box sx={{ pl: 3, mb: 1.5 }}>
+              <Box component="div" sx={{ pl: 3, mb: 1.5 }}>
                 <Typography
                   variant="subtitle2"
                   color={theme.palette.mode === ThemeMode.DARK ? 'textSecondary' : 'text.secondary'}

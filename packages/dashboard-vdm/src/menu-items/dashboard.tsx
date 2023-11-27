@@ -6,7 +6,13 @@ import {
   DeploymentUnitOutlined,
 } from '@ant-design/icons';
 
-import { MapOutlined, SmartToyOutlined, AssignmentTurnedInOutlined } from '@mui/icons-material';
+import {
+  MapOutlined,
+  SmartToyOutlined,
+  AssignmentTurnedInOutlined,
+  DoorSlidingOutlined,
+  ElevatorOutlined,
+} from '@mui/icons-material';
 
 // type
 import { NavItemType } from 'types/menu';
@@ -23,20 +29,53 @@ const icons = {
   MapOutlined,
   SmartToyOutlined,
   AssignmentTurnedInOutlined,
+  DoorSlidingOutlined,
+  ElevatorOutlined,
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
 
 const dashboard: NavItemType = {
   id: 'dashboard',
-  title: 'dashboards',
+  title: 'Dashboards',
   type: 'group',
   children: [
+    {
+      id: 'system-overview-page',
+      title: 'System Overview',
+      type: 'collapse',
+      // url: PATH_DASHBOARD.root,
+      icon: icons.DashboardOutlined,
+      // breadcrumbs: true,
+      children: [
+        {
+          id: 'robots',
+          title: 'Robots',
+          type: 'item',
+          url: PATH_DASHBOARD.robots,
+          icon: icons.SmartToyOutlined,
+        },
+        {
+          id: 'doors',
+          title: 'Doors',
+          type: 'item',
+          url: PATH_DASHBOARD.doors,
+          icon: icons.DoorSlidingOutlined,
+        },
+        {
+          id: 'lifts',
+          title: 'Lifts',
+          type: 'item',
+          url: PATH_DASHBOARD.lifts,
+          icon: icons.ElevatorOutlined,
+        },
+      ],
+    },
     {
       id: 'map-page',
       title: 'Map',
       type: 'item',
-      url: PATH_DASHBOARD.root,
+      url: PATH_DASHBOARD.map,
       icon: icons.MapOutlined,
       breadcrumbs: true,
       // children: [
@@ -62,14 +101,6 @@ const dashboard: NavItemType = {
       //     },
       //   },
       // ],
-    },
-    {
-      id: 'robot-page',
-      title: 'Robot',
-      type: 'item',
-      url: PATH_DASHBOARD.robots,
-      icon: icons.SmartToyOutlined,
-      breadcrumbs: true,
     },
     {
       id: 'task-page',

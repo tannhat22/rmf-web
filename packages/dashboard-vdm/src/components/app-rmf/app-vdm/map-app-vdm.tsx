@@ -25,16 +25,16 @@ import { Box } from '@mui/material';
 import { EMPTY, merge, scan, Subscription, switchMap } from 'rxjs';
 import appConfig from 'app-config';
 import { ResourcesContext } from 'contexts/app-contexts';
-import { AppEvents } from './app-events';
-import { RmfAppContext } from './rmf-app';
-import { TrajectoryData } from './overlay/trajectories-overlay';
-import { WorkcellData } from './overlay/workcells-overlay';
-import { RobotSummary } from './robots/robot-summary';
+import { AppEvents } from '../app-events';
+import { RmfAppContext } from '../rmf-app';
+import { TrajectoryData } from '../overlay/trajectories-overlay';
+import { WorkcellData } from '../overlay/workcells-overlay';
+import { RobotSummary } from '../robots/robot-summary';
 import { Box3, TextureLoader, Vector3 } from 'three';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { Line } from '@react-three/drei';
-import { CameraControl, LayersController } from './three-fiber';
-import { Lifts, Door, RobotThree } from './three-fiber';
+import { CameraControl, LayersController } from '../three-fiber';
+import { Lifts, Door, RobotThree } from '../three-fiber';
 
 type FleetState = ApiServerModelsRmfApiFleetStateFleetState;
 

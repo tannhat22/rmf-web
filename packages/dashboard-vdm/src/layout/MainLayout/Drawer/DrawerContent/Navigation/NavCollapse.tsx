@@ -432,7 +432,7 @@ const NavCollapse = ({
               },
             }}
           >
-            <Box onClick={handlerIconLink} sx={FlexBox}>
+            <Box component="div" onClick={handlerIconLink} sx={FlexBox}>
               {menuIcon && (
                 <ListItemIcon
                   sx={{
