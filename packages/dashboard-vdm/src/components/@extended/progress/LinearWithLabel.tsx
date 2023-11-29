@@ -5,11 +5,11 @@ import { Box, LinearProgress, LinearProgressProps, Typography } from '@mui/mater
 
 export default function LinearWithLabel({ value, ...others }: LinearProgressProps) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ width: '100%', mr: 1 }}>
+    <Box component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box component="div" sx={{ width: '100%', mr: 1 }}>
         <LinearProgress variant="determinate" value={value} {...others} />
       </Box>
-      <Box sx={{ minWidth: 35 }}>
+      <Box component="div" sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(value!)}%`}</Typography>
       </Box>
     </Box>

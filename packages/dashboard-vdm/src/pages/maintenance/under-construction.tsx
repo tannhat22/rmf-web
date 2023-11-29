@@ -22,7 +22,7 @@ function UnderConstruction() {
       sx={{ minHeight: '100vh', py: 2 }}
     >
       <Grid item xs={12}>
-        <Box sx={{ width: { xs: 300, sm: 480 } }}>
+        <Box component="div" sx={{ width: { xs: 300, sm: 480 } }}>
           <img src={construction} alt="mantis" style={{ width: '100%', height: 'auto' }} />
         </Box>
       </Grid>

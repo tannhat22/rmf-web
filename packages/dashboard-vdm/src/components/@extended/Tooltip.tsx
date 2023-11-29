@@ -76,7 +76,7 @@ interface Props extends TooltipProps {
 export default function CustomTooltip({ children, arrow, labelColor = '', ...rest }: Props) {
   const theme = useTheme();
   return (
-    <Box display="flex">
+    <Box component="div" display="flex">
       <TooltipStyle arrow={arrow} {...rest} theme={theme} labelColor={labelColor}>
         {children}
       </TooltipStyle>

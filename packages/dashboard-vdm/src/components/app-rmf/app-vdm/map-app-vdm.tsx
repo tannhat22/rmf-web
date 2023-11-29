@@ -405,7 +405,7 @@ export const MapApp = () => {
         sx={{
           position: 'relative',
           width: '100%',
-          height: '741px',
+          height: '785px',
           border: '1px solid #ccc',
           borderRadius: '16px',
           overflow: 'hidden',

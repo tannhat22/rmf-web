@@ -18,7 +18,7 @@ import {
 import { NavItemType } from 'types/menu';
 
 // paths
-import { PATH_DASHBOARD } from 'routes/paths';
+import { PATH_DASHBOARD, PATH_SYSTEMOVERVIEW } from 'routes/paths';
 
 // icons
 const icons = {
@@ -41,10 +41,17 @@ const dashboard: NavItemType = {
   type: 'group',
   children: [
     {
-      id: 'system-overview-page',
+      id: 'map',
+      title: 'Map',
+      type: 'item',
+      url: PATH_DASHBOARD.map,
+      icon: icons.MapOutlined,
+      breadcrumbs: false,
+    },
+    {
+      id: 'system-overview',
       title: 'System Overview',
       type: 'collapse',
-      // url: PATH_DASHBOARD.root,
       icon: icons.DashboardOutlined,
       // breadcrumbs: true,
       children: [
@@ -52,59 +59,31 @@ const dashboard: NavItemType = {
           id: 'robots',
           title: 'Robots',
           type: 'item',
-          url: PATH_DASHBOARD.robots,
+          url: PATH_SYSTEMOVERVIEW.robots,
           icon: icons.SmartToyOutlined,
+          breadcrumbs: true,
         },
         {
           id: 'doors',
           title: 'Doors',
           type: 'item',
-          url: PATH_DASHBOARD.doors,
+          url: PATH_SYSTEMOVERVIEW.doors,
           icon: icons.DoorSlidingOutlined,
+          breadcrumbs: true,
         },
         {
           id: 'lifts',
           title: 'Lifts',
           type: 'item',
-          url: PATH_DASHBOARD.lifts,
+          url: PATH_SYSTEMOVERVIEW.lifts,
           icon: icons.ElevatorOutlined,
+          breadcrumbs: true,
         },
       ],
     },
     {
-      id: 'map-page',
-      title: 'Map',
-      type: 'item',
-      url: PATH_DASHBOARD.map,
-      icon: icons.MapOutlined,
-      breadcrumbs: true,
-      // children: [
-      //   {
-      //     id: 'dashboard',
-      //     title: 'dashboard',
-      //     type: 'collapse',
-      //     url: PATH_DASHBOARD.root,
-      //     icon: icons.DashboardOutlined,
-      //   },
-      //   {
-      //     id: 'documentation',
-      //     title: 'documentation',
-      //     type: 'item',
-      //     url: 'https://codedthemes.gitbook.io/mantis/',
-      //     icon: icons.QuestionOutlined,
-      //     external: true,
-      //     target: true,
-      //     chip: {
-      //       label: 'gitbook',
-      //       color: 'secondary',
-      //       size: 'small',
-      //     },
-      //   },
-      // ],
-    },
-    {
-      id: 'task-page',
-      title: 'Task',
+      id: 'tasks',
+      title: 'Tasks',
       type: 'item',
       url: PATH_DASHBOARD.tasks,
       icon: icons.AssignmentTurnedInOutlined,

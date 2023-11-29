@@ -56,7 +56,7 @@ const AnalyticEcommerce = ({
         )}
       </Grid>
     </Stack>
-    <Box sx={{ pt: 2.25 }}>
+    <Box component="div" sx={{ pt: 2.25 }}>
       <Typography variant="caption" color="textSecondary">
         You made an extra{' '}
         <Typography component="span" variant="caption" sx={{ color: `${color || 'primary'}.main` }}>

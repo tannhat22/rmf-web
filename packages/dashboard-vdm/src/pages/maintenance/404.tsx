@@ -26,12 +26,16 @@ function Error404() {
         <Grid item xs={12}>
           <Stack direction="row">
             <Grid item>
-              <Box sx={{ width: { xs: 250, sm: 590 }, height: { xs: 130, sm: 300 } }}>
+              <Box
+                component="div"
+                sx={{ width: { xs: 250, sm: 590 }, height: { xs: 130, sm: 300 } }}
+              >
                 <img src={error404} alt="mantis" style={{ width: '100%', height: '100%' }} />
               </Box>
             </Grid>
             <Grid item sx={{ position: 'relative' }}>
               <Box
+                component="div"
                 sx={{
                   position: 'absolute',
                   top: 60,

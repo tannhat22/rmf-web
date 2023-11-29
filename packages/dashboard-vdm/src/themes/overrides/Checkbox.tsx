@@ -80,6 +80,7 @@ export default function Checkbox(theme: Theme) {
         className: 'size-small',
         icon: (
           <Box
+            component="div"
             className="icon"
             sx={{
               width: 16,
@@ -92,6 +93,7 @@ export default function Checkbox(theme: Theme) {
         ),
         checkedIcon: (
           <Box
+            component="div"
             className="icon"
             sx={{
               width: 16,
@@ -107,6 +109,7 @@ export default function Checkbox(theme: Theme) {
         ),
         indeterminateIcon: (
           <Box
+            component="div"
             className="icon"
             sx={{
               width: 16,

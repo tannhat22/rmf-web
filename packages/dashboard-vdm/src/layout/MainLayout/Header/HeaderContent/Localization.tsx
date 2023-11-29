@@ -53,7 +53,7 @@ const Localization = () => {
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'grey.200' : 'grey.300';
   const iconBackColor = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box component="div" sx={{ flexShrink: 0, ml: 0.75 }}>
       <IconButton
         color="secondary"
         variant="light"

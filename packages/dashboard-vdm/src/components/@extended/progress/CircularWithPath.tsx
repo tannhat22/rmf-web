@@ -25,7 +25,7 @@ export default function CircularWithPath({
   ...others
 }: Props) {
   return (
-    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+    <Box component="div" sx={{ position: 'relative', display: 'inline-flex' }}>
       <CircularProgress
         variant="determinate"
         sx={{ color: pathColor ? pathColor : 'grey.200' }}
@@ -36,6 +36,7 @@ export default function CircularWithPath({
       />
       {showLabel && (
         <Box
+          component="div"
           sx={{
             top: 0,
             left: 0,

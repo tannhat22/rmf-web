@@ -155,6 +155,7 @@ const AuthResetPassword = () => {
                 <Grid container spacing={2} alignItems="center">
                   <Grid item>
                     <Box
+                      component="div"
                       sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }}
                     />
                   </Grid>

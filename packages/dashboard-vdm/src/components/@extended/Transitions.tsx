@@ -59,7 +59,7 @@ const Transitions = forwardRef(
     }
 
     return (
-      <Box ref={ref}>
+      <Box component="div" ref={ref}>
         {type === 'grow' && (
           <Grow
             {...others}
@@ -69,7 +69,9 @@ const Transitions = forwardRef(
               exit: 150,
             }}
           >
-            <Box sx={positionSX}>{children}</Box>
+            <Box component="div" sx={positionSX}>
+              {children}
+            </Box>
           </Grow>
         )}
 
@@ -88,7 +90,9 @@ const Transitions = forwardRef(
               exit: 150,
             }}
           >
-            <Box sx={positionSX}>{children}</Box>
+            <Box component="div" sx={positionSX}>
+              {children}
+            </Box>
           </Fade>
         )}
 
@@ -102,13 +106,17 @@ const Transitions = forwardRef(
             }}
             direction={direction}
           >
-            <Box sx={positionSX}>{children}</Box>
+            <Box component="div" sx={positionSX}>
+              {children}
+            </Box>
           </Slide>
         )}
 
         {type === 'zoom' && (
           <Zoom {...others}>
-            <Box sx={positionSX}>{children}</Box>
+            <Box component="div" sx={positionSX}>
+              {children}
+            </Box>
           </Zoom>
         )}
       </Box>

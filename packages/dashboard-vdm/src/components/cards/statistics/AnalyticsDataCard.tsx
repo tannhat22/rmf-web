@@ -27,7 +27,7 @@ const AnalyticsDataCard = ({
   children,
 }: Props) => (
   <MainCard content={false}>
-    <Box sx={{ p: 2.25 }}>
+    <Box component="div" sx={{ p: 2.25 }}>
       <Stack spacing={0.5}>
         <Typography variant="h6" color="textSecondary">
           {title}

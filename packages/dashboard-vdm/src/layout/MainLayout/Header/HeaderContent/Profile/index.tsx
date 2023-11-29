@@ -107,7 +107,7 @@ const Profile = () => {
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'grey.200' : 'grey.300';
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box component="div" sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
         sx={{
           p: 0.25,
@@ -193,7 +193,7 @@ const Profile = () => {
                     </Grid>
                   </CardContent>
 
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <Box component="div" sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs
                       variant="fullWidth"
                       value={value}

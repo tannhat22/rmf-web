@@ -5,9 +5,10 @@ import { Box, CircularProgress, CircularProgressProps, Typography } from '@mui/m
 
 export default function CircularWithLabel({ value, ...others }: CircularProgressProps) {
   return (
-    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+    <Box component="div" sx={{ position: 'relative', display: 'inline-flex' }}>
       <CircularProgress variant="determinate" value={value} {...others} />
       <Box
+        component="div"
         sx={{
           top: 0,
           left: 0,

@@ -14,7 +14,7 @@ interface Props {
 }
 
 const ComponentHeader = ({ title, caption, directory, link }: Props) => (
-  <Box sx={{ pl: 3 }}>
+  <Box component="div" sx={{ pl: 3 }}>
     <Stack spacing={1.25}>
       <Typography variant="h2">{title}</Typography>
       {caption && (

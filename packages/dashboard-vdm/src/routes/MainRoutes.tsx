@@ -5,7 +5,7 @@ import MainLayout from 'layout/MainLayout';
 import CommonLayout from 'layout/CommonLayout';
 import Loadable from 'components/Loadable';
 import AuthGuard from 'auth/AuthGuard';
-import { PATH_ROOT, PATH_DASHBOARD, PATH_MAINTENANCE } from './paths';
+import { PATH_ROOT, PATH_DASHBOARD, PATH_MAINTENANCE, PATH_SYSTEMOVERVIEW } from './paths';
 
 // pages routing
 const MaintenanceError = Loadable(lazy(() => import('pages/maintenance/404')));
@@ -17,10 +17,11 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 
 // render - sample page
 // const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
-const MapPage = Loadable(lazy(() => import('pages/dashboard/map-page')));
+const MapPage = Loadable(lazy(() => import('pages/map-page/map-page')));
 const RobotsPage = Loadable(lazy(() => import('pages/system-overview/robots-page')));
 const DoorsPage = Loadable(lazy(() => import('pages/system-overview/doors-page')));
 const LiftsPage = Loadable(lazy(() => import('pages/system-overview/lifts-page')));
+const TasksPage = Loadable(lazy(() => import('pages/tasks-page/tasks-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -37,23 +38,27 @@ const MainRoutes = {
       children: [
         {
           path: PATH_DASHBOARD.root,
-          element: <RobotsPage />,
-        },
-        {
-          path: PATH_DASHBOARD.robots,
-          element: <RobotsPage />,
-        },
-        {
-          path: PATH_DASHBOARD.doors,
-          element: <DoorsPage />,
-        },
-        {
-          path: PATH_DASHBOARD.lifts,
-          element: <LiftsPage />,
+          element: <MapPage />,
         },
         {
           path: PATH_DASHBOARD.map,
           element: <MapPage />,
+        },
+        {
+          path: PATH_SYSTEMOVERVIEW.robots,
+          element: <RobotsPage />,
+        },
+        {
+          path: PATH_SYSTEMOVERVIEW.doors,
+          element: <DoorsPage />,
+        },
+        {
+          path: PATH_SYSTEMOVERVIEW.lifts,
+          element: <LiftsPage />,
+        },
+        {
+          path: PATH_DASHBOARD.tasks,
+          element: <TasksPage />,
         },
       ],
     },

@@ -394,15 +394,17 @@ const NavCollapse = ({
                       }}
                     >
                       <ClickAwayListener onClickAway={handleClose}>
-                        <SimpleBar
-                          sx={{
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            maxHeight: 'calc(100vh - 170px)',
-                          }}
-                        >
-                          {navCollapse}
-                        </SimpleBar>
+                        <>
+                          <SimpleBar
+                            sx={{
+                              overflowX: 'hidden',
+                              overflowY: 'auto',
+                              maxHeight: 'calc(100vh - 170px)',
+                            }}
+                          >
+                            {navCollapse}
+                          </SimpleBar>
+                        </>
                       </ClickAwayListener>
                     </Paper>
                   </Transitions>
@@ -496,15 +498,17 @@ const NavCollapse = ({
                       }}
                     >
                       <ClickAwayListener onClickAway={handleClose}>
-                        <SimpleBar
-                          sx={{
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            maxHeight: 'calc(100vh - 170px)',
-                          }}
-                        >
-                          {navCollapse}
-                        </SimpleBar>
+                        <>
+                          <SimpleBar
+                            sx={{
+                              overflowX: 'hidden',
+                              overflowY: 'auto',
+                              maxHeight: 'calc(100vh - 170px)',
+                            }}
+                          >
+                            {navCollapse}
+                          </SimpleBar>
+                        </>
                       </ClickAwayListener>
                     </Paper>
                   </Transitions>

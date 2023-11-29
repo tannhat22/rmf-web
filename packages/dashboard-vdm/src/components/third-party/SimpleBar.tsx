@@ -53,7 +53,7 @@ export default function SimpleBarScroll({
         </SimpleBarStyle>
       </RootStyle>
       <MobileView>
-        <Box sx={{ overflowX: 'auto', ...sx }} {...other}>
+        <Box component="div" sx={{ overflowX: 'auto', ...sx }} {...other}>
           {children as ReactNode}
         </Box>
       </MobileView>

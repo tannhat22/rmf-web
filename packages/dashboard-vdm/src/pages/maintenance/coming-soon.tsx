@@ -20,10 +20,10 @@ const TimerBox = ({ count, label }: { count: number; label: string }) => {
   return (
     <MainCard content={false} sx={{ width: { xs: 60, sm: 80 } }}>
       <Stack justifyContent="center" alignItems="center">
-        <Box sx={{ py: 1.75 }}>
+        <Box component="div" sx={{ py: 1.75 }}>
           <Typography variant={matchDownSM ? 'h4' : 'h2'}>{count}</Typography>
         </Box>
-        <Box sx={{ p: 0.5, bgcolor: 'secondary.lighter', width: '100%' }}>
+        <Box component="div" sx={{ p: 0.5, bgcolor: 'secondary.lighter', width: '100%' }}>
           <Typography align="center" variant="subtitle2">
             {label}
           </Typography>
@@ -50,7 +50,10 @@ function ComingSoon() {
         sx={{ minHeight: '100vh', py: 2 }}
       >
         <Grid item xs={12}>
-          <Box sx={{ height: { xs: 310, sm: 420 }, width: { xs: 360, sm: 'auto' } }}>
+          <Box
+            component="div"
+            sx={{ height: { xs: 310, sm: 420 }, width: { xs: 360, sm: 'auto' } }}
+          >
             <img src={coming} alt="mantis" style={{ height: '100%', width: '100%' }} />
           </Box>
         </Grid>

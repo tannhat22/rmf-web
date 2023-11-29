@@ -11,6 +11,7 @@ const AuthBackground = () => {
   const theme = useTheme();
   return (
     <Box
+      component="div"
       sx={{
         position: 'absolute',
         filter: 'blur(18px)',

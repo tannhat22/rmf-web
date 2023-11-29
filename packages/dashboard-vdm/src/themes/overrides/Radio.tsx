@@ -78,6 +78,7 @@ export default function Radio(theme: Theme) {
         className: 'size-small',
         icon: (
           <Box
+            component="div"
             className="icon"
             sx={{
               width: 16,
@@ -90,6 +91,7 @@ export default function Radio(theme: Theme) {
         ),
         checkedIcon: (
           <Box
+            component="div"
             className="icon"
             sx={{
               width: 16,
@@ -101,6 +103,7 @@ export default function Radio(theme: Theme) {
             }}
           >
             <Box
+              component="div"
               className="dot"
               sx={{
                 width: 8,

@@ -26,7 +26,7 @@ function Error500() {
         sx={{ minHeight: '100vh' }}
       >
         <Grid item xs={12}>
-          <Box sx={{ width: { xs: 350, sm: 396 } }}>
+          <Box component="div" sx={{ width: { xs: 350, sm: 396 } }}>
             <img src={error500} alt="mantis" style={{ height: '100%', width: '100%' }} />
           </Box>
         </Grid>

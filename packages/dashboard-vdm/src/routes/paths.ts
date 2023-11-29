@@ -23,10 +23,14 @@ export const PATH_AUTH = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   map: path(ROOTS_DASHBOARD, 'map'),
-  robots: path(ROOTS_DASHBOARD, 'robots'),
-  doors: path(ROOTS_DASHBOARD, 'doors'),
-  lifts: path(ROOTS_DASHBOARD, 'lifts'),
+  systemOverView: path(ROOTS_DASHBOARD, 'system-overview'),
   tasks: path(ROOTS_DASHBOARD, 'tasks'),
+};
+
+export const PATH_SYSTEMOVERVIEW = {
+  robots: path(PATH_DASHBOARD.systemOverView, 'robots'),
+  doors: path(PATH_DASHBOARD.systemOverView, 'doors'),
+  lifts: path(PATH_DASHBOARD.systemOverView, 'lifts'),
 };
 
 export const PATH_MAINTENANCE = {
