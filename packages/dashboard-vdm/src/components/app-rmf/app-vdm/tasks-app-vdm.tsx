@@ -240,8 +240,13 @@ export const TasksApp = () => {
   };
 
   return (
-    <Box component="div">
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <Box
+      component="div"
+      sx={{ border: '1px solid #ccc', borderRadius: '10px', overflow: 'hidden' }}
+    >
+      <div
+        style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ccc' }}
+      >
         <Tabs value={selectedPanelIndex} onChange={handlePanelChange} aria-label="Task App Tabs">
           <Tab
             label="Queue"
