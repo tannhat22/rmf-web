@@ -11,6 +11,10 @@ import 'simplebar/dist/simplebar.css';
 import 'assets/third-party/apex-chart.css';
 import 'assets/third-party/react-table.css';
 
+// rmf-vdm
+import 'leaflet/dist/leaflet.css';
+import { LocalizationProvider } from 'react-components';
+
 // project import
 import App from './App';
 import { store } from 'store';
@@ -25,9 +29,11 @@ const root = createRoot(container!);
 root.render(
   <ReduxProvider store={store}>
     <ConfigProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <LocalizationProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </LocalizationProvider>
     </ConfigProvider>
   </ReduxProvider>
 );
