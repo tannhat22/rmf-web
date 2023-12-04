@@ -1,7 +1,11 @@
-import { useRef, useState } from 'react';
+import React from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
+
+import { ReportOutlined } from '@mui/icons-material';
+
 import {
   Avatar,
   Badge,
@@ -19,6 +23,13 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
+
+import { ApiServerModelsTortoiseModelsAlertsAlertLeaf as Alert } from 'api-client';
+
+import { AppEvents } from 'components/app-rmf/app-events';
+import { RmfAppContext } from 'components/app-rmf/rmf-app';
+import { Subscription } from 'rxjs';
+import { formatDistance } from 'date-fns';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -57,13 +68,27 @@ const actionSX = {
 // ==============================|| HEADER CONTENT - NOTIFICATION ||============================== //
 
 const Notification = () => {
+  const rmf = useContext(RmfAppContext);
   const theme = useTheme();
   const matchesXs = useMediaQuery(theme.breakpoints.down('md'));
 
   const anchorRef = useRef<any>(null);
   const [read, setRead] = useState(2);
   const [open, setOpen] = useState(false);
+  const [unacknowledgedAlertsNum, setUnacknowledgedAlertsNum] = useState(0);
+  const [unacknowledgedAlertList, setUnacknowledgedAlertList] = useState<Alert[]>([]);
+
   const handleToggle = () => {
+    if (!rmf) {
+      return;
+    }
+    (async () => {
+      const { data: alerts } = await rmf.alertsApi.getAlertsAlertsGet();
+      const unackList = alerts.filter(
+        (alert) => !alert.acknowledged_by && !alert.unix_millis_acknowledged_time
+      );
+      setUnacknowledgedAlertList(unackList.reverse());
+    })();
     setOpen((prevOpen) => !prevOpen);
   };
 
@@ -77,6 +102,58 @@ const Notification = () => {
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'grey.200' : 'grey.300';
   const iconBackColor = theme.palette.mode === ThemeMode.DARK ? 'background.default' : 'grey.100';
 
+  useEffect(() => {
+    if (!rmf) {
+      return;
+    }
+
+    const subs: Subscription[] = [];
+    subs.push(
+      AppEvents.refreshAlert.subscribe({
+        next: () => {
+          (async () => {
+            const resp = await rmf.alertsApi.getAlertsAlertsGet();
+            const alerts = resp.data as Alert[];
+            setUnacknowledgedAlertsNum(
+              alerts.filter(
+                (alert) => !(alert.acknowledged_by && alert.unix_millis_acknowledged_time)
+              ).length
+            );
+          })();
+        },
+      })
+    );
+
+    // Get the initial number of unacknowledged alerts
+    (async () => {
+      const resp = await rmf.alertsApi.getAlertsAlertsGet();
+      const alerts = resp.data as Alert[];
+      setUnacknowledgedAlertsNum(
+        alerts.filter((alert) => !(alert.acknowledged_by && alert.unix_millis_acknowledged_time))
+          .length
+      );
+    })();
+    return () => subs.forEach((s) => s.unsubscribe());
+  }, [rmf]);
+
+  // const handleOpenAlertList = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  //   if (!rmf) {
+  //     return;
+  //   }
+  //   (async () => {
+  //     const { data: alerts } = await rmf.alertsApi.getAlertsAlertsGet();
+  //     const unackList = alerts.filter(
+  //       (alert) => !alert.acknowledged_by && !alert.unix_millis_acknowledged_time
+  //     );
+  //     setUnacknowledgedAlertList(unackList.reverse());
+  //   })();
+  //   // setAlertListAnchor(event.currentTarget);
+  // };
+
+  const timeDistance = (time: number) => {
+    return formatDistance(new Date(), new Date(time));
+  };
+
   return (
     <Box component="div" sx={{ flexShrink: 0, ml: 0.75 }}>
       <IconButton
@@ -89,7 +166,7 @@ const Notification = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Badge badgeContent={read} color="primary">
+        <Badge badgeContent={unacknowledgedAlertsNum} color="primary">
           <BellOutlined />
         </Badge>
       </IconButton>
@@ -138,9 +215,13 @@ const Notification = () => {
                   content={false}
                   secondary={
                     <>
-                      {read > 0 && (
+                      {unacknowledgedAlertsNum > 0 && (
                         <Tooltip title="Mark as all read">
-                          <IconButton color="success" size="small" onClick={() => setRead(0)}>
+                          <IconButton
+                            color="success"
+                            size="small"
+                            onClick={() => setUnacknowledgedAlertsNum(0)}
+                          >
                             <CheckCircleOutlined style={{ fontSize: '1.15rem' }} />
                           </IconButton>
                         </Tooltip>
@@ -160,135 +241,67 @@ const Notification = () => {
                       },
                     }}
                   >
-                    <ListItemButton selected={read > 0}>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            color: 'success.main',
-                            bgcolor: 'success.lighter',
-                          }}
-                        >
-                          <GiftOutlined />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6">
-                            It&apos;s{' '}
-                            <Typography component="span" variant="subtitle1">
-                              Cristina danny&apos;s
-                            </Typography>{' '}
-                            birthday today.
-                          </Typography>
-                        }
-                        secondary="2 min ago"
-                      />
-                      <ListItemSecondaryAction>
-                        <Typography variant="caption" noWrap>
-                          3:00 AM
-                        </Typography>
-                      </ListItemSecondaryAction>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            color: 'primary.main',
-                            bgcolor: 'primary.lighter',
-                          }}
-                        >
-                          <MessageOutlined />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6">
-                            <Typography component="span" variant="subtitle1">
-                              Aida Burg
-                            </Typography>{' '}
-                            commented your post.
-                          </Typography>
-                        }
-                        secondary="5 August"
-                      />
-                      <ListItemSecondaryAction>
-                        <Typography variant="caption" noWrap>
-                          6:00 PM
-                        </Typography>
-                      </ListItemSecondaryAction>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton selected={read > 0}>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            color: 'error.main',
-                            bgcolor: 'error.lighter',
-                          }}
-                        >
-                          <SettingOutlined />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6">
-                            Your Profile is Complete &nbsp;
-                            <Typography component="span" variant="subtitle1">
-                              60%
-                            </Typography>{' '}
-                          </Typography>
-                        }
-                        secondary="7 hours ago"
-                      />
-                      <ListItemSecondaryAction>
-                        <Typography variant="caption" noWrap>
-                          2:45 PM
-                        </Typography>
-                      </ListItemSecondaryAction>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            color: 'primary.main',
-                            bgcolor: 'primary.lighter',
-                          }}
-                        >
-                          C
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6">
-                            <Typography component="span" variant="subtitle1">
-                              Cristina Danny
-                            </Typography>{' '}
-                            invited to join{' '}
-                            <Typography component="span" variant="subtitle1">
-                              Meeting.
+                    {unacknowledgedAlertList.length === 0 ? (
+                      <ListItemButton selected={unacknowledgedAlertsNum > 0}>
+                        <ListItemText
+                          primary={
+                            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                              No unacknowledged alerts!
                             </Typography>
-                          </Typography>
-                        }
-                        secondary="Daily scrum meeting time"
-                      />
-                      <ListItemSecondaryAction>
-                        <Typography variant="caption" noWrap>
-                          9:10 PM
-                        </Typography>
-                      </ListItemSecondaryAction>
-                    </ListItemButton>
-                    <Divider />
-                    <ListItemButton sx={{ textAlign: 'center', py: `${12}px !important` }}>
-                      <ListItemText
-                        primary={
-                          <Typography variant="h6" color="primary">
-                            View All
-                          </Typography>
-                        }
-                      />
-                    </ListItemButton>
+                          }
+                        />
+                      </ListItemButton>
+                    ) : (
+                      unacknowledgedAlertList.map((alert) => (
+                        <Tooltip
+                          key={alert.id}
+                          title={
+                            <React.Fragment>
+                              <Typography>Alert</Typography>
+                              <Typography>ID: {alert.original_id}</Typography>
+                              <Typography>Type: {alert.category.toUpperCase()}</Typography>
+                              <Typography>
+                                Created: {new Date(alert.unix_millis_created_time).toLocaleString()}
+                              </Typography>
+                            </React.Fragment>
+                          }
+                          placement="right"
+                        >
+                          <React.Fragment>
+                            <Divider />
+                            <ListItemButton>
+                              <ListItemAvatar>
+                                <Avatar
+                                  sx={{
+                                    color: 'primary.main',
+                                    bgcolor: 'primary.lighter',
+                                  }}
+                                >
+                                  <ReportOutlined />
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={
+                                  <Typography variant="h6">
+                                    Task{' '}
+                                    <Typography component="span" variant="subtitle1">
+                                      {alert.original_id}
+                                    </Typography>{' '}
+                                    had an alert.
+                                  </Typography>
+                                }
+                                secondary={`${timeDistance(alert.unix_millis_created_time)} ago`}
+                              />
+                              <ListItemSecondaryAction>
+                                <Typography variant="caption" noWrap>
+                                  {new Date(alert.unix_millis_created_time).toLocaleTimeString()}
+                                </Typography>
+                              </ListItemSecondaryAction>
+                            </ListItemButton>
+                          </React.Fragment>
+                        </Tooltip>
+                      ))
+                    )}
                   </List>
                 </MainCard>
               </ClickAwayListener>
