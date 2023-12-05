@@ -25,6 +25,7 @@ import appConfig from 'app-config';
 import ResourceManager from 'managers/resource-manager';
 import { ResourcesContext } from 'contexts/app-contexts';
 import { RmfApp } from 'components/app-rmf/rmf-app';
+import { AlertStore } from 'components/app-rmf/alert-store';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -67,6 +68,7 @@ const MainLayout = () => {
     <ResourcesContext.Provider value={resourceManager.current}>
       <RmfApp>
         <Box component="div" sx={{ display: 'flex', width: '100%' }}>
+          <AlertStore />
           <Header />
           {!isHorizontal ? <Drawer /> : <HorizontalBar />}
 

@@ -14,7 +14,7 @@ export function RmfApp(props: RmfAppProps): JSX.Element {
   const { authenticator } = React.useContext(AppConfigContext);
   const [rmfIngress, setRmfIngress] = React.useState<RmfIngress | undefined>(undefined);
 
-  console.log(authenticator);
+  // console.log(authenticator);
 
   React.useEffect(() => {
     if (authenticator.user) {

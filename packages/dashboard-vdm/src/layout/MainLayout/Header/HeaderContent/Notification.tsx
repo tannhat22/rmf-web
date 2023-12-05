@@ -73,8 +73,9 @@ const Notification = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('md'));
 
   const anchorRef = useRef<any>(null);
-  const [read, setRead] = useState(2);
+
   const [open, setOpen] = useState(false);
+  // const [viewAll, setViewAll] = useState(false);
   const [unacknowledgedAlertsNum, setUnacknowledgedAlertsNum] = useState(0);
   const [unacknowledgedAlertList, setUnacknowledgedAlertList] = useState<Alert[]>([]);
 
@@ -97,6 +98,7 @@ const Notification = () => {
       return;
     }
     setOpen(false);
+    // setViewAll(false);
   };
 
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'grey.200' : 'grey.300';
@@ -149,6 +151,10 @@ const Notification = () => {
   //   })();
   //   // setAlertListAnchor(event.currentTarget);
   // };
+
+  const openAlertDialog = (alert: Alert) => {
+    AppEvents.alertListOpenedAlert.next(alert);
+  };
 
   const timeDistance = (time: number) => {
     return formatDistance(new Date(), new Date(time));
@@ -239,10 +245,14 @@ const Notification = () => {
                         '& .MuiAvatar-root': avatarSX,
                         '& .MuiListItemSecondaryAction-root': { ...actionSX, position: 'relative' },
                       },
+                      maxHeight: '480px',
+                      overflow: 'auto',
+                      position: 'relative',
                     }}
                   >
                     {unacknowledgedAlertList.length === 0 ? (
-                      <ListItemButton selected={unacknowledgedAlertsNum > 0}>
+                      // <ListItemButton selected={unacknowledgedAlertsNum > 0}>
+                      <ListItemButton>
                         <ListItemText
                           primary={
                             <Typography variant="body2" sx={{ textAlign: 'center' }}>
@@ -253,55 +263,59 @@ const Notification = () => {
                       </ListItemButton>
                     ) : (
                       unacknowledgedAlertList.map((alert) => (
-                        <Tooltip
-                          key={alert.id}
-                          title={
-                            <React.Fragment>
-                              <Typography>Alert</Typography>
-                              <Typography>ID: {alert.original_id}</Typography>
-                              <Typography>Type: {alert.category.toUpperCase()}</Typography>
-                              <Typography>
-                                Created: {new Date(alert.unix_millis_created_time).toLocaleString()}
-                              </Typography>
-                            </React.Fragment>
-                          }
-                          placement="right"
-                        >
-                          <React.Fragment>
-                            <Divider />
-                            <ListItemButton>
-                              <ListItemAvatar>
-                                <Avatar
-                                  sx={{
-                                    color: 'primary.main',
-                                    bgcolor: 'primary.lighter',
-                                  }}
-                                >
-                                  <ReportOutlined />
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={
-                                  <Typography variant="h6">
-                                    Task{' '}
-                                    <Typography component="span" variant="subtitle1">
-                                      {alert.original_id}
-                                    </Typography>{' '}
-                                    had an alert.
-                                  </Typography>
-                                }
-                                secondary={`${timeDistance(alert.unix_millis_created_time)} ago`}
-                              />
-                              <ListItemSecondaryAction>
-                                <Typography variant="caption" noWrap>
-                                  {new Date(alert.unix_millis_created_time).toLocaleTimeString()}
+                        <React.Fragment key={alert.id}>
+                          <Divider />
+                          <ListItemButton
+                            selected={unacknowledgedAlertsNum > 0}
+                            onClick={() => {
+                              openAlertDialog(alert);
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar
+                                sx={{
+                                  color: 'primary.main',
+                                  bgcolor: 'primary.lighter',
+                                }}
+                              >
+                                <ReportOutlined />
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography variant="h6">
+                                  {alert.category[0].toUpperCase() + alert.category.slice(1)}{' '}
+                                  <Typography component="span" variant="subtitle1">
+                                    {alert.original_id}
+                                  </Typography>{' '}
+                                  had an alert.
                                 </Typography>
-                              </ListItemSecondaryAction>
-                            </ListItemButton>
-                          </React.Fragment>
-                        </Tooltip>
+                              }
+                              secondary={`${timeDistance(alert.unix_millis_created_time)} ago`}
+                            />
+                            <ListItemSecondaryAction>
+                              <Typography variant="caption" noWrap>
+                                {new Date(alert.unix_millis_created_time).toLocaleTimeString()}
+                              </Typography>
+                            </ListItemSecondaryAction>
+                          </ListItemButton>
+                        </React.Fragment>
                       ))
                     )}
+                    {/* {!viewAll && unacknowledgedAlertsNum > 5 ? (
+                      <ListItemButton
+                        sx={{ textAlign: 'center', py: `${12}px !important` }}
+                        onClick={() => setViewAll(true)}
+                      >
+                        <ListItemText
+                          primary={
+                            <Typography variant="h6" color="primary">
+                              View All
+                            </Typography>
+                          }
+                        />
+                      </ListItemButton>
+                    ) : null} */}
                   </List>
                 </MainCard>
               </ClickAwayListener>
