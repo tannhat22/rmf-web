@@ -35,6 +35,9 @@ import { downloadCsvFull, downloadCsvMinimal, toApiSchedule, parseTasksFile } fr
 import { useCreateTaskFormData } from 'hooks/useCreateTaskForm';
 import useGetUsername from 'hooks/useFetchUser';
 
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+
 const RefreshTaskQueueTableInterval = 5000;
 
 enum TaskTablePanel {
@@ -77,7 +80,6 @@ function TabPanel(props: TabPanelProps) {
 
 export const TasksApp = () => {
   const rmf = React.useContext(RmfAppContext);
-  const { showAlert } = React.useContext(AppControllerContext);
   const [autoRefresh, setAutoRefresh] = React.useState(true);
   const [refreshTaskAppCount, setRefreshTaskAppCount] = React.useState(0);
 
@@ -100,6 +102,20 @@ export const TasksApp = () => {
   const { waypointNames, pickupPoints, dropoffPoints, cleaningZoneNames } =
     useCreateTaskFormData(rmf);
   const username = useGetUsername(rmf);
+
+  const showAlertSnack = (color: string, message: string) => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: message,
+        variant: 'alert',
+        alert: {
+          color: color,
+        },
+        close: false,
+      })
+    );
+  };
 
   React.useEffect(() => {
     const sub = AppEvents.refreshTaskApp.subscribe({
@@ -294,7 +310,7 @@ export const TasksApp = () => {
           try {
             taskFiles = parseTasksFile(await fileInputEl.files[0].text());
           } catch (err) {
-            showAlert('error', (err as Error).message, 5000);
+            showAlertSnack('error', (err as Error).message);
             return res([]);
           }
           // only submit tasks when all tasks are error free
@@ -482,23 +498,23 @@ export const TasksApp = () => {
           tasksFromFile={tasksFromFile}
           onSuccess={() => {
             setOpenCreateTaskForm(false);
-            showAlert('success', 'Successfully created task');
+            showAlertSnack('success', 'Successfully created task');
           }}
           onFail={(e) => {
-            showAlert('error', `Failed to create task: ${e.message}`);
+            showAlertSnack('error', `Failed to create task: ${e.message}`);
           }}
           onSuccessFavoriteTask={(message) => {
-            showAlert('success', message);
+            showAlertSnack('success', message);
           }}
           onFailFavoriteTask={(e) => {
-            showAlert('error', `Failed to create or delete favorite task: ${e.message}`);
+            showAlertSnack('error', `Failed to create or delete favorite task: ${e.message}`);
           }}
           onSuccessScheduling={() => {
             setOpenCreateTaskForm(false);
-            showAlert('success', 'Successfully created schedule');
+            showAlertSnack('success', 'Successfully created schedule');
           }}
           onFailScheduling={(e) => {
-            showAlert('error', `Failed to submit schedule: ${e.message}`);
+            showAlertSnack('error', `Failed to submit schedule: ${e.message}`);
           }}
         />
       )}

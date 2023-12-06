@@ -13,6 +13,9 @@ import { AlertContent, AlertDialog } from 'react-components';
 import { base } from 'react-components';
 import { TaskInspector } from './task-inspector';
 
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+
 type Alert = ApiServerModelsTortoiseModelsAlertsAlertLeaf;
 
 interface TaskAlert extends TaskEventLog {
@@ -29,6 +32,20 @@ export interface TaskAlertDialogProps {
 }
 
 export function TaskAlertDialog({ alert, removeAlert }: TaskAlertDialogProps): JSX.Element {
+  const showAlertSnack = (color: string, message: string) => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: message,
+        variant: 'alert',
+        alert: {
+          color: color,
+        },
+        close: false,
+      })
+    );
+  };
+
   const getErrorLogEntries = (logs: TaskEventLog) => {
     let errorLogs: LogEntry[] = [];
     if (logs.log) {
@@ -144,7 +161,6 @@ export function TaskAlertDialog({ alert, removeAlert }: TaskAlertDialogProps): J
   };
 
   const rmf = React.useContext(RmfAppContext);
-  const { showAlert } = React.useContext(AppControllerContext);
   const [taskAlert, setTaskAlert] = React.useState<TaskAlert | null>(null);
   const [openTaskInspector, setOpenTaskInspector] = React.useState(false);
   const [taskState, setTaskState] = React.useState<TaskState | null>(null);
@@ -212,12 +228,12 @@ export function TaskAlertDialog({ alert, removeAlert }: TaskAlertDialogProps): J
               (new Date().getTime() - ackResponse.unix_millis_acknowledged_time) / 1000;
             showAlertMessage += ` ${Math.round(ackSecondsAgo)}s ago`;
           }
-          showAlert('success', showAlertMessage);
+          showAlertSnack('success', showAlertMessage);
         } else {
           throw new Error(`Failed to acknowledge alert ID ${taskAlert.task_id}`);
         }
       } catch (error) {
-        showAlert('error', `Failed to acknowledge alert ID ${taskAlert.task_id}`);
+        showAlertSnack('error', `Failed to acknowledge alert ID ${taskAlert.task_id}`);
         console.log(error);
       }
     })();

@@ -37,16 +37,13 @@ import IconButton from 'components/@extended/IconButton';
 import Transitions from 'components/@extended/Transitions';
 
 // assets
-import {
-  BellOutlined,
-  CheckCircleOutlined,
-  GiftOutlined,
-  MessageOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { BellOutlined, CheckCircleOutlined } from '@ant-design/icons';
 
 // types
 import { ThemeMode } from 'types/config';
+
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
 
 // sx styles
 const avatarSX = {
@@ -79,6 +76,20 @@ const Notification = () => {
   const [unacknowledgedAlertsNum, setUnacknowledgedAlertsNum] = useState(0);
   const [unacknowledgedAlertList, setUnacknowledgedAlertList] = useState<Alert[]>([]);
 
+  const showAlertSnack = (color: string, message: string) => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: message,
+        variant: 'alert',
+        alert: {
+          color: color,
+        },
+        close: false,
+      })
+    );
+  };
+
   const handleToggle = () => {
     if (!rmf) {
       return;
@@ -99,6 +110,41 @@ const Notification = () => {
     }
     setOpen(false);
     // setViewAll(false);
+  };
+
+  const handleAcknowledgedAll = (alerts: Alert[]) => {
+    if (!rmf) {
+      return;
+    }
+
+    alerts.map((alert) => {
+      (async () => {
+        try {
+          const ackResponse = (
+            await rmf?.alertsApi.acknowledgeAlertAlertsAlertIdPost(alert.original_id)
+          ).data;
+
+          if (ackResponse.id !== ackResponse.original_id) {
+            // let showAlertMessage = `Alert ${ackResponse.original_id} acknowledged`;
+            // if (ackResponse.acknowledged_by) {
+            //   showAlertMessage += ` by User ${ackResponse.acknowledged_by}`;
+            // }
+            // if (ackResponse.unix_millis_acknowledged_time) {
+            //   const ackSecondsAgo =
+            //     (new Date().getTime() - ackResponse.unix_millis_acknowledged_time) / 1000;
+            //   showAlertMessage += ` ${Math.round(ackSecondsAgo)}s ago`;
+            // }
+            setUnacknowledgedAlertList([]);
+            // showAlertSnack('success', showAlertMessage);
+          } else {
+            throw new Error(`Failed to acknowledge alert ID ${alert.original_id}`);
+          }
+        } catch (error) {
+          showAlertSnack('error', `Failed to acknowledge alert ID ${alert.original_id}`);
+          // console.log(error);
+        }
+      })();
+    });
   };
 
   const iconBackColorOpen = theme.palette.mode === ThemeMode.DARK ? 'grey.200' : 'grey.300';
@@ -226,7 +272,7 @@ const Notification = () => {
                           <IconButton
                             color="success"
                             size="small"
-                            onClick={() => setUnacknowledgedAlertsNum(0)}
+                            onClick={() => handleAcknowledgedAll(unacknowledgedAlertList)}
                           >
                             <CheckCircleOutlined style={{ fontSize: '1.15rem' }} />
                           </IconButton>
