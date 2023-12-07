@@ -7,7 +7,8 @@ const debug = Debug('authenticator');
 
 export class KeycloakAuthenticator
   extends EventEmitter<AuthenticatorEventType>
-  implements Authenticator {
+  implements Authenticator
+{
   get user(): string | undefined {
     return this._user;
   }
@@ -25,7 +26,7 @@ export class KeycloakAuthenticator
    */
   constructor(config: Keycloak.KeycloakConfig | string, silentCheckSsoRedirectUri?: string) {
     super();
-    this._inst = Keycloak(config);
+    this._inst = new Keycloak(config);
     this._silentCheckSsoRedirectUri = silentCheckSsoRedirectUri;
   }
 

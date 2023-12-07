@@ -24,8 +24,8 @@ config = {
     # NOTE: This is ONLY used for documentation purposes, the "jwt_public_key" will be the
     # only key used to verify a token.
     # "oidc_url": None,
-    "oidc_url": "http://localhost:8080/auth/realms/rmf-web/.well-known/openid-configuration",
-    # "oidc_url": 'http://192.168.47.128:8080/auth/realms/rmf-web/.well-known/openid-configuration',
+    "oidc_url": "http://localhost:8080/realms/rmf-web/.well-known/openid-configuration",
+    # "oidc_url": 'http://192.168.47.128:8080/realms/rmf-web/.well-known/openid-configuration',
     # Audience the access token is meant for. Can also be an array.
     # Used to verify the "aud" claim.
     # "aud": "rmf_api_server",
@@ -34,8 +34,8 @@ config = {
     # Used to verify the "iss" claim
     # If iss is set to None, it means that authentication should be disabled
     # "iss": None,
-    "iss": "http://localhost:8080/auth/realms/rmf-web",
-    # "iss": 'http://192.168.47.128:8080/auth/realms/rmf-web',
+    "iss": "http://localhost:8080/realms/rmf-web",
+    # "iss": 'http://192.168.47.128:8080/realms/rmf-web',
     # list of arguments passed to the ros node, "--ros-args" is automatically prepended to the list.
     # e.g.
     #   Run with sim time: ["-p", "use_sim_time:=true"]
