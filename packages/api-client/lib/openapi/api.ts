@@ -7679,6 +7679,47 @@ export const TasksApiAxiosParamCreator = function (configuration?: Configuration
       };
     },
     /**
+     *
+     * @summary Get Task Request
+     * @param {string} taskId task_id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getTaskRequestTasksTaskIdRequestGet: async (
+      taskId: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'taskId' is not null or undefined
+      assertParamExists('getTaskRequestTasksTaskIdRequestGet', 'taskId', taskId);
+      const localVarPath = `/tasks/{task_id}/request`.replace(
+        `{${'task_id'}}`,
+        encodeURIComponent(String(taskId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * Available in socket.io
      * @summary Get Task State
      * @param {string} taskId task_id

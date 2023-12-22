@@ -272,6 +272,7 @@ export const TasksApp = () => {
   // Thêm button add tasks:
   const submitTasks = React.useCallback<Required<CreateTaskFormProps>['submitTasks']>(
     async (taskRequests, schedule) => {
+      console.log(taskRequests);
       if (!rmf) {
         throw new Error('tasks api not available');
       }
