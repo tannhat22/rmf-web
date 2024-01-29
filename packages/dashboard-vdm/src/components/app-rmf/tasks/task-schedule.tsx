@@ -13,10 +13,11 @@ import {
 import React from 'react';
 import {
   ConfirmationDialog,
-  CreateTaskForm,
-  CreateTaskFormProps,
+  CreateTaskFormVdm,
+  CreateTaskFormVdmProps,
   EventEditDeletePopup,
   Schedule,
+  RobotTableData,
 } from 'react-components';
 import { useCreateTaskFormData } from 'hooks/useCreateTaskForm';
 import useGetUsername from 'hooks/useFetchUser';
@@ -62,7 +63,11 @@ const disablingCellsWithoutEvents = (
   );
 };
 
-export const TaskSchedule = () => {
+export interface TaskScheduleProps {
+  robots: RobotTableData[];
+}
+
+export const TaskSchedule = ({ robots }: TaskScheduleProps) => {
   const rmf = React.useContext(RmfAppContext);
   const { showAlert } = React.useContext(AppControllerContext);
   const { waypointNames, pickupPoints, dropoffPoints, cleaningZoneNames } =
@@ -165,7 +170,7 @@ export const TaskSchedule = () => {
     );
   };
 
-  const submitTasks = React.useCallback<Required<CreateTaskFormProps>['submitTasks']>(
+  const submitTasks = React.useCallback<Required<CreateTaskFormVdmProps>['submitTasks']>(
     async (taskRequests, schedule) => {
       if (!rmf) {
         throw new Error('tasks api not available');
@@ -282,8 +287,9 @@ export const TaskSchedule = () => {
         )}
       />
       {openCreateTaskForm && (
-        <CreateTaskForm
+        <CreateTaskFormVdm
           user={username ? username : 'unknown user'}
+          robots={robots}
           patrolWaypoints={waypointNames}
           cleaningZones={cleaningZoneNames}
           pickupPoints={pickupPoints}

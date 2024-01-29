@@ -42,6 +42,7 @@ import { ConfirmationDialog, ConfirmationDialogProps } from '../confirmation-dia
 import { PositiveIntField } from '../form-inputs';
 import sx from '@mui/system/sx';
 import { padding, width } from '@mui/system';
+import { RobotTableData } from '..';
 
 // A bunch of manually defined descriptions to avoid using `any`.
 interface Payload {
@@ -67,6 +68,11 @@ interface PatrolTaskDescription {
 
 interface CleanTaskDescription {
   zone: string;
+}
+
+interface RobotInform {
+  fleet: string | null;
+  name: string | null;
 }
 
 type TaskDescription = DeliveryTaskDescription | PatrolTaskDescription | CleanTaskDescription;
@@ -199,6 +205,7 @@ function DeliveryTaskForm({
           options={Object.keys(pickupPoints)}
           value={taskDesc.pickup.place}
           onChange={(_ev, newValue) => {
+            console.log('on change pickup');
             const place = newValue ?? '';
             const handler =
               newValue !== null && pickupPoints[newValue] ? pickupPoints[newValue] : '';
@@ -275,6 +282,7 @@ function DeliveryTaskForm({
           options={Object.keys(dropoffPoints)}
           value={taskDesc.dropoff.place}
           onChange={(_ev, newValue) => {
+            console.log('on change dropoff');
             const place = newValue ?? '';
             const handler =
               newValue !== null && dropoffPoints[newValue] ? dropoffPoints[newValue] : '';
@@ -665,13 +673,14 @@ const defaultFavoriteTask = (): TaskFavorite => {
   };
 };
 
-export interface CreateTaskFormProps
+export interface CreateTaskFormVdmProps
   extends Omit<ConfirmationDialogProps, 'onConfirmClick' | 'toolbar'> {
   /**
    * Shows extra UI elements suitable for submittng batched tasks. Default to 'false'.
    */
   user: string;
   allowBatch?: boolean;
+  robots: RobotTableData[];
   cleaningZones?: string[];
   patrolWaypoints?: string[];
   pickupPoints?: Record<string, string>;
@@ -679,7 +688,12 @@ export interface CreateTaskFormProps
   favoritesTasks?: TaskFavorite[];
   scheduleToEdit?: Schedule;
   requestTask?: TaskRequest;
-  submitTasks?(tasks: TaskRequest[], schedule: Schedule | null): Promise<void>;
+  submitTasks?(
+    tasks: TaskRequest[],
+    schedule: Schedule | null,
+    fleetName: string | null,
+    robotName: string | null,
+  ): Promise<void>;
   tasksFromFile?(): Promise<TaskRequest[]> | TaskRequest[];
   onSuccess?(tasks: TaskRequest[]): void;
   onFail?(error: Error, tasks: TaskRequest[]): void;
@@ -691,8 +705,9 @@ export interface CreateTaskFormProps
   onFailScheduling?(error: Error): void;
 }
 
-export function CreateTaskForm({
+export function CreateTaskFormVdm({
   user,
+  robots,
   cleaningZones = [],
   patrolWaypoints = [],
   pickupPoints = {},
@@ -712,7 +727,7 @@ export function CreateTaskForm({
   onSuccessScheduling,
   onFailScheduling,
   ...otherProps
-}: CreateTaskFormProps): JSX.Element {
+}: CreateTaskFormVdmProps): JSX.Element {
   const theme = useTheme();
 
   const [openFavoriteDialog, setOpenFavoriteDialog] = React.useState(false);
@@ -725,6 +740,8 @@ export function CreateTaskForm({
   );
   const [favoriteTaskTitleError, setFavoriteTaskTitleError] = React.useState(false);
   const [savingFavoriteTask, setSavingFavoriteTask] = React.useState(false);
+
+  const [robotInfo, setRobotInfo] = React.useState<RobotInform>({ fleet: null, name: null });
 
   const [taskRequests, setTaskRequests] = React.useState<TaskRequest[]>(() => [
     requestTask ?? defaultTask(),
@@ -834,6 +851,19 @@ export function CreateTaskForm({
     updateTasks();
   };
 
+  const handleRobotNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const newRobotName = ev.target.value;
+    const robotIsValid = robots.find((robot) => robot.name === newRobotName);
+    if (robotIsValid === undefined) {
+      return;
+    }
+
+    setRobotInfo({
+      fleet: robotIsValid.fleet,
+      name: robotIsValid.name,
+    });
+  };
+
   // no memo because deps would likely change
   const handleSubmit = async (scheduling: boolean) => {
     if (!submitTasks) {
@@ -851,7 +881,12 @@ export function CreateTaskForm({
     const submittingSchedule = scheduling && scheduleEnabled;
     try {
       setSubmitting(true);
-      await submitTasks(taskRequests, submittingSchedule ? schedule : null);
+      await submitTasks(
+        taskRequests,
+        submittingSchedule ? schedule : null,
+        robotInfo.fleet,
+        robotInfo.name,
+      );
       setSubmitting(false);
 
       if (submittingSchedule) {
@@ -1050,30 +1085,14 @@ export function CreateTaskForm({
                       label="Robot name"
                       variant="outlined"
                       fullWidth
-                      value={taskRequest.category}
-                      onChange={handleTaskTypeChange}
+                      value={robotInfo.name ? robotInfo.name : ''}
+                      onChange={handleRobotNameChange}
                     >
-                      <MenuItem
-                        value="clean"
-                        disabled={!cleaningZones || cleaningZones.length === 0}
-                      >
-                        Clean
-                      </MenuItem>
-                      <MenuItem
-                        value="patrol"
-                        disabled={!patrolWaypoints || patrolWaypoints.length === 0}
-                      >
-                        Patrol
-                      </MenuItem>
-                      <MenuItem
-                        value="delivery"
-                        disabled={
-                          Object.keys(pickupPoints).length === 0 ||
-                          Object.keys(dropoffPoints).length === 0
-                        }
-                      >
-                        Delivery
-                      </MenuItem>
+                      {robots.map((robot, robot_id) => (
+                        <MenuItem key={robot_id} value={robot.name}>
+                          {robot.name}
+                        </MenuItem>
+                      ))}
                     </TextField>
                   </Grid>
                   <Grid item xs={5}>

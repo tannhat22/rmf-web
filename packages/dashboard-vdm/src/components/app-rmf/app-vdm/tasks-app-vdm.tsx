@@ -16,18 +16,17 @@ import { AddOutlined } from '@mui/icons-material';
 import { TaskState, TaskFavoritePydantic as TaskFavorite, TaskRequest } from 'api-client';
 import React from 'react';
 import {
-  CreateTaskForm,
-  CreateTaskFormProps,
+  CreateTaskFormVdm,
+  CreateTaskFormVdmProps,
   FilterFields,
   MuiMouseEvent,
   SortFields,
   TaskDataGridTable,
   Tasks,
+  RobotTableData,
 } from 'react-components';
 import { Subscription } from 'rxjs';
-import { AppControllerContext } from 'contexts/app-contexts';
 import { AppEvents } from '../app-events';
-// import { MicroAppProps } from '../micro-app';
 import { RmfAppContext } from '../rmf-app';
 import { TaskSchedule } from '../tasks/task-schedule';
 import { TaskSummary } from '../tasks/task-summary';
@@ -80,6 +79,10 @@ function TabPanel(props: TabPanelProps) {
 
 export const TasksApp = () => {
   const rmf = React.useContext(RmfAppContext);
+
+  const [fleets, setFleets] = React.useState<string[]>([]);
+  const [robots, setRobots] = React.useState<Record<string, RobotTableData[]>>({});
+
   const [autoRefresh, setAutoRefresh] = React.useState(true);
   const [refreshTaskAppCount, setRefreshTaskAppCount] = React.useState(0);
 
@@ -102,6 +105,8 @@ export const TasksApp = () => {
   const { waypointNames, pickupPoints, dropoffPoints, cleaningZoneNames } =
     useCreateTaskFormData(rmf);
   const username = useGetUsername(rmf);
+
+  console.log('re-render');
 
   const showAlertSnack = (color: string, message: string) => {
     dispatch(
@@ -142,6 +147,94 @@ export const TasksApp = () => {
       clearInterval(refreshInterval);
     };
   }, [autoRefresh]);
+
+  // Get fleet information
+  React.useEffect(() => {
+    if (!rmf) {
+      return;
+    }
+
+    (async () => {
+      const fleetsData = (await rmf.fleetsApi.getFleetsFleetsGet()).data;
+      console.log(fleetsData);
+      setFleets(
+        fleetsData.reduce<string[]>((acc, f) => {
+          if (f.name) {
+            acc.push(f.name);
+          }
+          return acc;
+        }, [])
+      );
+      setRobots({});
+    })();
+    // const sub = rmf.fleetsObs.subscribe((fleets) => {
+    //   setFleets(
+    //     fleets.reduce<string[]>((acc, f) => {
+    //       if (f.name) {
+    //         acc.push(f.name);
+    //       }
+    //       return acc;
+    //     }, [])
+    //   );
+    //   setRobots({});
+    // });
+    // return () => sub.unsubscribe();
+  }, [rmf]);
+
+  React.useEffect(() => {
+    if (!rmf) {
+      return;
+    }
+
+    fleets.map((f) => {
+      (async () => {
+        const fleet = (await rmf.fleetsApi.getFleetStateFleetsNameStateGet(f)).data;
+        console.log(fleet);
+        const taskIds = fleet.robots
+          ? Object.values(fleet.robots).reduce<string[]>((acc, robot) => {
+              if (robot.task_id) {
+                acc.push(robot.task_id);
+              }
+              return acc;
+            }, [])
+          : [];
+
+        const tasks =
+          taskIds.length > 0
+            ? (await rmf.tasksApi.queryTaskStatesTasksGet(taskIds.join(','))).data.reduce(
+                (acc, task) => {
+                  acc[task.booking.id] = task;
+                  return acc;
+                },
+                {} as Record<string, TaskState>
+              )
+            : {};
+
+        setRobots((prev) => {
+          if (!fleet.name) {
+            return prev;
+          }
+          return {
+            ...prev,
+            [fleet.name]: fleet.robots
+              ? Object.entries(fleet.robots).map<RobotTableData>(([name, robot]) => ({
+                  fleet: fleet.name || '',
+                  name,
+                  battery: robot.battery && +robot.battery.toFixed(2),
+                  status: robot.status,
+                  estFinishTime:
+                    robot.task_id && tasks[robot.task_id]
+                      ? tasks[robot.task_id].unix_millis_finish_time
+                      : undefined,
+                  lastUpdateTime: robot.unix_millis_time ? robot.unix_millis_time : undefined,
+                  level: robot.location?.map || 'N/A',
+                }))
+              : [],
+          };
+        });
+      })();
+    });
+  }, [rmf, fleets]);
 
   // TODO: parameterize this variable
   const GET_LIMIT = 10;
@@ -270,21 +363,36 @@ export const TasksApp = () => {
   };
 
   // Thêm button add tasks:
-  const submitTasks = React.useCallback<Required<CreateTaskFormProps>['submitTasks']>(
-    async (taskRequests, schedule) => {
+  const submitTasks = React.useCallback<Required<CreateTaskFormVdmProps>['submitTasks']>(
+    async (taskRequests, schedule, fleetName, robotName) => {
       console.log(taskRequests);
       if (!rmf) {
         throw new Error('tasks api not available');
       }
       if (!schedule) {
-        await Promise.all(
-          taskRequests.map((request) =>
-            rmf.tasksApi.postDispatchTaskTasksDispatchTaskPost({
-              type: 'dispatch_task_request',
-              request,
-            })
-          )
-        );
+        if (robotName && fleetName) {
+          console.log('submit robot_task_request');
+          await Promise.all(
+            taskRequests.map((request) =>
+              rmf.tasksApi.postRobotTaskTasksRobotTaskPost({
+                type: 'robot_task_request',
+                robot: robotName,
+                fleet: fleetName,
+                request,
+              })
+            )
+          );
+        } else {
+          console.log('submit dispatch_task_request');
+          await Promise.all(
+            taskRequests.map((request) =>
+              rmf.tasksApi.postDispatchTaskTasksDispatchTaskPost({
+                type: 'dispatch_task_request',
+                request,
+              })
+            )
+          );
+        }
       } else {
         const scheduleRequests = taskRequests.map((req) => toApiSchedule(req, schedule));
         await Promise.all(
@@ -338,12 +446,14 @@ export const TasksApp = () => {
       setFavoritesTasks(results);
     })();
 
-    return () => {
-      setFavoritesTasks([]);
-    };
+    // return () => {
+    //   setFavoritesTasks([]);
+    // };
   }, [rmf, refreshTaskAppCount]);
 
-  const submitFavoriteTask = React.useCallback<Required<CreateTaskFormProps>['submitFavoriteTask']>(
+  const submitFavoriteTask = React.useCallback<
+    Required<CreateTaskFormVdmProps>['submitFavoriteTask']
+  >(
     async (taskFavoriteRequest) => {
       if (!rmf) {
         throw new Error('tasks api not available');
@@ -354,7 +464,9 @@ export const TasksApp = () => {
     [rmf]
   );
 
-  const deleteFavoriteTask = React.useCallback<Required<CreateTaskFormProps>['deleteFavoriteTask']>(
+  const deleteFavoriteTask = React.useCallback<
+    Required<CreateTaskFormVdmProps>['deleteFavoriteTask']
+  >(
     async (favoriteTask) => {
       if (!rmf) {
         throw new Error('tasks api not available');
@@ -477,15 +589,16 @@ export const TasksApp = () => {
         </TableContainer>
       </TabPanel>
       <TabPanel selectedTabIndex={selectedPanelIndex} index={TaskTablePanel.Schedule}>
-        <TaskSchedule />
+        <TaskSchedule robots={Object.values(robots).flatMap((r) => r)} />
       </TabPanel>
       <input type="file" style={{ display: 'none' }} ref={uploadFileInputRef} />
       {openTaskSummary && (
         <TaskSummary task={selectedTask} onClose={() => setOpenTaskSummary(false)} />
       )}
       {openCreateTaskForm && (
-        <CreateTaskForm
+        <CreateTaskFormVdm
           user={username ? username : 'unknown user'}
+          robots={Object.values(robots).flatMap((r) => r)}
           patrolWaypoints={waypointNames}
           cleaningZones={cleaningZoneNames}
           pickupPoints={pickupPoints}
