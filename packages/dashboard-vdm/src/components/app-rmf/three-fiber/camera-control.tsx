@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import React, { useEffect, useRef } from 'react';
-import { MOUSE, Vector3 } from 'three';
+import { MOUSE, Vector3, TOUCH } from 'three';
 
 const DEFAULT_ZOOM_IN_CONSTANT = 1.2;
 const DEFAULT_ZOOM_OUT_CONSTANT = 0.8;
@@ -64,6 +64,10 @@ export const CameraControl: React.FC<CameraControlProps> = ({ zoom }) => {
       LEFT: MOUSE.PAN,
       MIDDLE: undefined,
       RIGHT: undefined,
+    };
+    controls.touches = {
+      ONE: TOUCH.PAN,
+      TWO: TOUCH.DOLLY_PAN,
     };
 
     if (AppEvents.cameraPosition.value) {

@@ -33,6 +33,7 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 
 // types
 import { ThemeMode } from 'types/config';
+import { useLocales } from 'locales';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -69,6 +70,7 @@ function a11yProps(index: number) {
 
 const Profile = () => {
   const theme = useTheme();
+  const { translate } = useLocales();
   const navigate = useNavigate();
 
   const { logout, user } = useAuthContext();
@@ -180,7 +182,7 @@ const Profile = () => {
                         </Stack>
                       </Grid>
                       <Grid item>
-                        <Tooltip title="Logout">
+                        <Tooltip title={translate('Logout')}>
                           <IconButton
                             size="large"
                             sx={{ color: 'text.primary' }}
@@ -209,7 +211,7 @@ const Profile = () => {
                           textTransform: 'capitalize',
                         }}
                         icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                        label="Profile"
+                        label={translate('Profile')}
                         {...a11yProps(0)}
                       />
                       <Tab
@@ -221,7 +223,7 @@ const Profile = () => {
                           textTransform: 'capitalize',
                         }}
                         icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                        label="Setting"
+                        label={translate('Setting')}
                         {...a11yProps(1)}
                       />
                     </Tabs>

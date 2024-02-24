@@ -98,6 +98,13 @@ const NavCollapse = ({
     VirtualElement | (() => VirtualElement) | null | undefined
   >(null);
 
+  // console.log('selected: ', selected);
+  // console.log('selectedItems: ', selectedItems);
+  // console.log('selectedLevel: ', selectedLevel);
+  // console.log('level: ', level);
+  // console.log('open: ', open);
+  // console.log('anchorEl: ', anchorEl);
+
   const handleClick = (
     event:
       | React.MouseEvent<HTMLAnchorElement>
@@ -108,7 +115,9 @@ const NavCollapse = ({
     setSelectedLevel(level);
     if (drawerOpen) {
       setOpen(!open);
-      setSelected(!selected ? menu.id : null);
+      // setSelected(!selected ? menu.id : null);
+      // console.log('menu.id:  ', menu.id);
+      setSelected(menu.id);
       setSelectedItems(!selected ? menu.id : '');
       if (menu.url) Navigation(`${menu.url}`);
     } else {
@@ -119,7 +128,9 @@ const NavCollapse = ({
   const handlerIconLink = () => {
     if (!drawerOpen) {
       if (menu.url) Navigation(`${menu.url}`);
-      setSelected(menu.id);
+      if (menu.type != 'collapse') {
+        setSelected(menu.id);
+      }
     }
   };
 

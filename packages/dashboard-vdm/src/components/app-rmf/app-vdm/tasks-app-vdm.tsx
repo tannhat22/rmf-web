@@ -36,6 +36,7 @@ import useGetUsername from 'hooks/useFetchUser';
 
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
+import { useLocales } from 'locales';
 
 const RefreshTaskQueueTableInterval = 5000;
 
@@ -79,6 +80,7 @@ function TabPanel(props: TabPanelProps) {
 
 export const TasksApp = () => {
   const rmf = React.useContext(RmfAppContext);
+  const { translate } = useLocales();
 
   const [fleets, setFleets] = React.useState<string[]>([]);
   const [robots, setRobots] = React.useState<Record<string, RobotTableData[]>>({});
@@ -106,7 +108,44 @@ export const TasksApp = () => {
     useCreateTaskFormData(rmf);
   const username = useGetUsername(rmf);
 
-  console.log('re-render');
+  const titleTranslate = {
+    Queue: translate('Queue'),
+    Schedule: translate('Schedule'),
+    Date: translate('Date'),
+    Requester: translate('Requester'),
+    Category: translate('Category'),
+    Assignee: translate('Assignee'),
+    'Start Time': translate('Start Time'),
+    'End Time': translate('End Time'),
+    State: translate('State'),
+    'Select File': translate('Select File'),
+    'Create Task': translate('Create Task'),
+    'Favorite tasks': translate('Favorite tasks'),
+    'Task Category': translate('Task Category'),
+    Clean: translate('Clean'),
+    Patrol: translate('Patrol'),
+    Delivery: translate('Delivery'),
+    'Robot name': translate('Robot name'),
+    'Pickup Location': translate('Pickup Location'),
+    'Dropoff Location': translate('Dropoff Location'),
+    'Pickup SKU': translate('Pickup SKU'),
+    'Dropoff SKU': translate('Dropoff SKU'),
+    Priority: translate('Priority'),
+    Quantity: translate('Quantity'),
+    Cancel: translate('Cancel'),
+    'Save as a favorite task': translate('Save as a favorite task'),
+    'Confirm edits': translate('Confirm edits'),
+    Delete: translate('Delete'),
+    Save: translate('Save'),
+    Back: translate('Back'),
+    'Confirm Delete': translate('Confirm Delete'),
+    'Favorite Task': translate('Favorite Task'),
+    'Are you sure you want to delete': translate('Are you sure you want to delete'),
+    'Submit All Now': translate('Submit All Now'),
+    'Submit Now': translate('Submit Now'),
+    'Edit schedule': translate('Edit schedule'),
+    'Add to Schedule': translate('Add to Schedule'),
+  };
 
   const showAlertSnack = (color: string, message: string) => {
     dispatch(
@@ -156,7 +195,6 @@ export const TasksApp = () => {
 
     (async () => {
       const fleetsData = (await rmf.fleetsApi.getFleetsFleetsGet()).data;
-      console.log(fleetsData);
       setFleets(
         fleetsData.reduce<string[]>((acc, f) => {
           if (f.name) {
@@ -167,18 +205,6 @@ export const TasksApp = () => {
       );
       setRobots({});
     })();
-    // const sub = rmf.fleetsObs.subscribe((fleets) => {
-    //   setFleets(
-    //     fleets.reduce<string[]>((acc, f) => {
-    //       if (f.name) {
-    //         acc.push(f.name);
-    //       }
-    //       return acc;
-    //     }, [])
-    //   );
-    //   setRobots({});
-    // });
-    // return () => sub.unsubscribe();
   }, [rmf]);
 
   React.useEffect(() => {
@@ -189,7 +215,6 @@ export const TasksApp = () => {
     fleets.map((f) => {
       (async () => {
         const fleet = (await rmf.fleetsApi.getFleetStateFleetsNameStateGet(f)).data;
-        console.log(fleet);
         const taskIds = fleet.robots
           ? Object.values(fleet.robots).reduce<string[]>((acc, robot) => {
               if (robot.task_id) {
@@ -365,13 +390,11 @@ export const TasksApp = () => {
   // Thêm button add tasks:
   const submitTasks = React.useCallback<Required<CreateTaskFormVdmProps>['submitTasks']>(
     async (taskRequests, schedule, fleetName, robotName) => {
-      console.log(taskRequests);
       if (!rmf) {
         throw new Error('tasks api not available');
       }
       if (!schedule) {
         if (robotName && fleetName) {
-          console.log('submit robot_task_request');
           await Promise.all(
             taskRequests.map((request) =>
               rmf.tasksApi.postRobotTaskTasksRobotTaskPost({
@@ -383,7 +406,6 @@ export const TasksApp = () => {
             )
           );
         } else {
-          console.log('submit dispatch_task_request');
           await Promise.all(
             taskRequests.map((request) =>
               rmf.tasksApi.postDispatchTaskTasksDispatchTaskPost({
@@ -492,12 +514,12 @@ export const TasksApp = () => {
       >
         <Tabs value={selectedPanelIndex} onChange={handlePanelChange} aria-label="Task App Tabs">
           <Tab
-            label="Queue"
+            label={titleTranslate['Queue']}
             id={tabId(TaskTablePanel.QueueTable)}
             aria-controls={tabPanelId(TaskTablePanel.QueueTable)}
           />
           <Tab
-            label="Schedule"
+            label={titleTranslate['Schedule']}
             id={tabId(TaskTablePanel.Schedule)}
             aria-controls={tabPanelId(TaskTablePanel.Schedule)}
           />
@@ -513,7 +535,7 @@ export const TasksApp = () => {
             sx={{ marginRight: '10px' }}
           >
             <AddOutlined />
-            New Task
+            {translate('New Task')}
           </Button>
           <div>
             <Tooltip title="Download" placement="top">
@@ -572,6 +594,7 @@ export const TasksApp = () => {
       <TabPanel selectedTabIndex={selectedPanelIndex} index={TaskTablePanel.QueueTable}>
         <TableContainer>
           <TaskDataGridTable
+            titleTranslate={titleTranslate}
             tasks={tasksState}
             onTaskClick={(_: MuiMouseEvent, task: TaskState) => {
               setSelectedTask(task);
@@ -598,6 +621,7 @@ export const TasksApp = () => {
       {openCreateTaskForm && (
         <CreateTaskFormVdm
           user={username ? username : 'unknown user'}
+          titleTranslate={titleTranslate}
           robots={Object.values(robots).flatMap((r) => r)}
           patrolWaypoints={waypointNames}
           cleaningZones={cleaningZoneNames}

@@ -4,6 +4,7 @@ config = {
     # standalone mode.
     # "host": "127.0.0.1",
     "host": "10.7.11.9",
+    # "host": "192.168.116.183",
     # port to bind to, this only applies when running the server in standalone mode.
     "port": 8000,
     "db_url": "sqlite://:memory:",
@@ -12,6 +13,7 @@ config = {
     # E.g. https://example.com/rmf/api/v1
     # "public_url": "http://localhost:8000",
     "public_url": "http://10.7.11.9:8000",
+    # "public_url": "http://192.168.116.183:8000",
     "cache_directory": "run/cache",  # The directory where cached files should be stored.
     "log_level": "WARNING",  # https://docs.python.org/3.8/library/logging.html#levels
     # a user that is automatically given admin privileges, note that this does not guarantee that the user exists in the identity provider.
@@ -26,6 +28,7 @@ config = {
     # "oidc_url": None,
     # "oidc_url": "http://localhost:8080/realms/rmf-web/.well-known/openid-configuration",
     "oidc_url": "http://10.7.11.9:8080/realms/rmf-web/.well-known/openid-configuration",
+    # "oidc_url": "http://192.168.116.183:8080/realms/rmf-web/.well-known/openid-configuration",
     # Audience the access token is meant for. Can also be an array.
     # Used to verify the "aud" claim.
     # "aud": "rmf_api_server",
@@ -36,6 +39,7 @@ config = {
     # "iss": None,
     # "iss": "http://localhost:8080/realms/rmf-web",
     "iss": "http://10.7.11.9:8080/realms/rmf-web",
+    # "iss": "http://192.168.116.183:8080/realms/rmf-web",
     # list of arguments passed to the ros node, "--ros-args" is automatically prepended to the list.
     # e.g.
     #   Run with sim time: ["-p", "use_sim_time:=true"]

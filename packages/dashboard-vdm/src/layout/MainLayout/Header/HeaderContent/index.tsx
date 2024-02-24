@@ -39,7 +39,7 @@ const HeaderContent = () => {
       {downLG && <Box component="div" sx={{ width: '100%', ml: 1 }} />}
 
       <Notification />
-      <Message />
+      {/* <Message /> */}
       {!downLG && <SwitchThemeMode />}
       {!downLG && <Profile />}
       {downLG && <MobileSection />}

@@ -44,6 +44,7 @@ import { ThemeMode } from 'types/config';
 
 import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
+import { useLocales } from 'locales';
 
 // sx styles
 const avatarSX = {
@@ -67,6 +68,7 @@ const actionSX = {
 const Notification = () => {
   const rmf = useContext(RmfAppContext);
   const theme = useTheme();
+  const { translate } = useLocales();
   const matchesXs = useMediaQuery(theme.breakpoints.down('md'));
 
   const anchorRef = useRef<any>(null);
@@ -261,7 +263,7 @@ const Notification = () => {
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard
-                  title="Notification"
+                  title={translate('Notification')}
                   elevation={0}
                   border={false}
                   content={false}

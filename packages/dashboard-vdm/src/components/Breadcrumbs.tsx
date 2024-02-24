@@ -149,11 +149,11 @@ const Breadcrumbs = ({
                 >
                   {icons && <HomeOutlined style={iconSX} />}
                   {icon && !icons && <HomeFilled style={{ ...iconSX, marginRight: 0 }} />}
-                  {(!icon || icons) && 'Home'}
+                  {(!icon || icons) && translate('Home')}
                 </Typography>
                 {main ? (
                   <Typography variant="h6" sx={{ textDecoration: 'none' }} color="textSecondary">
-                    {main.title}
+                    {translate(main.title)}
                   </Typography>
                 ) : null}
                 {subItems &&
@@ -169,7 +169,7 @@ const Breadcrumbs = ({
                     </Typography>
                   ))}
                 <Typography variant="subtitle1" color="textPrimary">
-                  {last.title}
+                  {translate(last.title)}
                 </Typography>
               </MuiBreadcrumbs>
             </Grid>
@@ -177,7 +177,7 @@ const Breadcrumbs = ({
               <Grid item sx={{ mb: card === false ? 0.25 : 1.5 }}>
                 <Typography variant="h2">
                   {/* {section ? `${translate(section)}` : last.title} */}
-                  {last.title}
+                  {translate(last.title)}
                 </Typography>
               </Grid>
             )}

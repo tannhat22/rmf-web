@@ -352,9 +352,18 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.10.6(@emotion/react@11.10.6)(@types/react@18.2.14)(react@18.2.0)
+      '@fontsource/inter':
+        specifier: ^5.0.8
+        version: 5.0.8
+      '@fontsource/poppins':
+        specifier: ^5.0.8
+        version: 5.0.8
+      '@fontsource/public-sans':
+        specifier: ^5.0.8
+        version: 5.0.8
       '@fontsource/roboto':
-        specifier: ^4.3.0
-        version: 4.5.7
+        specifier: ^5.0.8
+        version: 5.0.8
       '@fortawesome/fontawesome-svg-core':
         specifier: ^1.2.30
         version: 1.2.36
@@ -620,6 +629,9 @@ importers:
       react-error-overlay:
         specifier: 6.0.11
         version: 6.0.11
+      resize-observer-polyfill:
+        specifier: ^1.5.1
+        version: 1.5.1
       typescript:
         specifier: ~4.9.5
         version: 4.9.5
@@ -3107,8 +3119,24 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
+  /@fontsource/inter@5.0.8:
+    resolution: {integrity: sha512-28knWH1BfOiRalfLs90U4sge5mpQ8ZH6FS0PTT+IZMKrZ7wNHDHRuKa1kQJg+uHcc6axBppnxll+HXM4c7zo/Q==}
+    dev: false
+
+  /@fontsource/poppins@5.0.8:
+    resolution: {integrity: sha512-P8owfYWluoUY5Nyzk4gT/L6LmLmseP6ezFWhj6VBUa5pRIdnCvNJpoQ6i/vhekjtJOfqX6nKlB+LCttoUl2GQQ==}
+    dev: false
+
+  /@fontsource/public-sans@5.0.8:
+    resolution: {integrity: sha512-nLq7lRN8PhDgNy3t0J5AV017wdbKDDPNEAkQCmaYJp9bJ4t24ypOxeR5cZhPSoch0wI+RRfKjR8j7PmCodG6hg==}
+    dev: false
+
   /@fontsource/roboto@4.5.7:
     resolution: {integrity: sha512-m57UMER23Mk6Drg9OjtHW1Y+0KPGyZfE5XJoPTOsLARLar6013kJj4X2HICt+iFLJqIgTahA/QAvSn9lwF1EEw==}
+
+  /@fontsource/roboto@5.0.8:
+    resolution: {integrity: sha512-XxPltXs5R31D6UZeLIV1td3wTXU3jzd3f2DLsXI8tytMGBkIsGcc9sIyiupRtA8y73HAhuSCeweOoBqf6DbWCA==}
+    dev: false
 
   /@fortawesome/fontawesome-common-types@0.2.36:
     resolution: {integrity: sha512-a/7BiSgobHAgBWeN7N0w+lAhInrGxksn13uK7231n2m8EDPE3BMCl9NZLTGrj9ZXfCmC6LM0QLqXidIizVQ6yg==}
@@ -21642,6 +21670,10 @@ packages:
   /reselect@4.1.8:
     resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
     dev: false
+
+  /resize-observer-polyfill@1.5.1:
+    resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}
+    dev: true
 
   /resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}

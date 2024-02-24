@@ -72,6 +72,7 @@ export interface SortFields {
 export type MuiMouseEvent = MuiEvent<React.MouseEvent<HTMLElement>>;
 
 export interface TableDataGridState {
+  titleTranslate?: Record<string, string>;
   tasks: Tasks;
   onTaskClick?(ev: MuiMouseEvent, task: TaskState): void;
   onPageChange: (newPage: number) => void;
@@ -112,6 +113,7 @@ const TaskRequester = (requester: string | null): JSX.Element => {
 };
 
 export function TaskDataGridTable({
+  titleTranslate = {},
   tasks,
   onTaskClick,
   onPageChange,
@@ -140,7 +142,7 @@ export function TaskDataGridTable({
   const columns: GridColDef[] = [
     {
       field: 'unix_millis_request_time',
-      headerName: 'Date',
+      headerName: titleTranslate['Date'],
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -165,7 +167,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'requester',
-      headerName: 'Requester',
+      headerName: titleTranslate['Requester'],
       minWidth: 160,
       editable: false,
       renderCell: (cellValues) => TaskRequester(cellValues.row.booking.requester),
@@ -184,7 +186,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'category',
-      headerName: 'Category',
+      headerName: titleTranslate['Category'],
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
@@ -195,7 +197,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'assigned_to',
-      headerName: 'Assignee',
+      headerName: titleTranslate['Assignee'],
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
@@ -206,7 +208,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'unix_millis_start_time',
-      headerName: 'Start Time',
+      headerName: titleTranslate['Start Time'],
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -233,7 +235,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'unix_millis_finish_time',
-      headerName: 'End Time',
+      headerName: titleTranslate['End Time'],
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -260,7 +262,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'status',
-      headerName: 'State',
+      headerName: titleTranslate['State'],
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
         params.row.status ? params.row.status : 'unknown',

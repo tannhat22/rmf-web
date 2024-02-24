@@ -1,5 +1,5 @@
 // @mui
-import { enUS, zhCN } from '@mui/material/locale';
+import { enUS, zhCN, viVN } from '@mui/material/locale';
 
 // PLEASE REMOVE `LOCAL STORAGE` WHEN YOU CHANGE SETTINGS.
 // ----------------------------------------------------------------------
@@ -14,6 +14,11 @@ export const allLangs = [
     label: 'Chinese',
     value: 'cn',
     systemValue: zhCN,
+  },
+  {
+    label: 'Vietnamese',
+    value: 'vn',
+    systemValue: viVN,
   },
 ];
 

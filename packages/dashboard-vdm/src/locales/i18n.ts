@@ -8,6 +8,7 @@ import { defaultLang } from './config-lang';
 //
 import enLocales from './langs/en';
 import cnLocales from './langs/cn';
+import vnLocales from './langs/vn';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ i18n
     resources: {
       en: { translations: enLocales },
       cn: { translations: cnLocales },
+      vn: { translations: vnLocales },
     },
     lng,
     fallbackLng: defaultLang.value,

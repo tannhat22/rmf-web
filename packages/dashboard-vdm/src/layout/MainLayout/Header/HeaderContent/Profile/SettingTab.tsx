@@ -6,18 +6,34 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 // assets
 import {
   CommentOutlined,
+  FullscreenOutlined,
+  FullscreenExitOutlined,
   LockOutlined,
   QuestionCircleOutlined,
   UserOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
+import { useLocales } from 'locales';
 
 // ==============================|| HEADER PROFILE - SETTING TAB ||============================== //
 
 const SettingTab = () => {
+  const { translate } = useLocales();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [fullScreen, setFullScreen] = useState(!!document.fullscreenElement);
   const handleListItemClick = (event: React.MouseEvent<HTMLDivElement>, index: number) => {
     setSelectedIndex(index);
+  };
+
+  const handleSizeScreen = (event: React.MouseEvent<HTMLDivElement>) => {
+    const elem = document.documentElement;
+    if (!fullScreen) {
+      elem.requestFullscreen();
+      setFullScreen(true);
+    } else {
+      document.exitFullscreen();
+      setFullScreen(false);
+    }
   };
 
   return (
@@ -29,7 +45,7 @@ const SettingTab = () => {
         <ListItemIcon>
           <QuestionCircleOutlined />
         </ListItemIcon>
-        <ListItemText primary="Support" />
+        <ListItemText primary={translate('Support')} />
       </ListItemButton>
       <ListItemButton
         selected={selectedIndex === 1}
@@ -38,34 +54,27 @@ const SettingTab = () => {
         <ListItemIcon>
           <UserOutlined />
         </ListItemIcon>
-        <ListItemText primary="Account Settings" />
+        <ListItemText primary={translate('Account Settings')} />
       </ListItemButton>
       <ListItemButton
         selected={selectedIndex === 2}
         onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 2)}
       >
         <ListItemIcon>
-          <LockOutlined />
-        </ListItemIcon>
-        <ListItemText primary="Privacy Center" />
-      </ListItemButton>
-      <ListItemButton
-        selected={selectedIndex === 3}
-        onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 3)}
-      >
-        <ListItemIcon>
           <CommentOutlined />
         </ListItemIcon>
-        <ListItemText primary="Feedback" />
+        <ListItemText primary={translate('Feedback')} />
       </ListItemButton>
       <ListItemButton
-        selected={selectedIndex === 4}
-        onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 4)}
+        // selected={selectedIndex === 3}
+        onClick={(event: React.MouseEvent<HTMLDivElement>) => handleSizeScreen(event)}
       >
         <ListItemIcon>
-          <UnorderedListOutlined />
+          {fullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
         </ListItemIcon>
-        <ListItemText primary="History" />
+        <ListItemText
+          primary={fullScreen ? translate('Exit fullscreen') : translate('Fullscreen')}
+        />
       </ListItemButton>
     </List>
   );

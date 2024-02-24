@@ -23,6 +23,7 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -157,10 +158,11 @@ export function getShortDescription(taskRequest: TaskRequest): string {
 }
 
 interface FormToolbarProps {
+  labelLang: string;
   onSelectFileClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-function FormToolbar({ onSelectFileClick }: FormToolbarProps) {
+function FormToolbar({ labelLang, onSelectFileClick }: FormToolbarProps) {
   return (
     <Button
       aria-label="Select File"
@@ -169,12 +171,13 @@ function FormToolbar({ onSelectFileClick }: FormToolbarProps) {
       color="primary"
       onClick={onSelectFileClick}
     >
-      Select File
+      {labelLang}
     </Button>
   );
 }
 
 interface DeliveryTaskFormProps {
+  titleTranslate?: Record<string, string>;
   taskDesc: DeliveryTaskDescription;
   pickupPoints: Record<string, string>;
   dropoffPoints: Record<string, string>;
@@ -183,6 +186,7 @@ interface DeliveryTaskFormProps {
 }
 
 function DeliveryTaskForm({
+  titleTranslate = {},
   taskDesc,
   pickupPoints = {},
   dropoffPoints = {},
@@ -230,7 +234,7 @@ function DeliveryTaskForm({
             })
           }
           renderInput={(params) => (
-            <TextField {...params} label="Pickup Location" required={true} />
+            <TextField {...params} label={titleTranslate['Pickup Location']} required={true} />
           )}
         />
       </Grid>
@@ -238,7 +242,7 @@ function DeliveryTaskForm({
         <TextField
           id="pickup_sku"
           fullWidth
-          label="Pickup SKU"
+          label={titleTranslate['Pickup SKU']}
           value={taskDesc.pickup.payload.sku}
           required
           onChange={(ev) => {
@@ -258,7 +262,7 @@ function DeliveryTaskForm({
       <Grid item xs={2}>
         <PositiveIntField
           id="pickup_quantity"
-          label="Quantity"
+          label={titleTranslate['Quantity']}
           value={taskDesc.pickup.payload.quantity}
           onChange={(_ev, val) => {
             onInputChange({
@@ -307,7 +311,7 @@ function DeliveryTaskForm({
             })
           }
           renderInput={(params) => (
-            <TextField {...params} label="Dropoff Location" required={true} />
+            <TextField {...params} label={titleTranslate['Dropoff Location']} required={true} />
           )}
         />
       </Grid>
@@ -315,7 +319,7 @@ function DeliveryTaskForm({
         <TextField
           id="dropoff_sku"
           fullWidth
-          label="Dropoff SKU"
+          label={titleTranslate['Dropoff SKU']}
           value={taskDesc.dropoff.payload.sku}
           required
           onChange={(ev) => {
@@ -335,7 +339,7 @@ function DeliveryTaskForm({
       <Grid item xs={2}>
         <PositiveIntField
           id="dropoff_quantity"
-          label="Quantity"
+          label={titleTranslate['Quantity']}
           value={taskDesc.dropoff.payload.quantity}
           onChange={(_ev, val) => {
             onInputChange({
@@ -507,39 +511,49 @@ function FavoriteTask({
   return (
     <>
       <ListItem
-        sx={{ width: theme.spacing(30) }}
-        onClick={() => {
-          listItemClick();
-          setCallToUpdate(false);
-        }}
-        role="listitem button"
-        button
+        sx={{ width: theme.spacing(32) }}
         divider={true}
+        secondaryAction={
+          <>
+            <IconButton
+              edge="end"
+              aria-label="update"
+              onClick={() => {
+                setCallToUpdate(true);
+                listItemClick();
+              }}
+            >
+              <UpdateIcon />
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label="delete"
+              onClick={() => {
+                setOpenDialog(true);
+                setFavoriteTask(favoriteTask);
+                setCallToDelete(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </>
+        }
       >
-        <ListItemText primary={listItemText} />
-        <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            aria-label="update"
-            onClick={() => {
-              setCallToUpdate(true);
-              listItemClick();
-            }}
-          >
-            <UpdateIcon />
-          </IconButton>
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            onClick={() => {
-              setOpenDialog(true);
-              setFavoriteTask(favoriteTask);
-              setCallToDelete(true);
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
+        <ListItemButton
+          sx={{
+            // whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          role={undefined}
+          onClick={() => {
+            listItemClick();
+            setCallToUpdate(false);
+          }}
+          dense
+        >
+          <ListItemText primary={listItemText} />
+        </ListItemButton>
       </ListItem>
     </>
   );
@@ -679,6 +693,7 @@ export interface CreateTaskFormVdmProps
    * Shows extra UI elements suitable for submittng batched tasks. Default to 'false'.
    */
   user: string;
+  titleTranslate?: Record<string, string>;
   allowBatch?: boolean;
   robots: RobotTableData[];
   cleaningZones?: string[];
@@ -707,6 +722,7 @@ export interface CreateTaskFormVdmProps
 
 export function CreateTaskFormVdm({
   user,
+  titleTranslate = {},
   robots,
   cleaningZones = [],
   patrolWaypoints = [],
@@ -826,6 +842,7 @@ export function CreateTaskFormVdm({
       case 'delivery':
         return (
           <DeliveryTaskForm
+            titleTranslate={titleTranslate}
             taskDesc={taskRequest.description as DeliveryTaskDescription}
             pickupPoints={pickupPoints}
             dropoffPoints={dropoffPoints}
@@ -996,10 +1013,13 @@ export function CreateTaskFormVdm({
           <DialogTitle>
             <Grid container wrap="nowrap">
               <Grid item className={classes.title}>
-                Create Task
+                {titleTranslate['Create Task']}
               </Grid>
               <Grid item>
-                <FormToolbar onSelectFileClick={handleSelectFileClick} />
+                <FormToolbar
+                  labelLang={titleTranslate['Select File']}
+                  onSelectFileClick={handleSelectFileClick}
+                />
               </Grid>
             </Grid>
           </DialogTitle>
@@ -1007,7 +1027,7 @@ export function CreateTaskFormVdm({
             <Grid container direction="row" wrap="nowrap">
               <List dense className={classes.taskList} aria-label="Favorites Tasks">
                 <Typography variant="h6" component="div">
-                  Favorite tasks
+                  {titleTranslate['Favorite tasks']}
                 </Typography>
                 {favoritesTasks.map((favoriteTask, index) => {
                   return (
@@ -1029,6 +1049,7 @@ export function CreateTaskFormVdm({
                             priority: favoriteTask.priority,
                           },
                         ]);
+                        setFormFullyFilled(true);
                       }}
                     />
                   );
@@ -1047,7 +1068,7 @@ export function CreateTaskFormVdm({
                     <TextField
                       select
                       id="task-type"
-                      label="Task Category"
+                      label={titleTranslate['Task Category']}
                       variant="outlined"
                       fullWidth
                       margin="normal"
@@ -1058,13 +1079,13 @@ export function CreateTaskFormVdm({
                         value="clean"
                         disabled={!cleaningZones || cleaningZones.length === 0}
                       >
-                        Clean
+                        {titleTranslate['Clean']}
                       </MenuItem>
                       <MenuItem
                         value="patrol"
                         disabled={!patrolWaypoints || patrolWaypoints.length === 0}
                       >
-                        Patrol
+                        {titleTranslate['Patrol']}
                       </MenuItem>
                       <MenuItem
                         value="delivery"
@@ -1073,7 +1094,7 @@ export function CreateTaskFormVdm({
                           Object.keys(dropoffPoints).length === 0
                         }
                       >
-                        Delivery
+                        {titleTranslate['Delivery']}
                       </MenuItem>
                     </TextField>
                   </Grid>
@@ -1082,7 +1103,7 @@ export function CreateTaskFormVdm({
                     <TextField
                       select
                       id="robot-name"
-                      label="Robot name"
+                      label={titleTranslate['Robot name']}
                       variant="outlined"
                       fullWidth
                       value={robotInfo.name ? robotInfo.name : ''}
@@ -1114,14 +1135,14 @@ export function CreateTaskFormVdm({
                         });
                         updateTasks();
                       }}
-                      label="Start Time"
+                      label={titleTranslate['Start Time']}
                       renderInput={(props) => <TextField {...props} />}
                     />
                   </Grid>
                   <Grid item xs={2}>
                     <PositiveIntField
                       id="priority"
-                      label="Priority"
+                      label={titleTranslate['Priority']}
                       // FIXME(AA): The priority object is currently undefined.
                       value={(taskRequest.priority as Record<string, number>)?.value || 0}
                       onChange={(_ev, val) => {
@@ -1153,7 +1174,9 @@ export function CreateTaskFormVdm({
                     }}
                     style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}
                   >
-                    {callToUpdateFavoriteTask ? `Confirm edits` : 'Save as a favorite task'}
+                    {callToUpdateFavoriteTask
+                      ? titleTranslate['Confirm edits']
+                      : titleTranslate['Save as a favorite task']}
                   </Button>
                 </Grid>
               </Grid>
@@ -1188,7 +1211,7 @@ export function CreateTaskFormVdm({
               className={classes.actionBtn}
               onClick={(ev) => onClose && onClose(ev, 'escapeKeyDown')}
             >
-              Cancel
+              {titleTranslate['Cancel']}
             </Button>
             <Button
               variant="contained"
@@ -1197,7 +1220,7 @@ export function CreateTaskFormVdm({
               className={classes.actionBtn}
               onClick={() => setOpenSchedulingDialog(true)}
             >
-              {scheduleToEdit ? 'Edit schedule' : 'Add to Schedule'}
+              {scheduleToEdit ? titleTranslate['Edit schedule'] : titleTranslate['Add to Schedule']}
             </Button>
             <Button
               variant="contained"
@@ -1209,7 +1232,7 @@ export function CreateTaskFormVdm({
               onClick={handleSubmitNow}
             >
               <Loading hideChildren loading={submitting} size="1.5em" color="inherit">
-                {submitText}
+                {titleTranslate[submitText]}
               </Loading>
             </Button>
           </DialogActions>
@@ -1217,10 +1240,14 @@ export function CreateTaskFormVdm({
       </StyledDialog>
       {openFavoriteDialog && (
         <ConfirmationDialog
-          confirmText={callToDeleteFavoriteTask ? 'Delete' : 'Save'}
-          cancelText="Back"
+          confirmText={callToDeleteFavoriteTask ? titleTranslate['Delete'] : titleTranslate['Save']}
+          cancelText={titleTranslate['Back']}
           open={openFavoriteDialog}
-          title={callToDeleteFavoriteTask ? 'Confirm Delete' : 'Favorite Task'}
+          title={
+            callToDeleteFavoriteTask
+              ? titleTranslate['Confirm Delete']
+              : titleTranslate['Favorite Task']
+          }
           submitting={callToDeleteFavoriteTask ? deletingFavoriteTask : savingFavoriteTask}
           onClose={() => {
             setOpenFavoriteDialog(false);
@@ -1240,7 +1267,7 @@ export function CreateTaskFormVdm({
             />
           )}
           {callToDeleteFavoriteTask && (
-            <Typography>{`Are you sure you want to delete "${favoriteTaskBuffer.name}"?`}</Typography>
+            <Typography>{`${titleTranslate['Are you sure you want to delete']} "${favoriteTaskBuffer.name}"?`}</Typography>
           )}
         </ConfirmationDialog>
       )}

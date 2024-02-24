@@ -13,7 +13,7 @@ export type PresetColor =
   | 'theme6'
   | 'theme7'
   | 'theme8';
-export type I18n = 'en' | 'cn';
+export type I18n = 'en' | 'cn' | 'jp' | 'vn';
 
 export enum ThemeMode {
   LIGHT = 'light',
