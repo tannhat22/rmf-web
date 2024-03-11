@@ -395,13 +395,20 @@ function PlaceList({ places, onClick }: PlaceListProps) {
 }
 
 interface PatrolTaskFormProps {
+  titleTranslate?: Record<string, string>;
   taskDesc: PatrolTaskDescription;
   patrolWaypoints: string[];
   onChange(patrolTaskDescription: PatrolTaskDescription): void;
   allowSubmit(allow: boolean): void;
 }
 
-function PatrolTaskForm({ taskDesc, patrolWaypoints, onChange, allowSubmit }: PatrolTaskFormProps) {
+function PatrolTaskForm({
+  titleTranslate = {},
+  taskDesc,
+  patrolWaypoints,
+  onChange,
+  allowSubmit,
+}: PatrolTaskFormProps) {
   const theme = useTheme();
   const onInputChange = (desc: PatrolTaskDescription) => {
     allowSubmit(isPatrolTaskDescriptionValid(desc));
@@ -423,7 +430,9 @@ function PatrolTaskForm({ taskDesc, patrolWaypoints, onChange, allowSubmit }: Pa
               places: taskDesc.places.concat(newValue).filter((el: string) => el),
             })
           }
-          renderInput={(params) => <TextField {...params} label="Place Name" required={true} />}
+          renderInput={(params) => (
+            <TextField {...params} label={titleTranslate['Place Name']} required={true} />
+          )}
         />
       </Grid>
       <Grid item xs={2}>
@@ -833,6 +842,7 @@ export function CreateTaskFormVdm({
       case 'patrol':
         return (
           <PatrolTaskForm
+            titleTranslate={titleTranslate}
             taskDesc={taskRequest.description as PatrolTaskDescription}
             patrolWaypoints={patrolWaypoints}
             onChange={(desc) => handleTaskDescriptionChange('patrol', desc)}

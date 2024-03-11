@@ -125,6 +125,7 @@ export const TasksApp = () => {
     Clean: translate('Clean'),
     Patrol: translate('Patrol'),
     Delivery: translate('Delivery'),
+    'Place Name': translate('Place Name'),
     'Robot name': translate('Robot name'),
     'Pickup Location': translate('Pickup Location'),
     'Dropoff Location': translate('Dropoff Location'),
