@@ -23,3 +23,4 @@ python_version = "3.10"
 [packages]
 cryptography = "==38.0.4"
 asyncmy = "*"
+setuptools = "==70.0.0"

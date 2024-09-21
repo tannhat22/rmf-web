@@ -56,7 +56,8 @@ export class KeycloakAuthenticator
     };
 
     await this._inst.init({
-      onLoad: 'check-sso',
+      // onLoad: 'check-sso',
+      onLoad: 'login-required',
       silentCheckSsoRedirectUri: this._silentCheckSsoRedirectUri,
     });
     try {
