@@ -45,7 +45,7 @@ const LiftShapeMaker = ({ motionState }: LiftShapeMakerProps) => {
 
   const generateTextShape = () => {
     return (
-      <Text color="black" fontSize={0.6}>
+      <Text color="black" fontSize={0.6} font="/fonts/KFOmCnqEu92Fr1Mu4mxM.woff">
         {' '}
         {'?'}
       </Text>
@@ -82,10 +82,15 @@ export const LiftThreeMaker = ({
 }: LiftMakerProps): JSX.Element => {
   return (
     <group position={[x, y, yaw]}>
-      <Text color="black" fontSize={0.6}>
+      <Text color="black" fontSize={0.6} font="/fonts/KFOmCnqEu92Fr1Mu4mxM.woff">
         {liftState.current_floor}
       </Text>
-      <Text position={[0, 0.8, 0.5]} color="black" fontSize={0.6}>
+      <Text
+        position={[0, 0.8, 0.5]}
+        color="black"
+        fontSize={0.6}
+        font="/fonts/KFOmCnqEu92Fr1Mu4mxM.woff"
+      >
         {getLiftModeText(liftState)}
       </Text>
       <LiftShapeMaker motionState={liftState.motion_state} />
