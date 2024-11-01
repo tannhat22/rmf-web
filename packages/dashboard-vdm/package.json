@@ -9,10 +9,8 @@
     "lint": "tsc --build && eslint --max-warnings 0 src",
     "start": "concurrently npm:start:rmf-server npm:start:react",
     "start:react": "pnpm run --filter {.}^... build && vite",
-    "start:rmf": "node scripts/start-rmf.js",
     "start:rmf-server": "RMF_SERVER_USE_SIM_TIME=true npm --prefix ../api-server start",
     "start:rmf-server:psql": "RMF_SERVER_USE_SIM_TIME=true npm run --prefix ../api-server start:psql",
-    "start:sim": "concurrently npm:start:rmf-server npm:start:rmf npm:start:react",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
   },

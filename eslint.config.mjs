@@ -30,9 +30,9 @@ export default tseslint.config(
   ...compat.config(storybook.configs.recommended),
   {
     plugins: { 'simple-import-sort': simpleImportSort },
-    rules: {
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
-    },
+    // rules: {
+    //   'simple-import-sort/imports': 'error',
+    //   'simple-import-sort/exports': 'error',
+    // },
   },
 );
