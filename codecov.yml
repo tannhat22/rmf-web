@@ -1,0 +1,17 @@
+coverage:
+  status:
+    project: false
+    patch: false
+flags:
+  dashboard:
+    paths:
+      - packages/dashboard
+    carryforward: true
+  react-components:
+    paths:
+      - packages/react-components
+    carryforward: true
+  api-server:
+    paths:
+      - packages/api-server
+    carryforward: true
