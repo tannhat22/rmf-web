@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig, Plugin } from 'vite';
 
 import appConfig from './app-config.json';
-import { config } from 'process';
 
 /**
  * The goal of this plugin is to inject global variables to `index.html`, allowing
@@ -74,7 +73,10 @@ export default defineConfig({
       themes: '/src/themes',
       types: '/src/types',
       utils: '/src/utils',
+      services: '/src/services',
+      'micro-apps': '/src/micro-apps',
       config: '/src/config.ts',
+      'app-config': '/src/app-config.ts',
     },
   },
 });

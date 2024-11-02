@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 // auth provider
-import AuthContext from './JWTContext';
+import AuthContext from './Auth0Context';
 
 // ==============================|| AUTH HOOKS ||============================== //
 

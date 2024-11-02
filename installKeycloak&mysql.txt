@@ -1,0 +1,76 @@
+1. /-------------------------------------- MYSQL ------------------------------------------------ /
+sudo apt update
+sudo apt install mysql-server -y
+mysql --version
+sudo systemctl enable mysql
+sudo systemctl start mysql
+sudo systemctl status mysql
+
+sudo mysql_secure_installation
+    + VALIDATE PASSWORD component: Enter Y and press Enter to enable password validation on your server.
+    + Password Validation Policy: Enter 2 to enable the usage of strong passwords on your server.
+    + New password: Enter a new strong password to assign the root database user.
+    + Re-enter new password: Enter your password again to verify the root user password.
+    + Do you wish to continue with the password provided?: Enter Y to apply the new user password.
+    + Remove anonymous users?: Enter Y to revoke MySQL console access to unknown database users.
+    + Disallow root login remotely?: Enter Y to disable remote access to the MySQL root user account on your server.
+    + Remove test database and access to it?: Enter Y to delete the MySQL test databases.
+    + Reload privilege tables now?: Enter Y to refresh the MySQL privilege tables and apply your new configuration changes.
+
+sudo systemctl restart mysql
+sudo mysql -u root -p
+    CREATE USER 'my_user'@'localhost' IDENTIFIED BY 'my_password';
+    GRANT ALL PRIVILEGES ON my_database.* TO 'my_user'@'localhost';
+    FLUSH PRIVILEGES;
+    exit
+
+
+2. /-------------------------------------- KEYCLOAK ------------------------------------------------ /
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+sudo apt-get install default-jdk -y
+java --version
+
+wget https://github.com/keycloak/keycloak/releases/download/25.0.2/keycloak-25.0.2.tar.gz
+tar -xvzf keycloak-25.0.2.tar.gz
+
+/--------------------- Tạo user admin ----------------------/
+cd keycloak-25.0.2
+KEYCLOAK_ADMIN=admin KEYCLOAK_ADMIN_PASSWORD=admin ./bin/kc.sh start-dev
+/-----------------------------------------------------------/
+
+sudo mv keycloak-25.0.2 /opt/keycloak
+
+sudo groupadd keycloak
+sudo useradd -r -g keycloak -d /opt/keycloak -s /sbin/nologin keycloak
+
+sudo chown -R keycloak: /opt/keycloak/
+sudo chmod o+x /opt/keycloak/bin/
+
+sudo mkdir /etc/keycloak
+sudo mkdir -p /etc/keycloak/conf && sudo cp /opt/keycloak/conf/keycloak.conf /etc/keycloak/conf/keycloak.conf
+
+sudo nano /etc/systemd/system/keycloak.service
+/------------copy và dán vào-------------/:
+[Unit]
+Description=The Keycloak Server
+After=syslog.target network.target
+Before=httpd.service
+[Service]
+EnvironmentFile=/etc/keycloak/conf/keycloak.conf
+User=keycloak
+Group=keycloak
+LimitNOFILE=102642
+PIDFile=/etc/keycloak/keycloak.pid
+ExecStart=/opt/keycloak/bin/kc.sh start-dev
+StandardOutput=null
+[Install]
+WantedBy=multi-user.target
+/-----------------------------------------/
+
+sudo systemctl daemon-reload
+sudo systemctl enable keycloak
+sudo systemctl start keycloak
+sudo systemctl status keycloak
+

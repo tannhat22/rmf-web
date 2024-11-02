@@ -30,7 +30,9 @@ export function LiftControls({
         variant="contained"
         color="primary"
         size="small"
-        onClick={() => {
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
           setResetForm((prev) => prev + 1);
           setShowDialog(true);
         }}

@@ -54,7 +54,7 @@ const Breadcrumbs = ({
   const { pathname } = useLocation();
   const { translate, currentLang } = useLocales();
   const [breadCrumbs, setBreadCrumbs] = useState<NavItemType[]>();
-  const [section, setSection] = useState<string>();
+  // const [section, setSection] = useState<string>();
 
   const iconSX = {
     marginRight: theme.spacing(0.75),
@@ -66,7 +66,7 @@ const Breadcrumbs = ({
 
   const pathnames = pathname.split('/').filter(Boolean);
   let items: NavItemType[] = [];
-  let ids: string[] = [];
+  // let ids: string[] = [];
 
   useEffect(() => {
     navigation?.items?.map((menu: NavItemType) => {
@@ -78,7 +78,7 @@ const Breadcrumbs = ({
 
     if (items && items.length) {
       setBreadCrumbs(items);
-      if (ids?.length) setSection(ids[0]);
+      // if (ids?.length) setSection(ids[0]);
     }
   }, [pathname, currentLang]);
 
@@ -86,9 +86,10 @@ const Breadcrumbs = ({
     if (menu.children) {
       menu.children.filter((collapse: NavItemType) => {
         if (collapse.type && collapse.type === 'collapse') {
-          const path = `${pathnames.slice(0, depth).join('-')}`;
-          if (path === collapse.id) {
-            ids.push(menu.id!);
+          // const path = `${pathnames.slice(0, depth).join('-')}`;
+          // console.log(pathnames[depth]);
+          if (pathnames[depth] === collapse.id) {
+            // ids.push(menu.id!);
             items.push(collapse);
           }
           getCollapse(collapse as { children: NavItemType[]; type?: string }, depth + 1);
@@ -113,11 +114,11 @@ const Breadcrumbs = ({
   let breadcrumbContent: ReactElement = <Typography />;
 
   if (breadCrumbs && breadCrumbs.length) {
-    const main: NavItemType = breadCrumbs[0];
+    const main: NavItemType | null = breadCrumbs.length > 1 ? breadCrumbs[0] : null;
     const last: NavItemType = breadCrumbs.pop()!;
     const subItems = breadCrumbs.slice(1);
 
-    breadcrumbContent = (
+    breadcrumbContent = last.breadcrumbs ? (
       <>
         <MainCard
           border={card}
@@ -141,15 +142,20 @@ const Breadcrumbs = ({
               >
                 <Typography
                   component={Link}
-                  to="/"
+                  to="/dashboard"
                   color="textSecondary"
                   variant="h6"
                   sx={{ textDecoration: 'none' }}
                 >
                   {icons && <HomeOutlined style={iconSX} />}
                   {icon && !icons && <HomeFilled style={{ ...iconSX, marginRight: 0 }} />}
-                  {(!icon || icons) && main.title}
+                  {(!icon || icons) && translate('Home')}
                 </Typography>
+                {main ? (
+                  <Typography variant="h6" sx={{ textDecoration: 'none' }} color="textSecondary">
+                    {translate(main.title)}
+                  </Typography>
+                ) : null}
                 {subItems &&
                   subItems.length &&
                   subItems.map((subItem) => (
@@ -163,14 +169,15 @@ const Breadcrumbs = ({
                     </Typography>
                   ))}
                 <Typography variant="subtitle1" color="textPrimary">
-                  {last.title}
+                  {translate(last.title)}
                 </Typography>
               </MuiBreadcrumbs>
             </Grid>
             {title && (
               <Grid item sx={{ mb: card === false ? 0.25 : 1.5 }}>
                 <Typography variant="h2">
-                  {section ? `${translate(section)}` : last.title}
+                  {/* {section ? `${translate(section)}` : last.title} */}
+                  {translate(last.title)}
                 </Typography>
               </Grid>
             )}
@@ -178,6 +185,8 @@ const Breadcrumbs = ({
           {card === false && divider !== false && <Divider sx={{ mt: 2 }} />}
         </MainCard>
       </>
+    ) : (
+      <Typography />
     );
   }
 
