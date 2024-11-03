@@ -17,6 +17,8 @@ import { store } from 'store';
 import { ConfigProvider } from 'contexts/ConfigContext';
 import reportWebVitals from './reportWebVitals';
 
+import { LocalizationProvider } from 'react-components';
+
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
@@ -26,7 +28,9 @@ root.render(
   <ReduxProvider store={store}>
     <ConfigProvider>
       <BrowserRouter>
-        <App />
+        <LocalizationProvider>
+          <App />
+        </LocalizationProvider>
       </BrowserRouter>
     </ConfigProvider>
   </ReduxProvider>

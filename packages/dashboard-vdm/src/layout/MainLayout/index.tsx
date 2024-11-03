@@ -183,12 +183,12 @@ const MainLayout = (props: MainLayoutProps) => {
     [updateSettings]
   );
 
-  const theme = React.useMemo(() => {
-    if (!themes) {
-      return null;
-    }
-    return themes[settings.themeMode] || themes.default;
-  }, [themes, settings.themeMode]);
+  // const theme = React.useMemo(() => {
+  //   if (!themes) {
+  //     return null;
+  //   }
+  //   return themes[settings.themeMode] || themes.default;
+  // }, [themes, settings.themeMode]);
 
   // set media wise responsive drawer
   useEffect(() => {
@@ -199,72 +199,70 @@ const MainLayout = (props: MainLayoutProps) => {
   }, [matchDownXL]);
 
   const providers = userProfile && (
-    <LocalizationProvider>
-      <CssBaseline />
-      <AuthenticatorProvider value={authenticator}>
-        <UserProfileProvider value={userProfile}>
-          <ResourcesProvider value={resources}>
-            <TaskRegistryProvider value={taskRegistry}>
-              <RmfApiProvider value={rmfApi}>
-                <SettingsProvider value={settings}>
-                  <AppControllerProvider value={appController}>
-                    <DeliveryAlertStore />
-                    <AlertManager alertAudioPath={alertAudioPath} />
-                    <Box sx={{ display: 'flex', width: '100%' }}>
-                      <Header />
-                      {!isHorizontal ? <Drawer /> : <HorizontalBar />}
-                      <Box
-                        component="main"
-                        sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}
-                      >
-                        <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
-                        <Container
-                          maxWidth={container ? 'xl' : false}
-                          sx={{
-                            ...(container && { px: { xs: 0, sm: 2 } }),
-                            position: 'relative',
-                            minHeight: 'calc(100vh - 110px)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                          }}
-                        >
-                          <Breadcrumbs
-                            navigation={navigation}
-                            title
-                            icons
-                            card={false}
-                            divider={false}
-                          />
-                          <Outlet />
-                          <Footer />
-                        </Container>
-                      </Box>
-                    </Box>
-                    <Snackbar
-                      open={showAlert}
-                      message={alertMessage}
-                      onClose={() => setShowAlert(false)}
-                      autoHideDuration={alertDuration}
+    <AuthenticatorProvider value={authenticator}>
+      <UserProfileProvider value={userProfile}>
+        <ResourcesProvider value={resources}>
+          <TaskRegistryProvider value={taskRegistry}>
+            <RmfApiProvider value={rmfApi}>
+              <SettingsProvider value={settings}>
+                <AppControllerProvider value={appController}>
+                  <DeliveryAlertStore />
+                  <AlertManager alertAudioPath={alertAudioPath} />
+                  <Box sx={{ display: 'flex', width: '100%' }}>
+                    <Header />
+                    {!isHorizontal ? <Drawer /> : <HorizontalBar />}
+                    <Box
+                      component="main"
+                      sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}
                     >
-                      <Alert
-                        onClose={() => setShowAlert(false)}
-                        severity={alertSeverity}
-                        sx={{ width: '100%' }}
+                      <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
+                      <Container
+                        maxWidth={container ? 'xl' : false}
+                        sx={{
+                          ...(container && { px: { xs: 0, sm: 2 } }),
+                          position: 'relative',
+                          minHeight: 'calc(100vh - 110px)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
                       >
-                        {alertMessage}
-                      </Alert>
-                    </Snackbar>
-                  </AppControllerProvider>
-                </SettingsProvider>
-              </RmfApiProvider>
-            </TaskRegistryProvider>
-          </ResourcesProvider>
-        </UserProfileProvider>
-      </AuthenticatorProvider>
-    </LocalizationProvider>
+                        <Breadcrumbs
+                          navigation={navigation}
+                          title
+                          icons
+                          card={false}
+                          divider={false}
+                        />
+                        <Outlet />
+                        <Footer />
+                      </Container>
+                    </Box>
+                  </Box>
+                  <Snackbar
+                    open={showAlert}
+                    message={alertMessage}
+                    onClose={() => setShowAlert(false)}
+                    autoHideDuration={alertDuration}
+                  >
+                    <Alert
+                      onClose={() => setShowAlert(false)}
+                      severity={alertSeverity}
+                      sx={{ width: '100%' }}
+                    >
+                      {alertMessage}
+                    </Alert>
+                  </Snackbar>
+                </AppControllerProvider>
+              </SettingsProvider>
+            </RmfApiProvider>
+          </TaskRegistryProvider>
+        </ResourcesProvider>
+      </UserProfileProvider>
+    </AuthenticatorProvider>
   );
 
-  return theme ? <ThemeProvider theme={theme}>{providers}</ThemeProvider> : providers;
+  // return theme ? <ThemeProvider theme={theme}>{providers}</ThemeProvider> : providers;
+  return providers;
 };
 
 export default MainLayout;
