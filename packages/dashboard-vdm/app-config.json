@@ -11,7 +11,7 @@
   "reportIssue": "https://github.com/open-rmf/rmf-web/issues",
   "pickupZones": [],
   "defaultZoom": 20,
-  "defaultRobotZoom": 20,
+  "defaultRobotZoom": 30,
   "attributionPrefix": "OSRC-SG",
   "defaultMapLevel": "L1",
   "allowedTasks": [

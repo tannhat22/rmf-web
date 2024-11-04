@@ -19,11 +19,15 @@ sudo mysql_secure_installation
 
 sudo systemctl restart mysql
 sudo mysql -u root -p
-    CREATE USER 'my_user'@'localhost' IDENTIFIED BY 'my_password';
-    GRANT ALL PRIVILEGES ON my_database.* TO 'my_user'@'localhost';
+    CREATE USER 'tannhat'@'localhost' IDENTIFIED BY 'tannhatamr';
+    GRANT CREATE, SELECT, INSERT, UPDATE, DELETE ON *.* TO 'tannhat'@'localhost';
     FLUSH PRIVILEGES;
     exit
 
+    ////// cap quyen voi bang cap su dung
+    GRANT ALL PRIVILEGES ON my_database.* TO 'my_user'@'localhost';
+    FLUSH PRIVILEGES;
+    
 
 2. /-------------------------------------- KEYCLOAK ------------------------------------------------ /
 sudo apt-get update -y

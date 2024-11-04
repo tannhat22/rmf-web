@@ -120,38 +120,31 @@ const Notification = () => {
     // setViewAll(false);
   };
 
-  const handleAcknowledgedAll = (alerts: Alert[]) => {
-    if (!rmf) {
-      return;
-    }
+  const handleAcknowledgedAll = async (unacknowledgedAlertList: AlertRequest[]) => {
+    unacknowledgedAlertList.map(async (alertReq) => {
+      console.log(alertReq.id);
+      try {
+        const resp = (
+          await rmfApi.alertsApi.respondToAlertAlertsRequestAlertIdRespondPost(
+            alertReq.id,
+            'Acknowledge'
+          )
+        ).data;
+        console.log(
+          `Alert [${alertReq.id}]: responded with [${resp.response}] at ${resp.unix_millis_response_time}`
+        );
+      } catch (e) {
+        const errorMessage = `Failed to respond [Acknowledge] to alert ID [${alertReq.id}], ${
+          (e as Error).message
+        }`;
+        console.error(errorMessage);
+        showAlertSnack('error', errorMessage);
+        return;
+      }
 
-    alerts.map((alert) => {
-      (async () => {
-        try {
-          const ackResponse = (
-            await rmf?.alertsApi.acknowledgeAlertAlertsAlertIdPost(alert.original_id)
-          ).data;
-
-          if (ackResponse.id !== ackResponse.original_id) {
-            // let showAlertMessage = `Alert ${ackResponse.original_id} acknowledged`;
-            // if (ackResponse.acknowledged_by) {
-            //   showAlertMessage += ` by User ${ackResponse.acknowledged_by}`;
-            // }
-            // if (ackResponse.unix_millis_acknowledged_time) {
-            //   const ackSecondsAgo =
-            //     (new Date().getTime() - ackResponse.unix_millis_acknowledged_time) / 1000;
-            //   showAlertMessage += ` ${Math.round(ackSecondsAgo)}s ago`;
-            // }
-            setUnacknowledgedAlertList([]);
-            // showAlertSnack('success', showAlertMessage);
-          } else {
-            throw new Error(`Failed to acknowledge alert ID ${alert.original_id}`);
-          }
-        } catch (error) {
-          showAlertSnack('error', `Failed to acknowledge alert ID ${alert.original_id}`);
-          // console.log(error);
-        }
-      })();
+      const successMessage = `Responded [Acknowledge] to alert ID [${alertReq.id}]`;
+      console.log(successMessage);
+      showAlertSnack('success', successMessage);
     });
   };
 
@@ -232,7 +225,9 @@ const Notification = () => {
                           <IconButton
                             color="success"
                             size="small"
-                            onClick={() => handleAcknowledgedAll(unacknowledgedAlertList)}
+                            onClick={async () =>
+                              await handleAcknowledgedAll(unacknowledgedAlertList)
+                            }
                           >
                             <CheckCircleOutlined style={{ fontSize: '1.15rem' }} />
                           </IconButton>
