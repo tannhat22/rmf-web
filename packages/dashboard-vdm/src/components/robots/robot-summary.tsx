@@ -312,6 +312,7 @@ export const RobotSummary = React.memo(({ onClose, robot }: RobotSummaryProps) =
           sx={{
             fontSize: isScreenHeightLessThan800 ? '0.8rem' : '1rem',
             padding: isScreenHeightLessThan800 ? '4px 8px' : '6px 12px',
+            backgroundColor: '#9c27b0',
           }}
         />
         <TaskCancelButton

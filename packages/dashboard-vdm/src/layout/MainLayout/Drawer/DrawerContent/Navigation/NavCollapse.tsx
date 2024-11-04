@@ -120,7 +120,9 @@ const NavCollapse = ({
   const handlerIconLink = () => {
     if (!drawerOpen) {
       if (menu.url) Navigation(`${menu.url}`);
-      setSelected(menu.id);
+      if (menu.type != 'collapse') {
+        setSelected(menu.id);
+      }
     }
   };
 
@@ -395,15 +397,17 @@ const NavCollapse = ({
                       }}
                     >
                       <ClickAwayListener onClickAway={handleClose}>
-                        <SimpleBar
-                          sx={{
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            maxHeight: 'calc(100vh - 170px)',
-                          }}
-                        >
-                          {navCollapse}
-                        </SimpleBar>
+                        <>
+                          <SimpleBar
+                            sx={{
+                              overflowX: 'hidden',
+                              overflowY: 'auto',
+                              maxHeight: 'calc(100vh - 170px)',
+                            }}
+                          >
+                            {navCollapse}
+                          </SimpleBar>
+                        </>
                       </ClickAwayListener>
                     </Paper>
                   </Transitions>
@@ -497,15 +501,17 @@ const NavCollapse = ({
                       }}
                     >
                       <ClickAwayListener onClickAway={handleClose}>
-                        <SimpleBar
-                          sx={{
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            maxHeight: 'calc(100vh - 170px)',
-                          }}
-                        >
-                          {navCollapse}
-                        </SimpleBar>
+                        <>
+                          <SimpleBar
+                            sx={{
+                              overflowX: 'hidden',
+                              overflowY: 'auto',
+                              maxHeight: 'calc(100vh - 170px)',
+                            }}
+                          >
+                            {navCollapse}
+                          </SimpleBar>
+                        </>
                       </ClickAwayListener>
                     </Paper>
                   </Transitions>

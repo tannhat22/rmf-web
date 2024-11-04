@@ -1,20 +1,12 @@
-import { Box } from '@mui/material';
-import LiftsTable from 'components/lifts-table';
+import { InitialWindow, Workspace } from 'components';
+import liftsApp from 'micro-apps/lifts-app';
+
+const liftsWorkspace: InitialWindow[] = [
+  { layout: { x: 0, y: 0, w: 12, h: 5.3 }, microApp: liftsApp },
+];
 
 const LiftsPage = () => {
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        height: 'calc(100vh - 108px)',
-        border: '1px solid #ccc',
-        borderRadius: '10px',
-        overflow: 'hidden',
-      }}
-    >
-      <LiftsTable />
-    </Box>
-  );
+  return <Workspace initialWindows={liftsWorkspace} />;
 };
 
 export default LiftsPage;

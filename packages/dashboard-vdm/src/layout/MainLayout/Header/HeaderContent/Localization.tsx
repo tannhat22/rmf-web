@@ -123,15 +123,30 @@ const Localization = () => {
                     />
                   </ListItemButton>
                   <ListItemButton
-                    selected={currentLang.value === 'cn'}
-                    onClick={() => handleListItemClick('cn')}
+                    selected={currentLang.value === 'vn'}
+                    onClick={() => handleListItemClick('vn')}
                   >
                     <ListItemText
                       primary={
                         <Grid container>
-                          <Typography color="textPrimary">中国人</Typography>
+                          <Typography color="textPrimary">Tiếng Việt</Typography>
                           <Typography variant="caption" color="textSecondary" sx={{ ml: '8px' }}>
-                            (Chinese)
+                            (Vietnamese)
+                          </Typography>
+                        </Grid>
+                      }
+                    />
+                  </ListItemButton>
+                  <ListItemButton
+                    selected={currentLang.value === 'jp'}
+                    onClick={() => handleListItemClick('jp')}
+                  >
+                    <ListItemText
+                      primary={
+                        <Grid container>
+                          <Typography color="textPrimary">日本語</Typography>
+                          <Typography variant="caption" color="textSecondary" sx={{ ml: '8px' }}>
+                            (Japanese)
                           </Typography>
                         </Grid>
                       }

@@ -173,14 +173,13 @@ const Breadcrumbs = ({
                 </Typography>
               </MuiBreadcrumbs>
             </Grid>
-            {title && (
+            {/* {title && (
               <Grid item sx={{ mb: card === false ? 0.25 : 1.5 }}>
                 <Typography variant="h2">
-                  {/* {section ? `${translate(section)}` : last.title} */}
                   {translate(last.title)}
                 </Typography>
               </Grid>
-            )}
+            )} */}
           </Grid>
           {card === false && divider !== false && <Divider sx={{ mt: 2 }} />}
         </MainCard>

@@ -1,11 +1,10 @@
+// import { useMediaQuery } from '@mui/material';
+// import { useTheme } from '@mui/material/styles';
 import { appConfig } from 'app-config';
 import { InitialWindow, Workspace } from 'components';
 import createMapApp from 'micro-apps/map-app';
-import doorsApp from 'micro-apps/doors-app';
-import liftsApp from 'micro-apps/lifts-app';
-import robotMutexGroupsApp from 'micro-apps/robot-mutex-groups-app';
 import robotsApp from 'micro-apps/robots-app';
-// import tasksApp from 'micro-apps/tasks-app';
+import tasksApp from 'micro-apps/tasks-app';
 
 const mapApp = createMapApp({
   attributionPrefix: appConfig.attributionPrefix,
@@ -14,19 +13,23 @@ const mapApp = createMapApp({
   defaultZoom: appConfig.defaultZoom,
 });
 
-const robotsWorkspace: InitialWindow[] = [
-  {
-    layout: { x: 0, y: 0, w: 7, h: 4 },
-    microApp: robotsApp,
-  },
-  { layout: { x: 8, y: 0, w: 5, h: 8 }, microApp: mapApp },
-  { layout: { x: 0, y: 0, w: 7, h: 4 }, microApp: doorsApp },
-  { layout: { x: 0, y: 0, w: 7, h: 4 }, microApp: liftsApp },
-  { layout: { x: 8, y: 0, w: 5, h: 4 }, microApp: robotMutexGroupsApp },
+const robotsWorkspaceLg: InitialWindow[] = [
+  { layout: { x: 0, y: 0, w: 7, h: 5.6 }, microApp: tasksApp },
+  { layout: { x: 8, y: 0, w: 5, h: 2.8 }, microApp: mapApp },
+  { layout: { x: 8, y: 2.8, w: 5, h: 2.8 }, microApp: robotsApp },
 ];
 
+// const robotsWorkspaceMd: InitialWindow[] = [
+//   { layout: { x: 0, y: 0, w: 12, h: 5 }, microApp: tasksApp },
+//   { layout: { x: 0, y: 5, w: 12, h: 5 }, microApp: robotsApp },
+//   { layout: { x: 0, y: 10, w: 12, h: 5 }, microApp: mapApp },
+// ];
+
 const SystemOverview = () => {
-  return <Workspace initialWindows={robotsWorkspace} />;
+  // const theme = useTheme();
+  // const matchUpLg = useMediaQuery(theme.breakpoints.up('lg'));
+
+  return <Workspace initialWindows={robotsWorkspaceLg} />;
 };
 
 export default SystemOverview;

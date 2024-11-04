@@ -48,7 +48,7 @@ const dashboard: NavItemType = {
       type: 'item',
       url: PATH_DASHBOARD.root,
       icon: icons.HomeOutlined,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
     {
       id: 'map',
@@ -56,14 +56,13 @@ const dashboard: NavItemType = {
       type: 'item',
       url: PATH_DASHBOARD.map,
       icon: icons.MapOutlined,
-      breadcrumbs: false,
+      breadcrumbs: true,
     },
     {
       id: 'devices',
       title: 'Devices',
       type: 'collapse',
       icon: icons.DashboardOutlined,
-      // breadcrumbs: true,
       children: [
         {
           id: 'robots',
