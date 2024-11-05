@@ -3,14 +3,16 @@ import { TaskStateOutput as TaskState } from 'api-client';
 import React from 'react';
 import { RobotDataGridTable, RobotTableData } from 'react-components';
 
-import { useRmfApi } from '../../hooks/use-rmf-api';
+import { useRmfApi } from 'hooks/use-rmf-api';
 import { AppEvents } from '../app-events';
 import { RobotSummary } from './robot-summary';
+import { useLocales } from 'locales';
 
 const RefreshRobotTableInterval = 10000;
 
 export const RobotsTable = () => {
   const rmfApi = useRmfApi();
+  const { translate } = useLocales();
 
   const [robots, setRobots] = React.useState<Record<string, RobotTableData[]>>({});
   const [openRobotSummary, setOpenRobotSummary] = React.useState(false);
@@ -98,6 +100,7 @@ export const RobotsTable = () => {
           AppEvents.robotSelect.next([robot.fleet, robot.name]);
           setSelectedRobot(robot);
         }}
+        translate={translate}
       />
       {openRobotSummary && selectedRobot && (
         <RobotSummary robot={selectedRobot} onClose={() => setOpenRobotSummary(false)} />

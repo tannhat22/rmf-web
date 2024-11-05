@@ -1,4 +1,4 @@
-import { createMicroApp } from '../components/micro-app';
+import { createMicroApp } from 'components/micro-app';
 
 export default createMicroApp(
   'doors-table',

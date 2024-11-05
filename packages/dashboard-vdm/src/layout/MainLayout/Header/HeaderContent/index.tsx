@@ -12,6 +12,7 @@ import Localization from './Localization';
 import Notification from './Notification';
 import MobileSection from './MobileSection';
 import SwitchThemeMode from './SwitchThemeMode';
+import NewTask from './NewTask';
 
 import useConfig from 'hooks/useConfig';
 import { useLocales } from 'locales';
@@ -35,9 +36,10 @@ const HeaderContent = () => {
     <>
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
       {!downLG && <Search />}
-      {!downLG && localization}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 
+      <NewTask />
+      {!downLG && localization}
       <Notification />
       {/* <Message /> */}
       {!downLG && <SwitchThemeMode />}

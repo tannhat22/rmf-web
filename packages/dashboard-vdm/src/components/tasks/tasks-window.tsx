@@ -31,6 +31,7 @@ import { MicroAppProps } from '../micro-app';
 import { TaskSchedule } from './task-schedule';
 import { TaskSummary } from './task-summary';
 import { exportCsvFull, exportCsvMinimal } from './utils';
+import { useLocales } from 'locales';
 
 const RefreshTaskQueueTableInterval = 15000;
 const QueryLimit = 100;
@@ -85,6 +86,7 @@ export const TasksWindow = React.memo(
       ref: React.Ref<HTMLDivElement>
     ) => {
       const rmfApi = useRmfApi();
+      const { translate } = useLocales();
       const appController = useAppController();
       const [autoRefresh, setAutoRefresh] = React.useState(true);
       const [refreshTaskAppCount, setRefreshTaskAppCount] = React.useState(0);
@@ -320,7 +322,7 @@ export const TasksWindow = React.memo(
                     <DownloadIcon transform={`scale(${isScreenHeightLessThan800 ? 0.8 : 1})`} />
                   }
                 >
-                  Export past 31 days
+                  {translate('Export past 31 days')}
                 </Button>
               </Tooltip>
               <Menu
@@ -339,7 +341,7 @@ export const TasksWindow = React.memo(
                   }}
                   disableRipple
                 >
-                  Export Minimal
+                  {translate('Export Minimal')}
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
@@ -348,7 +350,7 @@ export const TasksWindow = React.memo(
                   }}
                   disableRipple
                 >
-                  Export Full
+                  {translate('Export Full')}
                 </MenuItem>
               </Menu>
               <Tooltip title="Refreshes the task queue table" color="inherit" placement="top">
@@ -370,7 +372,7 @@ export const TasksWindow = React.memo(
                     <RefreshIcon transform={`scale(${isScreenHeightLessThan800 ? 0.8 : 1})`} />
                   }
                 >
-                  Refresh Task Queue
+                  {translate('Refresh Task Queue')}
                 </Button>
               </Tooltip>
             </Box>
@@ -384,7 +386,7 @@ export const TasksWindow = React.memo(
               aria-label="Task App Tabs"
             >
               <Tab
-                label="Queue"
+                label={translate('Queue')}
                 id={tabId(TaskTablePanel.QueueTable)}
                 aria-controls={tabPanelId(TaskTablePanel.QueueTable)}
                 sx={{
@@ -392,7 +394,7 @@ export const TasksWindow = React.memo(
                 }}
               />
               <Tab
-                label="Schedule"
+                label={translate('Schedule')}
                 id={tabId(TaskTablePanel.Schedule)}
                 aria-controls={tabPanelId(TaskTablePanel.Schedule)}
                 sx={{
@@ -419,6 +421,7 @@ export const TasksWindow = React.memo(
                   onPageSizeChange={(newPageSize: number) =>
                     setTasksState((old: Tasks) => ({ ...old, pageSize: newPageSize }))
                   }
+                  translate={translate}
                 />
               </TableContainer>
             </TabPanel>

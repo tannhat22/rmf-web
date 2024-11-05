@@ -20,10 +20,12 @@ import React from 'react';
 import { base } from 'react-components';
 import { Subscription } from 'rxjs';
 
-import { useAppController } from '../hooks/use-app-controller';
-import { useRmfApi } from '../hooks/use-rmf-api';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+import { useRmfApi } from 'hooks/use-rmf-api';
 import { AppEvents } from './app-events';
 import { TaskCancelButton } from './tasks/task-cancellation';
+import { useLocales } from 'locales';
 
 interface AlertDialogProps {
   alertRequest: AlertRequest;
@@ -31,12 +33,26 @@ interface AlertDialogProps {
 }
 
 const AlertDialog = React.memo((props: AlertDialogProps) => {
+  const { translate } = useLocales();
   const { alertRequest, onDismiss } = props;
   const [isOpen, setIsOpen] = React.useState(true);
-  const { showAlert } = useAppController();
   const rmfApi = useRmfApi();
   const isScreenHeightLessThan800 = useMediaQuery('(max-height:800px)');
   const [additionalAlertMessage, setAdditionalAlertMessage] = React.useState<string | null>(null);
+
+  const showAlertSnack = (color: string, message: string) => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: message,
+        variant: 'alert',
+        alert: {
+          color: color,
+        },
+        close: false,
+      })
+    );
+  };
 
   const respondToAlert = async (alert_id: string, response: string) => {
     try {
@@ -51,13 +67,13 @@ const AlertDialog = React.memo((props: AlertDialogProps) => {
         (e as Error).message
       }`;
       console.error(errorMessage);
-      showAlert('error', errorMessage);
+      showAlertSnack('error', errorMessage);
       return;
     }
 
     const successMessage = `Responded [${response}] to alert ID [${alertRequest.id}]`;
     console.log(successMessage);
-    showAlert('success', successMessage);
+    showAlertSnack('success', successMessage);
   };
 
   const getErrorLogEntries = (logs: TaskEventLog) => {
@@ -209,7 +225,7 @@ const AlertDialog = React.memo((props: AlertDialogProps) => {
                 setIsOpen(false);
               }}
             >
-              {response}
+              {translate(response)}
             </Button>
           );
         })}
@@ -219,7 +235,7 @@ const AlertDialog = React.memo((props: AlertDialogProps) => {
             size="small"
             variant="contained"
             color="secondary"
-            buttonText={'Cancel task'}
+            buttonText={translate('Cancel task')}
             sx={{
               fontSize: isScreenHeightLessThan800 ? '0.8rem' : '1rem',
               padding: isScreenHeightLessThan800 ? '4px 8px' : '6px 12px',
@@ -239,7 +255,7 @@ const AlertDialog = React.memo((props: AlertDialogProps) => {
             setIsOpen(false);
           }}
         >
-          Dismiss
+          {translate('Dismiss')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -309,7 +325,9 @@ export const AlertManager = React.memo(({ alertAudioPath }: AlertManagerProps) =
           });
           return;
         }
-        AppEvents.pushAlert.next(alertRequest);
+        // AppEvents.pushAlert.next(alertRequest);
+        const successMessage = `Task: ${alertRequest.task_id} - state: "${alertRequest.title}"! `;
+        showAlertSnack('success', successMessage);
       })
     );
 
@@ -338,6 +356,20 @@ export const AlertManager = React.memo(({ alertAudioPath }: AlertManagerProps) =
       }
     };
   }, [rmfApi, alertAudio]);
+
+  const showAlertSnack = (color: string, message: string) => {
+    dispatch(
+      openSnackbar({
+        open: true,
+        message: message,
+        variant: 'alert',
+        alert: {
+          color: color,
+        },
+        close: false,
+      })
+    );
+  };
 
   const removeOpenAlert = (id: string) => {
     const filteredAlerts = Object.fromEntries(

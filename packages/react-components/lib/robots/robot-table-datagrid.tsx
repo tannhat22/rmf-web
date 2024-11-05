@@ -26,10 +26,15 @@ export interface RobotTableData {
 
 export interface RobotDataGridTableProps {
   onRobotClick?(ev: MuiEvent<React.MouseEvent<HTMLElement>>, robotName: RobotTableData): void;
+  translate?(text: any, options?: any): string;
   robots: RobotTableData[];
 }
 
-export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableProps): JSX.Element {
+export function RobotDataGridTable({
+  onRobotClick,
+  translate,
+  robots,
+}: RobotDataGridTableProps): JSX.Element {
   const isScreenHeightLessThan800 = useMediaQuery('(max-height:800px)');
 
   const handleEvent: GridEventListener<'rowClick'> = (
@@ -101,7 +106,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
   const columns: GridColDef[] = [
     {
       field: 'name',
-      headerName: 'Name',
+      headerName: translate ? translate('Name') : 'Name',
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) => params.row.name,
@@ -110,7 +115,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'fleet',
-      headerName: 'Fleet',
+      headerName: translate ? translate('Fleet') : 'Fleet',
       width: 90,
       valueGetter: (params: GridValueGetterParams) => params.row.fleet,
       flex: 1,
@@ -118,7 +123,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'estFinishTime',
-      headerName: 'Est. Task Finish Time',
+      headerName: translate ? translate('Est. Task Finish Time') : 'Est. Task Finish Time',
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
@@ -128,7 +133,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'level',
-      headerName: 'Level',
+      headerName: translate ? translate('Level') : 'Level',
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) => params.row.level,
@@ -137,7 +142,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'battery',
-      headerName: 'Battery',
+      headerName: translate ? translate('Battery') : 'Battery',
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) => `${(params.row.battery * 100).toFixed(2)}%`,
@@ -146,7 +151,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'lastUpdateTime',
-      headerName: 'Last Updated',
+      headerName: translate ? translate('Last Updated') : 'Last Updated',
       width: 150,
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
@@ -156,7 +161,7 @@ export function RobotDataGridTable({ onRobotClick, robots }: RobotDataGridTableP
     },
     {
       field: 'status',
-      headerName: 'Status',
+      headerName: translate ? translate('Status') : 'Status',
       editable: false,
       flex: 1,
       renderCell: StatusCell,

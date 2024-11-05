@@ -160,7 +160,7 @@ const Notification = () => {
   };
 
   return (
-    <Box component="div" sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <IconButton
         color="secondary"
         variant="light"
@@ -221,7 +221,7 @@ const Notification = () => {
                   secondary={
                     <>
                       {unacknowledgedAlertList.length > 0 && (
-                        <Tooltip title="Mark as all read">
+                        <Tooltip title={translate('Mark as all read')}>
                           <IconButton
                             color="success"
                             size="small"
@@ -256,7 +256,7 @@ const Notification = () => {
                         <ListItemText
                           primary={
                             <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                              No unacknowledged alerts!
+                              {translate('No unacknowledged alerts!')}
                             </Typography>
                           }
                         />
@@ -285,15 +285,19 @@ const Notification = () => {
                               primary={
                                 <Typography variant="h6">
                                   {alert.task_id
-                                    ? `Task ${alert.task_id} had an alert `
-                                    : 'Alert occured '}
+                                    ? `${translate('Task')} ${alert.task_id} ${translate(
+                                        'had an alert'
+                                      )} `
+                                    : `${translate('Alert occured')}`}
                                   {/* <Typography component="span" variant="subtitle1">
                                     {alert.id}
                                   </Typography>{' '}
                                   had an alert. */}
                                 </Typography>
                               }
-                              secondary={`${timeDistance(alert.unix_millis_alert_time)} ago`}
+                              secondary={`${timeDistance(alert.unix_millis_alert_time)} ${translate(
+                                'ago'
+                              )}`}
                             />
                             <ListItemSecondaryAction>
                               <Typography variant="caption" noWrap>

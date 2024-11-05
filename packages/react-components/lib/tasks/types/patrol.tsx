@@ -110,6 +110,7 @@ interface PatrolTaskFormProps {
   patrolWaypoints: string[];
   onChange(patrolTaskDescription: PatrolTaskDescription): void;
   onValidate(valid: boolean): void;
+  translate?(text: any, options?: any): string;
 }
 
 export function PatrolTaskForm({
@@ -117,6 +118,7 @@ export function PatrolTaskForm({
   patrolWaypoints,
   onChange,
   onValidate,
+  translate,
 }: PatrolTaskFormProps): React.JSX.Element {
   const theme = useTheme();
   const isScreenHeightLessThan800 = useMediaQuery('(max-height:800px)');
@@ -153,7 +155,7 @@ export function PatrolTaskForm({
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Place Name"
+              label={translate ? translate('Place Name') : 'Place Name'}
               required={true}
               InputLabelProps={{ style: { fontSize: isScreenHeightLessThan800 ? 14 : 20 } }}
             />
@@ -163,7 +165,7 @@ export function PatrolTaskForm({
       <Grid item xs={isScreenHeightLessThan800 ? 4 : 2}>
         <PositiveIntField
           id="loops"
-          label="Loops"
+          label={translate ? translate('Loops') : 'Loops'}
           sx={{
             '& .MuiOutlinedInput-root': {
               height: isScreenHeightLessThan800 ? '3rem' : '3.5rem',

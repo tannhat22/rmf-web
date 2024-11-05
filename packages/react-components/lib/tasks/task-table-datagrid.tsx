@@ -113,6 +113,7 @@ export interface TableDataGridState {
   onPageSizeChange: (newPageSize: number) => void;
   setFilterFields: React.Dispatch<React.SetStateAction<FilterFields>>;
   setSortFields: React.Dispatch<React.SetStateAction<SortFields>>;
+  translate?(text: any, options?: any): string;
 }
 
 const TaskRequester = (
@@ -152,6 +153,7 @@ export function TaskDataGridTable({
   onPageSizeChange,
   setFilterFields,
   setSortFields,
+  translate,
 }: TableDataGridState): JSX.Element {
   const handleEvent: GridEventListener<'rowClick'> = (
     params: GridRowParams,
@@ -174,7 +176,7 @@ export function TaskDataGridTable({
   const columns: GridColumns<TaskData> = [
     {
       field: 'unix_millis_request_time',
-      headerName: 'Date',
+      headerName: translate ? translate('Date') : 'Date',
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -193,7 +195,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'requester',
-      headerName: 'Requester',
+      headerName: translate ? translate('Requester') : 'Requester',
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -215,7 +217,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'label=pickup',
-      headerName: 'Pickup',
+      headerName: translate ? translate('Pickup') : 'Pickup',
       width: 150,
       editable: false,
       valueGetter: (params) => {
@@ -230,7 +232,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'label=destination',
-      headerName: 'Destination',
+      headerName: translate ? translate('Destination') : 'Destination',
       width: 150,
       editable: false,
       valueGetter: (params) => {
@@ -256,7 +258,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'unix_millis_start_time',
-      headerName: 'Start Time',
+      headerName: translate ? translate('Start Time') : 'Start Time',
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -282,7 +284,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'unix_millis_finish_time',
-      headerName: 'End Time',
+      headerName: translate ? translate('End Time') : 'End Time',
       width: 150,
       editable: false,
       renderCell: (cellValues) => {
@@ -321,7 +323,7 @@ export function TaskDataGridTable({
     },
     {
       field: 'status',
-      headerName: 'State',
+      headerName: translate ? translate('State') : 'State',
       editable: false,
       valueGetter: (params: GridValueGetterParams) =>
         params.row.state.status ? params.row.state.status : 'unknown',

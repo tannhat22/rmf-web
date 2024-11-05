@@ -87,6 +87,7 @@ export interface DeliveryTaskFormProps {
   dropoffPoints: Record<string, string>;
   onChange(taskDesc: DeliveryTaskDescription): void;
   onValidate(valid: boolean): void;
+  translate?(text: any, options?: any): string;
 }
 
 export function DeliveryTaskForm({
@@ -95,6 +96,7 @@ export function DeliveryTaskForm({
   dropoffPoints = {},
   onChange,
   onValidate,
+  translate,
 }: DeliveryTaskFormProps): React.JSX.Element {
   const theme = useTheme();
   const onInputChange = (desc: DeliveryTaskDescription) => {
@@ -136,7 +138,11 @@ export function DeliveryTaskForm({
             })
           }
           renderInput={(params) => (
-            <TextField {...params} label="Pickup Location" required={true} />
+            <TextField
+              {...params}
+              label={translate ? translate('Pickup Location') : 'Pickup Location'}
+              required={true}
+            />
           )}
         />
       </Grid>
@@ -144,7 +150,7 @@ export function DeliveryTaskForm({
         <TextField
           id="pickup_sku"
           fullWidth
-          label="Pickup SKU"
+          label={translate ? translate('Pickup SKU') : 'Pickup SKU'}
           value={taskDesc.pickup.payload.sku}
           required
           onChange={(ev) => {
@@ -164,7 +170,7 @@ export function DeliveryTaskForm({
       <Grid item xs={2}>
         <PositiveIntField
           id="pickup_quantity"
-          label="Quantity"
+          label={translate ? translate('Quantity') : 'Quantity'}
           value={taskDesc.pickup.payload.quantity}
           onChange={(_ev, val) => {
             onInputChange({
@@ -212,7 +218,11 @@ export function DeliveryTaskForm({
             })
           }
           renderInput={(params) => (
-            <TextField {...params} label="Dropoff Location" required={true} />
+            <TextField
+              {...params}
+              label={translate ? translate('Dropoff Location') : 'Dropoff Location'}
+              required={true}
+            />
           )}
         />
       </Grid>
@@ -220,7 +230,7 @@ export function DeliveryTaskForm({
         <TextField
           id="dropoff_sku"
           fullWidth
-          label="Dropoff SKU"
+          label={translate ? translate('Dropoff SKU') : 'Dropoff SKU'}
           value={taskDesc.dropoff.payload.sku}
           required
           onChange={(ev) => {
@@ -240,7 +250,7 @@ export function DeliveryTaskForm({
       <Grid item xs={2}>
         <PositiveIntField
           id="dropoff_quantity"
-          label="Quantity"
+          label={translate ? translate('Quantity') : 'Quantity'}
           value={taskDesc.dropoff.payload.quantity}
           onChange={(_ev, val) => {
             onInputChange({

@@ -21,9 +21,9 @@ import { openDrawer } from 'store/reducers/menu';
 import { MenuOrientation } from 'types/config';
 
 // rmf-web
-import { Alert, AlertProps, CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
+import { Alert, AlertProps, Snackbar } from '@mui/material';
 import React from 'react';
-import { getDefaultTaskDefinition, LocalizationProvider } from 'react-components';
+import { getDefaultTaskDefinition } from 'react-components';
 
 import { AppController, AppControllerProvider } from 'hooks/use-app-controller';
 import { AuthenticatorProvider } from 'hooks/use-authenticator';
@@ -36,7 +36,6 @@ import { Authenticator, UserProfile } from 'services/authenticator';
 import { DefaultRmfApi } from 'services/rmf-api';
 import { loadSettings, saveSettings, Settings } from 'services/settings';
 import { AlertManager } from 'components/alert-manager';
-// import AppBar, { APP_BAR_HEIGHT } from './appbar';
 import { DeliveryAlertStore } from 'components/delivery-alert-store';
 import { DashboardThemes } from 'components/theme';
 
