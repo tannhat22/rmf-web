@@ -65,7 +65,7 @@ const Breadcrumbs = ({
   };
 
   const pathnames = pathname.split('/').filter(Boolean);
-  let items: NavItemType[] = [];
+  const items: NavItemType[] = [];
   // let ids: string[] = [];
 
   useEffect(() => {
@@ -122,7 +122,7 @@ const Breadcrumbs = ({
       <>
         <MainCard
           border={card}
-          sx={card === false ? { mb: 3, bgcolor: 'transparent', ...sx } : { mb: 1.5, ...sx }}
+          sx={card === false ? { mb: 1.5, bgcolor: 'transparent', ...sx } : { mb: 1.5, ...sx }}
           {...others}
           content={card}
           shadow="none"

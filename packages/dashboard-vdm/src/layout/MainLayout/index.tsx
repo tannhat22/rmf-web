@@ -22,6 +22,7 @@ import { MenuOrientation } from 'types/config';
 
 // rmf-web
 import { Alert, AlertProps, Snackbar } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import { getDefaultTaskDefinition } from 'react-components';
 
@@ -94,6 +95,9 @@ export interface MainLayoutProps {
    */
   alertAudioPath?: string;
 }
+
+// Tạo theme mặc định
+const defaultTheme = createTheme();
 
 const MainLayout = (props: MainLayoutProps) => {
   const {
@@ -212,17 +216,18 @@ const MainLayout = (props: MainLayoutProps) => {
                     {!isHorizontal ? <Drawer /> : <HorizontalBar />}
                     <Box
                       component="main"
-                      sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}
+                      sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 1.5, sm: 1.5 } }}
                     >
                       <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
                       <Container
                         maxWidth={container ? 'xl' : false}
                         sx={{
-                          ...(container && { px: { xs: 0, sm: 2 } }),
+                          // ...(container && { px: { xs: 0, sm: 2 } }),
                           position: 'relative',
                           minHeight: 'calc(100vh - 110px)',
                           display: 'flex',
                           flexDirection: 'column',
+                          px: '0 !important',
                         }}
                       >
                         <Breadcrumbs
@@ -232,7 +237,9 @@ const MainLayout = (props: MainLayoutProps) => {
                           card={false}
                           divider={false}
                         />
-                        <Outlet />
+                        <ThemeProvider theme={defaultTheme}>
+                          <Outlet />
+                        </ThemeProvider>
                         <Footer />
                       </Container>
                     </Box>

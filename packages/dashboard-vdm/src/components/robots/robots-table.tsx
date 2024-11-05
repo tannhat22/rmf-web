@@ -8,7 +8,7 @@ import { AppEvents } from '../app-events';
 import { RobotSummary } from './robot-summary';
 import { useLocales } from 'locales';
 
-const RefreshRobotTableInterval = 10000;
+const RefreshRobotTableInterval = 2000;
 
 export const RobotsTable = () => {
   const rmfApi = useRmfApi();
