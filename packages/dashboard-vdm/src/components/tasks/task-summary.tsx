@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   LinearProgress,
   LinearProgressProps,
@@ -195,6 +196,18 @@ export const TaskSummary = React.memo((props: TaskSummaryProps) => {
       )}
       <DialogContent>{returnDialogContent()}</DialogContent>
       <DialogActions sx={{ justifyContent: 'center' }}>
+        <Button
+          size="small"
+          variant="contained"
+          onClick={() => setOpenTaskDetailsLogs(true)}
+          autoFocus
+          sx={{
+            fontSize: isScreenHeightLessThan800 ? '0.8rem' : '1rem',
+            padding: isScreenHeightLessThan800 ? '4px 8px' : '6px 12px',
+          }}
+        >
+          Inspect
+        </Button>
         <TaskCancelButton
           taskId={taskState ? taskState.booking.id : null}
           size="small"

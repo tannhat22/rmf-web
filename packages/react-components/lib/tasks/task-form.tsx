@@ -321,7 +321,7 @@ export interface TaskFormProps extends Omit<ConfirmationDialogProps, 'onConfirmC
   deleteFavoriteTask?(favoriteTask: TaskFavorite): Promise<void>;
   onSuccessScheduling?(): void;
   onFailScheduling?(error: Error): void;
-  translate?(text: any, options?: any): string;
+  translateCustom?(text: any, options?: any): string;
 }
 
 export function TaskForm({
@@ -356,7 +356,7 @@ export function TaskForm({
   deleteFavoriteTask,
   onSuccessScheduling,
   onFailScheduling,
-  translate,
+  translateCustom,
   ...otherProps
 }: TaskFormProps): JSX.Element {
   const theme = useTheme();
@@ -522,7 +522,7 @@ export function TaskForm({
               handleTaskDescriptionChange(PatrolTaskDefinition.requestCategory, desc)
             }
             onValidate={onValidate}
-            translate={translate}
+            translate={translateCustom}
           />
         );
       case DeliveryTaskDefinition.taskDefinitionId:
@@ -535,7 +535,7 @@ export function TaskForm({
               handleTaskDescriptionChange(DeliveryTaskDefinition.requestCategory, desc)
             }
             onValidate={onValidate}
-            translate={translate}
+            translate={translateCustom}
           />
         );
       case ComposeCleanTaskDefinition.taskDefinitionId:
@@ -911,11 +911,11 @@ export function TaskForm({
       <StyledDialog
         title={
           taskRequest
-            ? translate
-              ? translate('Edit Schedule')
+            ? translateCustom
+              ? translateCustom('Edit Schedule')
               : 'Edit Schedule'
-            : translate
-              ? translate('Create Task')
+            : translateCustom
+              ? translateCustom('Create Task')
               : 'Create Task'
         }
         maxWidth={isScreenHeightLessThan800 ? 'md' : 'lg'}
@@ -927,11 +927,11 @@ export function TaskForm({
             <Grid container wrap="nowrap" alignItems="center">
               <Grid item xs className={classes.title} container justifyContent="center">
                 {taskRequest
-                  ? translate
-                    ? translate('Edit Schedule')
+                  ? translateCustom
+                    ? translateCustom('Edit Schedule')
                     : 'Edit Schedule'
-                  : translate
-                    ? translate('Create Task')
+                  : translateCustom
+                    ? translateCustom('Create Task')
                     : 'Create Task'}
               </Grid>
             </Grid>
@@ -942,7 +942,7 @@ export function TaskForm({
             <Grid container direction="row" wrap="nowrap">
               <List dense className={classes.taskList} aria-label="Favorites Tasks">
                 <Typography fontSize={isScreenHeightLessThan800 ? 16 : 20} component="div">
-                  {translate ? translate('Favorite tasks') : 'Favorite tasks'}
+                  {translateCustom ? translateCustom('Favorite tasks') : 'Favorite tasks'}
                 </Typography>
                 {favoritesTasks.map((favoriteTask, index) => {
                   return (
@@ -963,6 +963,7 @@ export function TaskForm({
                           priority: favoriteTask.priority,
                         });
                         setTaskDefinitionId(favoriteTask.task_definition_id);
+                        setFormFullyFilled(true);
                       }}
                     />
                   );
@@ -981,7 +982,7 @@ export function TaskForm({
                     <TextField
                       select
                       id="task-type"
-                      label={translate ? translate('Task Category') : 'Task Category'}
+                      label={translateCustom ? translateCustom('Task Category') : 'Task Category'}
                       variant="outlined"
                       fullWidth
                       margin="normal"
@@ -1019,7 +1020,7 @@ export function TaskForm({
                       onChange={(date) => {
                         setWarnTime(date);
                       }}
-                      label={translate ? translate('Warn Time') : 'Warn Time'}
+                      label={translateCustom ? translateCustom('Warn Time') : 'Warn Time'}
                       sx={{ marginLeft: theme.spacing(1) }}
                     />
                   </Grid>
@@ -1032,7 +1033,7 @@ export function TaskForm({
                             onChange={handlePrioritySwitchChange}
                           />
                         }
-                        label={translate ? translate('Prioritize') : 'Prioritize'}
+                        label={translateCustom ? translateCustom('Prioritize') : 'Prioritize'}
                         sx={{
                           color: parseTaskPriority(currentTaskRequest.priority)
                             ? undefined
@@ -1052,7 +1053,7 @@ export function TaskForm({
                     <TextField
                       select
                       id="dispatch-type"
-                      label={translate ? translate('Dispatch Type') : 'Dispatch Type'}
+                      label={translateCustom ? translateCustom('Dispatch Type') : 'Dispatch Type'}
                       variant="outlined"
                       fullWidth
                       margin="normal"
@@ -1069,7 +1070,7 @@ export function TaskForm({
                       <TextField
                         select
                         id="dispatch-fleet-type"
-                        label={translate ? translate('Select Fleet') : 'Select Fleet'}
+                        label={translateCustom ? translateCustom('Select Fleet') : 'Select Fleet'}
                         variant="outlined"
                         fullWidth
                         margin="normal"
@@ -1090,7 +1091,7 @@ export function TaskForm({
                       <TextField
                         select
                         id="dispatch-robot-type"
-                        label={translate ? translate('Select Robot') : 'Select Robot'}
+                        label={translateCustom ? translateCustom('Select Robot') : 'Select Robot'}
                         variant="outlined"
                         fullWidth
                         margin="normal"
@@ -1140,7 +1141,9 @@ export function TaskForm({
           <DialogActions>
             <Button
               aria-label={
-                translate ? translate('Save as a favorite task') : 'Save as a favorite task'
+                translateCustom
+                  ? translateCustom('Save as a favorite task')
+                  : 'Save as a favorite task'
               }
               variant={callToUpdateFavoriteTask ? 'contained' : 'outlined'}
               color="primary"
@@ -1157,11 +1160,11 @@ export function TaskForm({
               disabled={taskDefinitionId === CustomComposeTaskDefinition.taskDefinitionId}
             >
               {callToUpdateFavoriteTask
-                ? translate
-                  ? translate(`Confirm edits`)
+                ? translateCustom
+                  ? translateCustom(`Confirm edits`)
                   : `Confirm edits`
-                : translate
-                  ? translate('Save as a favorite task')
+                : translateCustom
+                  ? translateCustom('Save as a favorite task')
                   : 'Save as a favorite task'}
             </Button>
           </DialogActions>
@@ -1173,7 +1176,7 @@ export function TaskForm({
               onClick={(ev) => onClose && onClose(ev, 'escapeKeyDown')}
               size={isScreenHeightLessThan800 ? 'small' : 'medium'}
             >
-              {translate ? translate('Cancel') : 'Cancel'}
+              {translateCustom ? translateCustom('Cancel') : 'Cancel'}
             </Button>
             {onScheduleTask ? (
               <Button
@@ -1185,7 +1188,7 @@ export function TaskForm({
                 size={isScreenHeightLessThan800 ? 'small' : 'medium'}
                 startIcon={<ScheduleSendIcon />}
               >
-                {translate ? translate('Add to Schedule') : 'Add to Schedule'}
+                {translateCustom ? translateCustom('Add to Schedule') : 'Add to Schedule'}
               </Button>
             ) : null}
             {onEditScheduleTask ? (
@@ -1198,7 +1201,7 @@ export function TaskForm({
                 size={isScreenHeightLessThan800 ? 'small' : 'medium'}
                 startIcon={<ScheduleSendIcon />}
               >
-                {translate ? translate('Edit schedule') : 'Edit schedule'}
+                {translateCustom ? translateCustom('Edit schedule') : 'Edit schedule'}
               </Button>
             ) : null}
             <Button
@@ -1218,7 +1221,7 @@ export function TaskForm({
                 size={isScreenHeightLessThan800 ? '0.8em' : '1.5em'}
                 color="inherit"
               >
-                {translate ? translate('Submit Now') : 'Submit Now'}
+                {translateCustom ? translateCustom('Submit Now') : 'Submit Now'}
               </Loading>
             </Button>
           </DialogActions>
@@ -1258,22 +1261,22 @@ export function TaskForm({
         <ConfirmationDialog
           confirmText={
             schedule
-              ? translate
-                ? translate('Edit Schedule')
+              ? translateCustom
+                ? translateCustom('Edit Schedule')
                 : 'Edit Schedule'
-              : translate
-                ? translate('Schedule')
+              : translateCustom
+                ? translateCustom('Schedule')
                 : 'Schedule'
           }
-          cancelText={translate ? translate('Cancel') : 'Cancel'}
+          cancelText={translateCustom ? translateCustom('Cancel') : 'Cancel'}
           open={openSchedulingDialog}
           title={
             schedule
-              ? translate
-                ? translate('Edit Scheduled Task')
+              ? translateCustom
+                ? translateCustom('Edit Scheduled Task')
                 : 'Edit Scheduled Task'
-              : translate
-                ? translate('Schedule Task')
+              : translateCustom
+                ? translateCustom('Schedule Task')
                 : 'Schedule Task'
           }
           submitting={false}
@@ -1306,7 +1309,7 @@ export function TaskForm({
                     return { ...prev, startOn: date };
                   });
                 }}
-                label={translate ? translate('Start On') : 'Start On'}
+                label={translateCustom ? translateCustom('Start On') : 'Start On'}
               />
             </Grid>
             <Grid item xs={6}>
@@ -1331,7 +1334,7 @@ export function TaskForm({
                     });
                   }
                 }}
-                label={translate ? translate('At') : 'At'}
+                label={translateCustom ? translateCustom('At') : 'At'}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1343,7 +1346,7 @@ export function TaskForm({
           </Grid>
           <Grid container marginTop={theme.spacing(1)} marginLeft={theme.spacing(0)}>
             <FormControl fullWidth={true}>
-              <FormHelperText>{translate ? translate('Ends') : 'Ends'}</FormHelperText>
+              <FormHelperText>{translateCustom ? translateCustom('Ends') : 'Ends'}</FormHelperText>
               <RadioGroup
                 aria-labelledby="controlled-radio-buttons-group"
                 name="controlled-radio-buttons-group"
@@ -1357,7 +1360,7 @@ export function TaskForm({
                     control={<Radio size={isScreenHeightLessThan800 ? 'small' : 'medium'} />}
                     label={
                       <Box component="div" fontSize={isScreenHeightLessThan800 ? '0.8rem' : '1rem'}>
-                        {translate ? translate('Never') : 'Never'}
+                        {translateCustom ? translateCustom('Never') : 'Never'}
                       </Box>
                     }
                     sx={{ fontSize: isScreenHeightLessThan800 ? '0.8rem' : '1rem' }}
@@ -1369,7 +1372,7 @@ export function TaskForm({
                     control={<Radio size={isScreenHeightLessThan800 ? 'small' : 'medium'} />}
                     label={
                       <Box component="div" fontSize={isScreenHeightLessThan800 ? '0.8rem' : '1rem'}>
-                        {translate ? translate('On') : 'On'}
+                        {translateCustom ? translateCustom('On') : 'On'}
                       </Box>
                     }
                   />

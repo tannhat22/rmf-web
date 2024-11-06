@@ -161,7 +161,7 @@ const NewTask = () => {
             console.error(`Failed to create schedule: ${e.message}`);
             showAlertSnack('error', `Failed to submit schedule: ${e.message}`);
           }}
-          translate={translate}
+          translateCustom={translate}
         />
       )}
     </Box>

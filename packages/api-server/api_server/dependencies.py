@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
 
-from fastapi import Depends, Query
+from fastapi import Depends, HTTPException, Query
 
 from api_server import ros_time
 
 from .models import Pagination
+
+MAX_UNIX_TIMESTAMP_MS = 253402300799998
 
 
 def pagination_query(
@@ -43,19 +45,36 @@ def time_between_query(alias: str, *, default: str | None = None):
     ) -> tuple[datetime, datetime] | None:
         if time_between is None:
             return None
-        if time_between.startswith("-"):
-            period = (
-                datetime.fromtimestamp(
-                    (now - int(time_between[1:])) / 1000, timezone.utc
-                ),
-                datetime.fromtimestamp(now / 1000, timezone.utc),
+        try:
+            if time_between.startswith("-"):
+                period = (
+                    datetime.fromtimestamp(
+                        (now - int(time_between[1:])) / 1000, timezone.utc
+                    ),
+                    datetime.fromtimestamp(now / 1000, timezone.utc),
+                )
+            else:
+                parts = time_between.split(",")
+                start_time = int(parts[0])
+                end_time = int(parts[1])
+
+                # Kiểm tra giá trị hợp lệ
+                if start_time < 0 or end_time < 0:
+                    raise ValueError(f"Unix timestamps cannot be negative!")
+
+                if end_time > MAX_UNIX_TIMESTAMP_MS:
+                    end_time = MAX_UNIX_TIMESTAMP_MS
+
+                period = (
+                    datetime.fromtimestamp(start_time / 1000, timezone.utc),
+                    datetime.fromtimestamp(end_time / 1000, timezone.utc),
+                )
+            return period
+
+        except (ValueError, IndexError) as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid 'between' query format or value: {e} - {time_between}",
             )
-        else:
-            parts = time_between.split(",")
-            period = (
-                datetime.fromtimestamp(int(parts[0]) / 1000, timezone.utc),
-                datetime.fromtimestamp(int(parts[1]) / 1000, timezone.utc),
-            )
-        return period
 
     return dep

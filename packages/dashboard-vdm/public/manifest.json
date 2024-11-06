@@ -1,0 +1,14 @@
+{
+  "short_name": "AMR VDM app",
+  "name": "VDM Fleet management system",
+  "icons": [
+    {
+      "src": "mabuchi_motor_only_logo.png",
+      "sizes": "200x200",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "http://localhost:5173/",
+  "display": "standalone",
+  "orientation": "landscape"
+}

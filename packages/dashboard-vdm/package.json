@@ -7,10 +7,11 @@
     "build": "pnpm run --filter {.}^... build && vite build",
     "gen-app-config-schema": "pnpm typescript-json-schema tsconfig.gen.json AppConfig --required -o app-config.schema.json",
     "lint": "tsc --build && eslint --max-warnings 0 src",
-    "start": "concurrently npm:start:rmf-server npm:start:react",
+    "start": "concurrently npm:start:rmf-server:mysql npm:start:react",
     "start:react": "pnpm run --filter {.}^... build && vite",
     "start:rmf-server": "RMF_SERVER_USE_SIM_TIME=true npm --prefix ../api-server start",
     "start:rmf-server:psql": "RMF_SERVER_USE_SIM_TIME=true npm run --prefix ../api-server start:psql",
+    "start:rmf-server:mysql": "RMF_SERVER_USE_SIM_TIME=true npm run --prefix ../api-server start:mysql",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
   },
