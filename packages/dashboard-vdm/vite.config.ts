@@ -43,6 +43,10 @@ const buildConfig = appConfig.buildConfig;
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    host: '0.0.0.0', // Cho phép truy cập từ mọi địa chỉ IP
+    port: 3000, // Cổng bạn muốn chạy Vite
+  },
   base: buildConfig.baseUrl,
   define: {
     APP_CONFIG_AUTH_PROVIDER: `'${buildConfig.authProvider}'`,

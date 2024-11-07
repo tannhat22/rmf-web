@@ -33,7 +33,7 @@ import { TaskSummary } from './task-summary';
 import { exportCsvFull, exportCsvMinimal } from './utils';
 import { useLocales } from 'locales';
 
-const RefreshTaskQueueTableInterval = 15000;
+const RefreshTaskQueueTableInterval = 3000;
 const QueryLimit = 100;
 
 enum TaskTablePanel {

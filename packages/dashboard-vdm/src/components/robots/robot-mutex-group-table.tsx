@@ -5,7 +5,7 @@ import { ConfirmationDialog, MutexGroupData, MutexGroupTable } from 'react-compo
 import { useAppController } from '../../hooks/use-app-controller';
 import { useRmfApi } from '../../hooks/use-rmf-api';
 
-const RefreshMutexGroupTableInterval = 5000;
+const RefreshMutexGroupTableInterval = 3000;
 
 export const RobotMutexGroupsTable = () => {
   const rmfApi = useRmfApi();

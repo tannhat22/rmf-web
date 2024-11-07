@@ -13,9 +13,13 @@ const mapApp = createMapApp({
   defaultZoom: appConfig.defaultZoom,
 });
 
-const mapWorkspace: InitialWindow[] = [{ layout: { x: 0, y: 0, w: 12, h: 5.3 }, microApp: mapApp }];
-
 const MapPage = () => {
+  const hCustom = (window.innerHeight - 178 + 8) / 158;
+
+  const mapWorkspace: InitialWindow[] = [
+    { layout: { x: 0, y: 0, w: 12, h: hCustom }, microApp: mapApp },
+  ];
+
   return <Workspace initialWindows={mapWorkspace} />;
   // return (
   //   <Box

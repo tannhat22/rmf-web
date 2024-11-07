@@ -211,20 +211,27 @@ const MainLayout = (props: MainLayoutProps) => {
                 <AppControllerProvider value={appController}>
                   <DeliveryAlertStore />
                   <AlertManager alertAudioPath={alertAudioPath} />
-                  <Box sx={{ display: 'flex', width: '100%' }}>
+                  <Box sx={{ display: 'flex', width: '100%', minHeight: '100vh' }}>
                     <Header />
                     {!isHorizontal ? <Drawer /> : <HorizontalBar />}
                     <Box
                       component="main"
-                      sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 1.5, sm: 1.5 } }}
+                      sx={{
+                        width: 'calc(100% - 260px)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flexGrow: 1,
+                        p: { xs: 1.5, sm: 1.5 },
+                      }}
                     >
                       <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
                       <Container
                         maxWidth={container ? 'xl' : false}
                         sx={{
                           // ...(container && { px: { xs: 0, sm: 2 } }),
+                          // minHeight: 'calc(100vh - 110px)',
+                          height: '100%',
                           position: 'relative',
-                          minHeight: 'calc(100vh - 110px)',
                           display: 'flex',
                           flexDirection: 'column',
                           px: '0 !important',

@@ -13,21 +13,14 @@ const mapApp = createMapApp({
   defaultZoom: appConfig.defaultZoom,
 });
 
-const robotsWorkspaceLg: InitialWindow[] = [
-  { layout: { x: 0, y: 0, w: 7, h: 5.6 }, microApp: tasksApp },
-  { layout: { x: 8, y: 0, w: 5, h: 2.8 }, microApp: mapApp },
-  { layout: { x: 8, y: 2.8, w: 5, h: 2.8 }, microApp: robotsApp },
-];
-
-// const robotsWorkspaceMd: InitialWindow[] = [
-//   { layout: { x: 0, y: 0, w: 12, h: 5 }, microApp: tasksApp },
-//   { layout: { x: 0, y: 5, w: 12, h: 5 }, microApp: robotsApp },
-//   { layout: { x: 0, y: 10, w: 12, h: 5 }, microApp: mapApp },
-// ];
-
 const SystemOverview = () => {
-  // const theme = useTheme();
-  // const matchUpLg = useMediaQuery(theme.breakpoints.up('lg'));
+  const hCustom = (window.innerHeight - 178 + 8) / 158;
+
+  const robotsWorkspaceLg: InitialWindow[] = [
+    { layout: { x: 0, y: 0, w: 7, h: hCustom }, microApp: tasksApp },
+    { layout: { x: 8, y: 0, w: 5, h: hCustom / 2 }, microApp: mapApp },
+    { layout: { x: 8, y: hCustom / 2, w: 5, h: hCustom / 2 }, microApp: robotsApp },
+  ];
 
   return <Workspace initialWindows={robotsWorkspaceLg} />;
 };

@@ -8,7 +8,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "http://localhost:5173/",
+  "start_url": "http://localhost:3000/",
   "display": "standalone",
   "orientation": "landscape"
 }
