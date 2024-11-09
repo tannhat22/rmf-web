@@ -143,12 +143,12 @@ function FavoriteTask({
   setCallToDelete,
   setCallToUpdate,
 }: FavoriteTaskProps) {
-  const theme = useTheme();
+  // const theme = useTheme();
   const isScreenHeightLessThan800 = useMediaQuery('(max-height:800px)');
   return (
     <>
       <ListItem
-        sx={{ width: theme.spacing(30) }}
+        sx={{ width: '100%' }}
         onClick={() => {
           listItemClick();
           setCallToUpdate(false);
@@ -164,34 +164,40 @@ function FavoriteTask({
               fontSize: isScreenHeightLessThan800 ? '0.8rem' : '1rem',
             },
           }}
+          sx={{ whiteSpace: 'normal', wordWrap: 'break-word' }}
         />
-        <ListItemSecondaryAction>
-          <Tooltip title={'Update'}>
-            <IconButton
-              edge="end"
-              aria-label="update"
-              onClick={() => {
-                setCallToUpdate(true);
-                listItemClick();
-              }}
-            >
-              <UpdateIcon transform={`scale(${isScreenHeightLessThan800 ? 0.7 : 1})`} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton
-              edge="end"
-              aria-label="delete"
-              onClick={() => {
-                setOpenDialog(true);
-                setFavoriteTask(favoriteTask);
-                setCallToDelete(true);
-              }}
-            >
-              <DeleteIcon transform={`scale(${isScreenHeightLessThan800 ? 0.7 : 1})`} />
-            </IconButton>
-          </Tooltip>
-        </ListItemSecondaryAction>
+        {/* <ListItemSecondaryAction> */}
+        <Tooltip title="Update">
+          <IconButton
+            edge="end"
+            aria-label="update"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCallToUpdate(true);
+              listItemClick();
+            }}
+          >
+            <UpdateIcon transform={`scale(${isScreenHeightLessThan800 ? 0.7 : 1})`} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setOpenDialog(true);
+              setFavoriteTask(favoriteTask);
+              setCallToDelete(true);
+            }}
+            sx={{ marginLeft: '6px' }}
+          >
+            <DeleteIcon transform={`scale(${isScreenHeightLessThan800 ? 0.7 : 1})`} />
+          </IconButton>
+        </Tooltip>
+        {/* </ListItemSecondaryAction> */}
       </ListItem>
     </>
   );
@@ -381,7 +387,6 @@ export function TaskForm({
       const definitionId = supportedTask.taskDefinitionId;
       const desc = getDefaultTaskDescription(definitionId);
       const req = getDefaultTaskRequest(definitionId);
-
       if (desc === undefined) {
         console.error(`Failed to retrieve task description for definition ID: [${definitionId}]`);
       }
@@ -825,7 +830,7 @@ export function TaskForm({
       onSuccessFavoriteTask &&
         onSuccessFavoriteTask('Deleted favorite task successfully', favoriteTaskBuffer);
 
-      const defaultTaskRequest = getDefaultTaskRequest(tasksToDisplay[0].taskDefinitionId);
+      const defaultTaskRequest = getDefaultTaskRequest(taskDefinitionId);
       if (!defaultTaskRequest) {
         // We should never reach this area as we have already validated that
         // each supported task have a valid task request for generation
@@ -940,44 +945,45 @@ export function TaskForm({
             sx={{ padding: isScreenHeightLessThan800 ? '0px 1.5rem' : '1.25rem 1.5rem' }}
           >
             <Grid container direction="row" wrap="nowrap">
-              <List dense className={classes.taskList} aria-label="Favorites Tasks">
-                <Typography fontSize={isScreenHeightLessThan800 ? 16 : 20} component="div">
-                  {translateCustom ? translateCustom('Favorite tasks') : 'Favorite tasks'}
-                </Typography>
-                {favoritesTasks.map((favoriteTask, index) => {
-                  return (
-                    <FavoriteTask
-                      listItemText={favoriteTask.name}
-                      key={index}
-                      setFavoriteTask={setFavoriteTaskBuffer}
-                      favoriteTask={favoriteTask}
-                      setCallToDelete={setCallToDeleteFavoriteTask}
-                      setCallToUpdate={setCallToUpdateFavoriteTask}
-                      setOpenDialog={setOpenFavoriteDialog}
-                      listItemClick={() => {
-                        setFavoriteTaskBuffer(favoriteTask);
-                        setCurrentTaskRequest({
-                          category: favoriteTask.category,
-                          description: favoriteTask.description,
-                          unix_millis_earliest_start_time: 0,
-                          priority: favoriteTask.priority,
-                        });
-                        setTaskDefinitionId(favoriteTask.task_definition_id);
-                        setFormFullyFilled(true);
-                      }}
-                    />
-                  );
-                })}
-              </List>
-
+              <Grid item>
+                <List dense className={classes.taskList} aria-label="Favorites Tasks">
+                  <Typography fontSize={isScreenHeightLessThan800 ? 16 : 20} component="div">
+                    {translateCustom ? translateCustom('Favorite tasks') : 'Favorite tasks'}
+                  </Typography>
+                  {favoritesTasks.map((favoriteTask, index) => {
+                    return (
+                      <FavoriteTask
+                        listItemText={favoriteTask.name}
+                        key={index}
+                        setFavoriteTask={setFavoriteTaskBuffer}
+                        favoriteTask={favoriteTask}
+                        setCallToDelete={setCallToDeleteFavoriteTask}
+                        setCallToUpdate={setCallToUpdateFavoriteTask}
+                        setOpenDialog={setOpenFavoriteDialog}
+                        listItemClick={() => {
+                          setFavoriteTaskBuffer(favoriteTask);
+                          setCurrentTaskRequest({
+                            category: favoriteTask.category,
+                            description: favoriteTask.description,
+                            unix_millis_earliest_start_time: 0,
+                            priority: favoriteTask.priority,
+                          });
+                          setTaskDefinitionId(favoriteTask.task_definition_id);
+                          setFormFullyFilled(true);
+                        }}
+                      />
+                    );
+                  })}
+                </List>
+              </Grid>
               <Divider
                 orientation="vertical"
                 flexItem
                 style={{ marginLeft: theme.spacing(2), marginRight: theme.spacing(2) }}
               />
 
-              <Grid>
-                <Grid container spacing={theme.spacing(2)} alignItems="center">
+              <Grid item xs={12} sm container>
+                <Grid item container spacing={theme.spacing(2)} alignItems="center">
                   <Grid item xs={12}>
                     <TextField
                       select
@@ -1048,7 +1054,7 @@ export function TaskForm({
                   flexItem
                   style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}
                 />
-                <Grid container spacing={theme.spacing(2)} alignItems="center">
+                <Grid item container spacing={theme.spacing(2)} alignItems="center">
                   <Grid item xs={dispatchType === DispatchType.Automatic ? 12 : 6}>
                     <TextField
                       select

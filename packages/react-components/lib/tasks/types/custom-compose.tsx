@@ -55,7 +55,7 @@ export function CustomComposeTaskForm({
   };
 
   return (
-    <Grid container spacing={theme.spacing(2)}>
+    <Grid item container spacing={theme.spacing(2)}>
       <Grid item xs={12}>
         <TextField
           label="Multiline"

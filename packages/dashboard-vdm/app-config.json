@@ -22,9 +22,6 @@
       "taskDefinitionId": "delivery"
     },
     {
-      "taskDefinitionId": "compose-clean"
-    },
-    {
       "taskDefinitionId": "custom_compose"
     }
   ],

@@ -105,7 +105,7 @@ export function DeliveryTaskForm({
   };
 
   return (
-    <Grid container spacing={theme.spacing(2)} justifyContent="center" alignItems="center">
+    <Grid item container spacing={theme.spacing(2)} justifyContent="center" alignItems="center">
       <Grid item xs={6}>
         <Autocomplete
           id="pickup-location"

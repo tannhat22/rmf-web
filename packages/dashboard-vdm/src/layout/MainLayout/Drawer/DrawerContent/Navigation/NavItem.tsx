@@ -53,7 +53,7 @@ const NavItem = ({ item, level }: Props) => {
     target?: LinkTarget;
   } = {
     component: forwardRef((props, ref) => (
-      <Link {...props} to={item.url!} target={itemTarget} ref={ref} />
+      <Link {...props} to={item.url!} target={itemTarget} ref={ref} onClick={handleClick} />
     )),
   };
   if (item?.external) {
@@ -70,6 +70,14 @@ const NavItem = ({ item, level }: Props) => {
   const isSelected = openItem.findIndex((id) => id === item.id) > -1;
 
   const { pathname } = useLocation();
+
+  // Fix bug khi ấn vào cùng 1 đường dẫn sẽ bị mất breadcum
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    // Nếu đường dẫn hiện tại trùng với URL của item, ngừng điều hướng
+    if (pathname === item.url) {
+      e.preventDefault(); // Ngừng điều hướng
+    }
+  };
 
   // active menu item on page load
   useEffect(() => {

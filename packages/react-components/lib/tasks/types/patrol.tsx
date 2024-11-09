@@ -132,7 +132,7 @@ export function PatrolTaskForm({
   }, [onValidate, taskDesc]);
 
   return (
-    <Grid container spacing={theme.spacing(2)} justifyContent="center" alignItems="center">
+    <Grid item container spacing={theme.spacing(2)} justifyContent="center" alignItems="center">
       <Grid item xs={isScreenHeightLessThan800 ? 8 : 10}>
         <Autocomplete
           id="place-input"

@@ -2,7 +2,6 @@
 config = {
     # ip or hostname to bind the socket to, this only applies when running the server in
     # standalone mode.
-    # "host": "127.0.0.1",
     "host": "10.7.11.9",
     # port to bind to, this only applies when running the server in standalone mode.
     "port": 8000,
@@ -17,7 +16,7 @@ config = {
     "builtin_admin": "admin",
     # path to a PEM encoded RSA public key which is used to verify JWT tokens, if the path is relative, it is based on the working dir.
     # "jwt_public_key": None,
-    "jwt_public_key": "/home/amr-server/nhat_ws/projects/rmf-web/packages/api-server/jwt_key/keycloak-public.key",
+    "jwt_public_key": "/home/tannhat/nhat_ws/projects/rmf-web/packages/api-server/jwt_key/keycloak-public.key",
     # jwt secret, this is mutually exclusive with `jwt_public_key`.
     # "jwt_secret": "rmfisawesome",
     "jwt_secret": None,

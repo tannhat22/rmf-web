@@ -68,6 +68,13 @@ const Breadcrumbs = ({
   const items: NavItemType[] = [];
   // let ids: string[] = [];
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (pathname === '/dashboard') {
+      // Nếu đang ở trang dashboard, ngừng điều hướng
+      e.preventDefault();
+    }
+  };
+
   useEffect(() => {
     navigation?.items?.map((menu: NavItemType) => {
       if (menu.type && menu.type === 'group') {
@@ -145,6 +152,7 @@ const Breadcrumbs = ({
                   to="/dashboard"
                   color="textSecondary"
                   variant="h6"
+                  onClick={handleClick}
                   sx={{ textDecoration: 'none' }}
                 >
                   {icons && <HomeOutlined style={iconSX} />}

@@ -66,7 +66,7 @@ export const Map = styled((props: MapProps) => {
     'Doors & Lifts': false,
     'Doors labels': true,
     Robots: false,
-    'Robots labels': true,
+    'Robots labels': false,
     Trajectories: false,
   });
   const [openRobotSummary, setOpenRobotSummary] = React.useState(false);
@@ -89,6 +89,7 @@ export const Map = styled((props: MapProps) => {
   const trajectoryTime = 300000;
   const trajectoryAnimScale = trajectoryTime / (0.9 * TrajectoryUpdateInterval);
   const trajManager = rmfApi?.trajectoryManager;
+
   React.useEffect(() => {
     if (!currentLevel) {
       return;
