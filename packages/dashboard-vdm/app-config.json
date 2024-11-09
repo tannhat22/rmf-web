@@ -1,11 +1,11 @@
 {
   "$schema": "./app-config.schema.json",
-  "rmfServerUrl": "http://localhost:8000",
-  "trajectoryServerUrl": "ws://localhost:8006",
+  "rmfServerUrl": "http://10.7.11.9:8000",
+  "trajectoryServerUrl": "ws://10.7.11.9:8006",
   "authConfig": {
     "clientId": "rmf_api_server",
     "realm": "rmf-web",
-    "url": "http://localhost:8080/"
+    "url": "http://10.7.11.9:8080/"
   },
   "helpLink": "https://osrf.github.io/ros2multirobotbook/rmf-core.html",
   "reportIssue": "https://github.com/open-rmf/rmf-web/issues",

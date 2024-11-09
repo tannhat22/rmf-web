@@ -247,7 +247,7 @@ const MainLayout = (props: MainLayoutProps) => {
                         <ThemeProvider theme={defaultTheme}>
                           <Outlet />
                         </ThemeProvider>
-                        <Footer />
+                        {/* <Footer /> */}
                       </Container>
                     </Box>
                   </Box>

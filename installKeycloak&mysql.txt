@@ -25,7 +25,7 @@ sudo mysql -u root -p
     exit
 
     ////// cap quyen voi bang cap su dung
-    GRANT ALL PRIVILEGES ON my_database.* TO 'my_user'@'localhost';
+    GRANT ALL PRIVILEGES ON rmfvdmdatabase.* TO 'tannhat'@'localhost';
     FLUSH PRIVILEGES;
     
 
