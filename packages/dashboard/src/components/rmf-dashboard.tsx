@@ -28,6 +28,7 @@ import { AlertManager } from './alert-manager';
 import AppBar, { APP_BAR_HEIGHT } from './appbar';
 import { DeliveryAlertStore } from './delivery-alert-store';
 import { DashboardThemes } from './theme';
+// import { AdminDrawer } from './admin/drawer';
 
 const DefaultAlertDuration = 2000;
 
@@ -43,7 +44,12 @@ export interface AllowedTask {
   /**
    * The task definition to configure.
    */
-  taskDefinitionId: 'patrol' | 'delivery' | 'compose-clean' | 'custom_compose';
+  taskDefinitionId:
+    | 'patrol'
+    | 'delivery'
+    | 'delivery_multiple'
+    | 'compose-clean'
+    | 'custom_compose';
 
   /**
    * Configure the display name for the task definition.

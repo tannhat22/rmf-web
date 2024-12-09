@@ -1,8 +1,12 @@
 {
   "$schema": "./app-config.schema.json",
-  "rmfServerUrl": "http://localhost:8000",
-  "trajectoryServerUrl": "ws://localhost:8006",
-  "authConfig": {},
+  "rmfServerUrl": "http://192.168.47.128:8000",
+  "trajectoryServerUrl": "ws://192.168.47.128:8006",
+  "authConfig": {
+    "clientId": "rmf_api_server",
+    "realm": "rmf-web",
+    "url": "http://192.168.47.128:8080/"
+  },
   "helpLink": "https://osrf.github.io/ros2multirobotbook/rmf-core.html",
   "reportIssue": "https://github.com/open-rmf/rmf-web/issues",
   "pickupZones": [],
@@ -16,6 +20,9 @@
     },
     {
       "taskDefinitionId": "delivery"
+    },
+    {
+      "taskDefinitionId": "delivery_multiple"
     },
     {
       "taskDefinitionId": "compose-clean"
@@ -35,8 +42,8 @@
   "cartIds": [],
   "buildConfig": {
     "baseUrl": "/",
-    "authProvider": "stub",
+    "authProvider": "keycloak",
     "customTabs": false,
-    "adminTab": false
+    "adminTab": true
   }
 }

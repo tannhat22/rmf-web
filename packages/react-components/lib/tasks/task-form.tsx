@@ -71,6 +71,12 @@ import {
   makeDeliveryTaskBookingLabel,
 } from './types/delivery';
 import {
+  DeliveryMultipleTaskDefinition,
+  DeliveryMultipleTaskDescription,
+  DeliveryMultipleTaskForm,
+  makeDeliveryMultipleTaskBookingLabel,
+} from './types/delivery-multiple';
+import {
   DeliveryAreaPickupTaskDefinition,
   DeliveryCustomTaskDescription,
   DeliveryCustomTaskForm,
@@ -102,6 +108,7 @@ export type TaskDescription =
   | DeliveryCustomTaskDescription
   | PatrolTaskDescription
   | DeliveryTaskDescription
+  | DeliveryMultipleTaskDescription
   | ComposeCleanTaskDescription;
 
 const classes = {
@@ -336,6 +343,7 @@ export function TaskForm({
   tasksToDisplay = [
     PatrolTaskDefinition,
     DeliveryTaskDefinition,
+    DeliveryMultipleTaskDefinition,
     ComposeCleanTaskDefinition,
     CustomComposeTaskDefinition,
   ],
@@ -555,6 +563,22 @@ export function TaskForm({
             onValidate={onValidate}
           />
         );
+      case DeliveryMultipleTaskDefinition.taskDefinitionId:
+        return (
+          <DeliveryMultipleTaskForm
+            taskDesc={currentTaskRequest.description as DeliveryMultipleTaskDescription}
+            pickupFirstPoints={pickupPoints}
+            dropoffFirstPoints={dropoffPoints}
+            pickupSecondPoints={pickupPoints}
+            dropoffSecondPoints={dropoffPoints}
+            onChange={(desc: DeliveryMultipleTaskDescription) => {
+              desc.category = currentTaskRequest.description.category;
+              handleTaskDescriptionChange(DeliveryMultipleTaskDefinition.requestCategory, desc);
+            }}
+            onValidate={onValidate}
+            translate={translateCustom}
+          />
+        );
       case DeliveryPickupTaskDefinition.taskDefinitionId:
         return (
           <DeliveryPickupTaskForm
@@ -677,6 +701,9 @@ export function TaskForm({
           break;
         case DeliveryTaskDefinition.taskDefinitionId:
           requestBookingLabel = makeDeliveryTaskBookingLabel(request.description);
+          break;
+        case DeliveryMultipleTaskDefinition.taskDefinitionId:
+          requestBookingLabel = makeDeliveryMultipleTaskBookingLabel(request.description);
           break;
         case ComposeCleanTaskDefinition.taskDefinitionId:
           requestBookingLabel = makeComposeCleanTaskBookingLabel(request.description);

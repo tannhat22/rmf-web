@@ -20,6 +20,11 @@ import {
   makeDeliveryTaskShortDescription,
 } from './delivery';
 import {
+  DeliveryMultipleTaskDefinition,
+  makeDefaultDeliveryMultipleTaskDescription,
+  makeDeliveryMultipleTaskShortDescription,
+} from './delivery-multiple';
+import {
   DeliveryAreaPickupTaskDefinition,
   DeliveryPickupTaskDefinition,
   DeliverySequentialLotPickupTaskDefinition,
@@ -77,6 +82,8 @@ export function getShortDescription(
       return makePatrolTaskShortDescription(taskRequest.description, taskDisplayName);
     case DeliveryTaskDefinition.taskDefinitionId:
       return makeDeliveryTaskShortDescription(taskRequest.description, taskDisplayName);
+    case DeliveryMultipleTaskDefinition.taskDefinitionId:
+      return makeDeliveryMultipleTaskShortDescription(taskRequest.description, taskDisplayName);
     case ComposeCleanTaskDefinition.taskDefinitionId:
       return makeComposeCleanTaskShortDescription(taskRequest.description, taskDisplayName);
     case DeliveryPickupTaskDefinition.taskDefinitionId:
@@ -103,6 +110,8 @@ export function getDefaultTaskDefinition(taskDefinitionId: string): TaskDefiniti
       return DeliveryAreaPickupTaskDefinition;
     case DeliveryTaskDefinition.taskDefinitionId:
       return DeliveryTaskDefinition;
+    case DeliveryMultipleTaskDefinition.taskDefinitionId:
+      return DeliveryMultipleTaskDefinition;
     case PatrolTaskDefinition.taskDefinitionId:
       return PatrolTaskDefinition;
     case CustomComposeTaskDefinition.taskDefinitionId:
@@ -124,6 +133,8 @@ export function getDefaultTaskDescription(
       return makeDefaultDeliveryCustomTaskDescription(taskDefinitionId);
     case DeliveryTaskDefinition.taskDefinitionId:
       return makeDefaultDeliveryTaskDescription();
+    case DeliveryMultipleTaskDefinition.taskDefinitionId:
+      return makeDefaultDeliveryMultipleTaskDescription();
     case PatrolTaskDefinition.taskDefinitionId:
       return makeDefaultPatrolTaskDescription();
     case CustomComposeTaskDefinition.taskDefinitionId:

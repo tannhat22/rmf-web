@@ -1,5 +1,5 @@
 import testConfig from '../app-config.json';
-import { AllowedTask } from './components';
+import { AllowedTask } from './layout/MainLayout/index';
 import { Resources } from './hooks/use-resources';
 import { Authenticator } from './services/authenticator';
 import { KeycloakAuthenticator } from './services/keycloak';
