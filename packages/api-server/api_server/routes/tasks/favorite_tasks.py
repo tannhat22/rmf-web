@@ -41,10 +41,11 @@ async def get_favorites_tasks(
     user: Annotated[User, Depends(user_dep)],
 ):
     # Chỉnh sửa để lấy tất cả favorites tasks khi là user admin
-    if user.username == "admin":
-        favorites_tasks = await ttm.TaskFavorite.all()
-    else:
-        favorites_tasks = await ttm.TaskFavorite.filter(user=user.username)
+    # if user.username == "admin":
+    #     favorites_tasks = await ttm.TaskFavorite.all()
+    # else:
+    #     favorites_tasks = await ttm.TaskFavorite.filter(user=user.username)
+    favorites_tasks = await ttm.TaskFavorite.filter(user=user.username)
     return [
         TaskFavorite.model_validate(favorite_task) for favorite_task in favorites_tasks
     ]
