@@ -199,12 +199,12 @@ const MainLayout = (props: MainLayoutProps) => {
   // }, [themes, settings.themeMode]);
 
   // set media wise responsive drawer
-  useEffect(() => {
-    if (!miniDrawer) {
-      dispatch(openDrawer(!matchDownXL));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchDownXL]);
+  // useEffect(() => {
+  //   if (!miniDrawer) {
+  //     dispatch(openDrawer(!matchDownXL));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [matchDownXL]);
 
   const providers = userProfile && (
     <AuthenticatorProvider value={authenticator}>

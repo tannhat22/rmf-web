@@ -10,9 +10,9 @@
   "helpLink": "https://osrf.github.io/ros2multirobotbook/rmf-core.html",
   "reportIssue": "https://github.com/open-rmf/rmf-web/issues",
   "pickupZones": [],
-  "defaultZoom": 20,
-  "defaultRobotZoom": 30,
-  "attributionPrefix": "OSRC-SG",
+  "defaultZoom": 4,
+  "defaultRobotZoom": 16,
+  "attributionPrefix": "VDM-RMF",
   "defaultMapLevel": "L1",
   "allowedTasks": [
     {

@@ -45,7 +45,7 @@ async def get_favorites_tasks(
     #     favorites_tasks = await ttm.TaskFavorite.all()
     # else:
     #     favorites_tasks = await ttm.TaskFavorite.filter(user=user.username)
-    favorites_tasks = await ttm.TaskFavorite.filter(user=user.username)
+    favorites_tasks = await ttm.TaskFavorite.filter(user=user.username).order_by("name")
     return [
         TaskFavorite.model_validate(favorite_task) for favorite_task in favorites_tasks
     ]
