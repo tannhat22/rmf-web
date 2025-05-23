@@ -6,6 +6,7 @@ import { TaskInfo } from 'react-components';
 
 import { useRmfApi } from '../../hooks/use-rmf-api';
 import { TaskCancelButton } from './task-cancellation';
+import { TaskPhaseSkipButton } from './task-phase-skippation';
 import { TaskLogs } from './task-logs';
 
 export interface TableDataGridState {
@@ -78,17 +79,32 @@ export function TaskInspector({ task, onClose }: TableDataGridState): JSX.Elemen
                         <TaskInfo task={taskState} title="Details" />
                       </CardContent>
                       <Grid item paddingLeft={2} paddingRight={2}>
-                        <TaskCancelButton
-                          taskId={taskState ? taskState.booking.id : null}
-                          style={{
-                            marginTop: theme.spacing(1),
-                            marginBottom: theme.spacing(1),
-                          }}
-                          fullWidth
-                          variant="contained"
-                          color="secondary"
-                          aria-label="Cancel Task"
-                        />
+                        {taskState.pending && taskState.pending.length > 0 ? (
+                          <TaskPhaseSkipButton
+                            taskId={taskState.booking.id}
+                            style={{
+                              marginTop: theme.spacing(1),
+                              marginBottom: theme.spacing(1),
+                              marginRight: theme.spacing(1),
+                            }}
+                            fullWidth
+                            variant="contained"
+                            // color="secondary"
+                            aria-label="Skip Current Phase"
+                          />
+                        ) : (
+                          <TaskCancelButton
+                            taskId={taskState.booking.id}
+                            style={{
+                              marginTop: theme.spacing(1),
+                              marginBottom: theme.spacing(1),
+                            }}
+                            fullWidth
+                            variant="contained"
+                            color="secondary"
+                            aria-label="Cancel Task"
+                          />
+                        )}
                       </Grid>
                     </>
                   ) : (

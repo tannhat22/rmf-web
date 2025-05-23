@@ -21,6 +21,8 @@ sudo systemctl restart mysql
 sudo mysql -u root -p
     CREATE USER 'tannhat'@'localhost' IDENTIFIED BY 'tannhatamr';
     GRANT CREATE, SELECT, INSERT, UPDATE, DELETE ON *.* TO 'tannhat'@'localhost';
+    *** nếu muốn cấp user với quyền root:
+        GRANT ALL PRIVILEGES ON *.* TO 'tannhat'@'localhost' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
     exit
 
