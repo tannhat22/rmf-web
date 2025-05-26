@@ -32,7 +32,14 @@ from .app_config import app_config
 from .authenticator import AuthenticationError, authenticator, user_dep
 from .fast_io import FastIO
 from .logging import default_logger
-from .models import DispenserState, DoorState, IngestorState, LiftState, User
+from .models import (
+    DispenserState,
+    DoorState,
+    IngestorState,
+    LiftState,
+    StationState,
+    User,
+)
 from .models import tortoise_models as ttm
 from .repositories import TaskRepository
 from .rmf_io import RmfEvents
@@ -219,6 +226,9 @@ app.include_router(
     routes.ingestors_router, prefix="/ingestors", dependencies=[Depends(user_dep)]
 )
 app.include_router(
+    routes.stations_router, prefix="/stations", dependencies=[Depends(user_dep)]
+)
+app.include_router(
     routes.fleets_router, prefix="/fleets", dependencies=[Depends(user_dep)]
 )
 app.include_router(routes.rios_router, prefix="/rios", dependencies=[Depends(user_dep)])
@@ -281,3 +291,10 @@ async def _load_states(rmf_events: RmfEvents):
     for state in ingestor_states:
         rmf_events.ingestor_states.on_next(state)
     default_logger.info(f"loaded {len(ingestor_states)} ingestor states")
+
+    station_states = [
+        StationState.model_validate(x.data) for x in await ttm.StationState.all()
+    ]
+    for state in station_states:
+        rmf_events.station_states.on_next(state)
+    default_logger.info(f"loaded {len(station_states)} station states")

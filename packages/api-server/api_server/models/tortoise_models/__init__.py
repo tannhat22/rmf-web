@@ -11,6 +11,7 @@ from .lift_state import LiftState
 from .log import LogMixin
 from .rio import *
 from .scheduled_task import *
+from .station_state import StationState
 from .tasks import (
     TaskEventLog,
     TaskEventLogLog,

@@ -28,8 +28,9 @@ import { TrajectoryData } from '../services/robot-trajectory-manager';
 import { AppEvents } from './app-events';
 import { DoorSummary } from './door-summary';
 import { LiftSummary } from './lift-summary';
+import { StationSummary } from './station-summary';
 import { RobotSummary } from './robots/robot-summary';
-import { CameraControl, Door, LayersController, Lifts, RobotThree } from './three-fiber';
+import { CameraControl, Door, LayersController, Lifts, RobotThree, Stations } from './three-fiber';
 
 const debug = Debug('MapApp');
 
@@ -72,9 +73,11 @@ export const Map = styled((props: MapProps) => {
   const [openRobotSummary, setOpenRobotSummary] = React.useState(false);
   const [openDoorSummary, setOpenDoorSummary] = React.useState(false);
   const [openLiftSummary, setOpenLiftSummary] = React.useState(false);
+  const [openStationSummary, setOpenStationSummary] = React.useState(false);
   const [selectedRobot, setSelectedRobot] = React.useState<RobotTableData>();
   const [selectedDoor, setSelectedDoor] = React.useState<DoorModel>();
   const [selectedLift, setSelectedLift] = React.useState<Lift>();
+  const [selectedStation, setSelectedStation] = React.useState<Place>();
 
   const [buildingMap, setBuildingMap] = React.useState<BuildingMap | null>(null);
 
@@ -537,12 +540,13 @@ export const Map = styled((props: MapProps) => {
           waypoints
             .filter((waypoint) => waypoint.pickupHandler || waypoint.dropoffHandler)
             .map((place, index) => (
-              <ShapeThreeRendering
+              <Stations
                 key={index}
-                position={[place.vertex.x, place.vertex.y, 0]}
-                color="yellow"
-                text={place.vertex.name}
-                circleShape={false}
+                station={place}
+                onStationClick={(_ev, station) => {
+                  setOpenStationSummary(true);
+                  setSelectedStation(station);
+                }}
               />
             ))}
         {!disabledLayers['Pickup & Dropoff labels'] &&
@@ -700,6 +704,10 @@ export const Map = styled((props: MapProps) => {
 
       {openLiftSummary && selectedLift && (
         <LiftSummary onClose={() => setOpenLiftSummary(false)} lift={selectedLift} />
+      )}
+
+      {openStationSummary && selectedStation && (
+        <StationSummary onClose={() => setOpenStationSummary(false)} station={selectedStation} />
       )}
     </Suspense>
   ) : null;

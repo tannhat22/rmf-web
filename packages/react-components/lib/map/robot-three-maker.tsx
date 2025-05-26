@@ -131,7 +131,7 @@ export const RobotThreeMaker = ({
           {robot.name}
         </Text>
       ) : robotLabel ? (
-        <TextThreeRendering position={[0, 0, 1]} text={robot.name} />
+        <TextThreeRendering position={[position.x, position.y + 1, 1]} text={robot.name} />
       ) : null}
       {imageUrl ? (
         <RobotImageMaker

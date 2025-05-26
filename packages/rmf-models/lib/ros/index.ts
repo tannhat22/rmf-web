@@ -7,3 +7,4 @@ export * as rmf_door_msgs from './rmf_door_msgs';
 export * as rmf_dispenser_msgs from './rmf_dispenser_msgs';
 export * as rmf_charger_msgs from './rmf_charger_msgs';
 export * as rmf_lift_msgs from './rmf_lift_msgs';
+export * as machine_fleet_msgs from './machine_fleet_msgs';

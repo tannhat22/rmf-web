@@ -11,6 +11,7 @@ import {
   DoorState,
   FleetState,
   IngestorState,
+  StationState,
   LiftState,
   TaskEventLog,
   TaskStateOutput,
@@ -79,6 +80,10 @@ export class SioClient {
 
   subscribeLiftState(liftName: string, listener: Listener<LiftState>): Subscription {
     return this.subscribe<LiftState>(`/lifts/${liftName}/state`, listener);
+  }
+
+  subscribeStationState(stationName: string, listener: Listener<StationState>): Subscription {
+    return this.subscribe<StationState>(`/stations/${stationName}/state`, listener);
   }
 
   subscribeDispenserState(guid: string, listener: Listener<DispenserState>): Subscription {

@@ -23,38 +23,25 @@ interface TaskPlace {
 }
 
 interface TaskActivity {
-  category: string;
-  description: TaskPlace;
-}
-
-interface DeliveryMultiplePhase {
   activity: {
     category: string;
-    description: {
-      activities: [
-        go_to_pickup_first: TaskActivity,
-        go_to_dropoff_first: TaskActivity,
-        go_to_pickup_second: TaskActivity,
-        go_to_dropoff_second: TaskActivity,
-      ];
-    };
+    description: TaskPlace;
   };
 }
 
 export interface DeliveryMultipleTaskDescription {
   category: string;
-  phases: [delivery_multiple_phase: DeliveryMultiplePhase];
+  phases: TaskActivity[];
 }
 
 export function makeDeliveryMultipleTaskBookingLabel(
   task_description: DeliveryMultipleTaskDescription,
 ): TaskBookingLabels {
-  const pickupDescription =
-    task_description.phases[0].activity.description.activities[0].description;
+  const pickupDescription = task_description.phases[0].activity.description;
   return {
     task_definition_id: DeliveryMultipleTaskDefinition.taskDefinitionId,
     pickup: pickupDescription.place,
-    destination: task_description.phases[0].activity.description.activities[3].description.place,
+    destination: task_description.phases[3].activity.description.place,
     cart_id: pickupDescription.payload.sku,
   };
 }
@@ -69,8 +56,8 @@ function isTaskPlaceValid(place: TaskPlace): boolean {
 }
 
 function isDeliveryTaskDescriptionValid(taskDescription: DeliveryMultipleTaskDescription): boolean {
-  return taskDescription.phases[0].activity.description.activities.every((activity) =>
-    isTaskPlaceValid(activity.description),
+  return taskDescription.phases.every((activity) =>
+    isTaskPlaceValid(activity.activity.description),
   );
 }
 
@@ -80,10 +67,8 @@ export function deliveryInsertPlace(
   pickupPlace: string,
   pickupHandler: string,
 ): DeliveryMultipleTaskDescription {
-  taskDescription.phases[0].activity.description.activities[numberOrder].description.place =
-    pickupPlace;
-  taskDescription.phases[0].activity.description.activities[numberOrder].description.handler =
-    pickupHandler;
+  taskDescription.phases[numberOrder].activity.description.place = pickupPlace;
+  taskDescription.phases[numberOrder].activity.description.handler = pickupHandler;
   return taskDescription;
 }
 
@@ -92,8 +77,7 @@ export function deliveryInsertSku(
   numberOrder: number,
   sku: string,
 ): DeliveryMultipleTaskDescription {
-  taskDescription.phases[0].activity.description.activities[numberOrder].description.payload.sku =
-    sku;
+  taskDescription.phases[numberOrder].activity.description.payload.sku = sku;
   return taskDescription;
 }
 
@@ -102,9 +86,7 @@ export function deliveryInsertQuantity(
   numberOrder: number,
   quantity: number,
 ): DeliveryMultipleTaskDescription {
-  taskDescription.phases[0].activity.description.activities[
-    numberOrder
-  ].description.payload.quantity = quantity;
+  taskDescription.phases[numberOrder].activity.description.payload.quantity = quantity;
   return taskDescription;
 }
 
@@ -114,54 +96,53 @@ export function makeDefaultDeliveryMultipleTaskDescription(): DeliveryMultipleTa
     phases: [
       {
         activity: {
-          category: 'sequence',
+          category: 'pickup',
           description: {
-            activities: [
-              {
-                category: 'pickup',
-                description: {
-                  place: '',
-                  handler: '',
-                  payload: {
-                    sku: '',
-                    quantity: 1,
-                  },
-                },
-              },
-              {
-                category: 'dropoff',
-                description: {
-                  place: '',
-                  handler: '',
-                  payload: {
-                    sku: '',
-                    quantity: 1,
-                  },
-                },
-              },
-              {
-                category: 'pickup',
-                description: {
-                  place: '',
-                  handler: '',
-                  payload: {
-                    sku: '',
-                    quantity: 1,
-                  },
-                },
-              },
-              {
-                category: 'dropoff',
-                description: {
-                  place: '',
-                  handler: '',
-                  payload: {
-                    sku: '',
-                    quantity: 1,
-                  },
-                },
-              },
-            ],
+            place: '',
+            handler: '',
+            payload: {
+              sku: '',
+              quantity: 1,
+            },
+          },
+        },
+      },
+      {
+        activity: {
+          category: 'dropoff',
+          description: {
+            place: '',
+            handler: '',
+            payload: {
+              sku: '',
+              quantity: 1,
+            },
+          },
+        },
+      },
+      {
+        activity: {
+          category: 'pickup',
+          description: {
+            place: '',
+            handler: '',
+            payload: {
+              sku: '',
+              quantity: 1,
+            },
+          },
+        },
+      },
+      {
+        activity: {
+          category: 'dropoff',
+          description: {
+            place: '',
+            handler: '',
+            payload: {
+              sku: '',
+              quantity: 1,
+            },
           },
         },
       },
@@ -173,16 +154,16 @@ export function makeDeliveryMultipleTaskShortDescription(
   desc: DeliveryMultipleTaskDescription,
   displayName?: string,
 ): string {
-  const goToPickupFirst: TaskActivity = desc.phases[0].activity.description.activities[0];
-  const goToDropoffFirst: TaskActivity = desc.phases[0].activity.description.activities[1];
-  const goToPickupSecond: TaskActivity = desc.phases[0].activity.description.activities[2];
-  const goToDropoffSecond: TaskActivity = desc.phases[0].activity.description.activities[3];
+  const goToPickupFirst: TaskActivity = desc.phases[0];
+  const goToDropoffFirst: TaskActivity = desc.phases[1];
+  const goToPickupSecond: TaskActivity = desc.phases[2];
+  const goToDropoffSecond: TaskActivity = desc.phases[3];
 
   return `[${displayName ?? DeliveryMultipleTaskDefinition.taskDisplayName}] Pickup1 
-  [${goToPickupFirst.description.payload.sku}] from [${goToPickupFirst.description.place}], 
-  dropoff1 [${goToDropoffFirst.description.payload.sku}] at [${goToDropoffFirst.description.place}] then 
-  Pickup2 [${goToPickupSecond.description.payload.sku}] from [${goToPickupSecond.description.place}], 
-  dropoff2 [${goToDropoffSecond.description.payload.sku}] at [${goToDropoffSecond.description.place}]`;
+  [${goToPickupFirst.activity.description.payload.sku}] from [${goToPickupFirst.activity.description.place}], 
+  dropoff1 [${goToDropoffFirst.activity.description.payload.sku}] at [${goToDropoffFirst.activity.description.place}] then 
+  Pickup2 [${goToPickupSecond.activity.description.payload.sku}] from [${goToPickupSecond.activity.description.place}], 
+  dropoff2 [${goToDropoffSecond.activity.description.payload.sku}] at [${goToDropoffSecond.activity.description.place}]`;
 }
 
 export interface DeliveryMultipleTaskFormProps {
@@ -221,7 +202,7 @@ export function DeliveryMultipleTaskForm({
           freeSolo
           fullWidth
           options={Object.keys(pickupFirstPoints)}
-          value={taskDesc.phases[0].activity.description.activities[0].description.place}
+          value={taskDesc.phases[0].activity.description.place}
           onChange={(_ev, newValue) => {
             const place = newValue ?? '';
             const handler =
@@ -253,7 +234,7 @@ export function DeliveryMultipleTaskForm({
           id="pickupFirst_sku"
           fullWidth
           label={`${translate ? translate('Pickup SKU') : 'Pickup SKU'} 1`}
-          value={taskDesc.phases[0].activity.description.activities[0].description.payload.sku}
+          value={taskDesc.phases[0].activity.description.payload.sku}
           required
           onChange={(ev) => {
             const sku = ev.target.value;
@@ -267,7 +248,7 @@ export function DeliveryMultipleTaskForm({
         <PositiveIntField
           id="pickupFirst_quantity"
           label={`${translate ? translate('Quantity') : 'Quantity'} 1`}
-          value={taskDesc.phases[0].activity.description.activities[0].description.payload.quantity}
+          value={taskDesc.phases[0].activity.description.payload.quantity}
           onChange={(_ev, val) => {
             const quantity = val;
             let newTaskDesc = { ...taskDesc };
@@ -282,7 +263,7 @@ export function DeliveryMultipleTaskForm({
           freeSolo
           fullWidth
           options={Object.keys(dropoffFirstPoints)}
-          value={taskDesc.phases[0].activity.description.activities[1].description.place}
+          value={taskDesc.phases[1].activity.description.place}
           onChange={(_ev, newValue) => {
             const place = newValue ?? '';
             const handler =
@@ -314,7 +295,7 @@ export function DeliveryMultipleTaskForm({
           id="dropoffFirst_sku"
           fullWidth
           label={`${translate ? translate('Dropoff SKU') : 'Dropoff SKU'} 1`}
-          value={taskDesc.phases[0].activity.description.activities[1].description.payload.sku}
+          value={taskDesc.phases[1].activity.description.payload.sku}
           required
           onChange={(ev) => {
             const sku = ev.target.value;
@@ -328,7 +309,7 @@ export function DeliveryMultipleTaskForm({
         <PositiveIntField
           id="dropoffFirst_quantity"
           label={`${translate ? translate('Quantity') : 'Quantity'} 1`}
-          value={taskDesc.phases[0].activity.description.activities[1].description.payload.quantity}
+          value={taskDesc.phases[1].activity.description.payload.quantity}
           onChange={(_ev, val) => {
             const quantity = val;
             let newTaskDesc = { ...taskDesc };
@@ -344,7 +325,7 @@ export function DeliveryMultipleTaskForm({
           freeSolo
           fullWidth
           options={Object.keys(pickupSecondPoints)}
-          value={taskDesc.phases[0].activity.description.activities[2].description.place}
+          value={taskDesc.phases[2].activity.description.place}
           onChange={(_ev, newValue) => {
             const place = newValue ?? '';
             const handler =
@@ -376,7 +357,7 @@ export function DeliveryMultipleTaskForm({
           id="pickupSecond_sku"
           fullWidth
           label={`${translate ? translate('Pickup SKU') : 'Pickup SKU'} 2`}
-          value={taskDesc.phases[0].activity.description.activities[2].description.payload.sku}
+          value={taskDesc.phases[2].activity.description.payload.sku}
           required
           onChange={(ev) => {
             const sku = ev.target.value;
@@ -390,7 +371,7 @@ export function DeliveryMultipleTaskForm({
         <PositiveIntField
           id="pickupSecond_quantity"
           label={`${translate ? translate('Quantity') : 'Quantity'} 2`}
-          value={taskDesc.phases[0].activity.description.activities[2].description.payload.quantity}
+          value={taskDesc.phases[2].activity.description.payload.quantity}
           onChange={(_ev, val) => {
             const quantity = val;
             let newTaskDesc = { ...taskDesc };
@@ -405,7 +386,7 @@ export function DeliveryMultipleTaskForm({
           freeSolo
           fullWidth
           options={Object.keys(dropoffSecondPoints)}
-          value={taskDesc.phases[0].activity.description.activities[3].description.place}
+          value={taskDesc.phases[3].activity.description.place}
           onChange={(_ev, newValue) => {
             const place = newValue ?? '';
             const handler =
@@ -439,7 +420,7 @@ export function DeliveryMultipleTaskForm({
           id="dropoffSecond_sku"
           fullWidth
           label={`${translate ? translate('Dropoff SKU') : 'Dropoff SKU'} 2`}
-          value={taskDesc.phases[0].activity.description.activities[3].description.payload.sku}
+          value={taskDesc.phases[3].activity.description.payload.sku}
           required
           onChange={(ev) => {
             const sku = ev.target.value;
@@ -453,7 +434,7 @@ export function DeliveryMultipleTaskForm({
         <PositiveIntField
           id="dropoffSecond_quantity"
           label={`${translate ? translate('Quantity') : 'Quantity'} 2`}
-          value={taskDesc.phases[0].activity.description.activities[3].description.payload.quantity}
+          value={taskDesc.phases[3].activity.description.payload.quantity}
           onChange={(_ev, val) => {
             const quantity = val;
             let newTaskDesc = { ...taskDesc };

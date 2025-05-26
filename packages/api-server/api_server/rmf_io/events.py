@@ -10,6 +10,7 @@ class RmfEvents:
         self.lift_states = Subject[mdl.LiftState]()
         self.dispenser_states = Subject[mdl.DispenserState]()
         self.ingestor_states = Subject[mdl.IngestorState]()
+        self.station_states = Subject[mdl.StationState]()
         self.fleet_states = Subject[mdl.FleetState]()
         self.building_map = BehaviorSubject[mdl.BuildingMap | None](None)
         self.beacons = Subject[mdl.BeaconState]()

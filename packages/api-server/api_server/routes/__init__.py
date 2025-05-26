@@ -11,4 +11,5 @@ from .internal import router as internal_router
 from .lifts import router as lifts_router
 from .main import router as main_router
 from .rios import router as rios_router
+from .stations import router as stations_router
 from .tasks import *

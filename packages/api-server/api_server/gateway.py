@@ -12,6 +12,9 @@ import rclpy.client
 import rclpy.node
 import rclpy.qos
 from fastapi import HTTPException
+from machine_fleet_msgs.msg import FleetStationState
+from machine_fleet_msgs.msg import StationRequest as RmfStationRequest
+from machine_fleet_msgs.msg import StationState as RmfStationState
 from rclpy.subscription import Subscription
 from rmf_building_map_msgs.msg import AffineImage as RmfAffineImage
 from rmf_building_map_msgs.msg import BuildingMap as RmfBuildingMap
@@ -62,6 +65,7 @@ from .models import (
     FireAlarmTriggerState,
     IngestorState,
     LiftState,
+    StationState,
 )
 from .repositories import CachedFilesRepository
 
@@ -101,6 +105,9 @@ class RmfGateway:
 
         self._adapter_lift_req = self._ros_node.create_publisher(
             RmfLiftRequest, "adapter_lift_requests", transient_qos
+        )
+        self._station_req = self._ros_node.create_publisher(
+            RmfStationRequest, "station_requests", transient_qos
         )
         self._submit_task_srv = self._ros_node.create_client(
             RmfSubmitTask, "submit_task"
@@ -258,6 +265,25 @@ class RmfGateway:
             10,
         )
         self._subscriptions.append(ingestor_states_sub)
+
+        def handle_station_state(msg: FleetStationState):
+            async def save(station_state: StationState):
+                await self._rmf_repo.save_station_state(station_state)
+                self._rmf_events.station_states.on_next(station_state)
+                logging.debug("%s", station_state)
+
+            stations = msg.pickup_stations + msg.dropoff_stations
+            for station in stations:
+                dic = message_to_ordereddict(station)
+                self._loop.create_task(save(StationState(**dic)))
+
+        station_states_sub = self._ros_node.create_subscription(
+            FleetStationState,
+            "station_states",
+            handle_station_state,
+            10,
+        )
+        self._subscriptions.append(station_states_sub)
 
         def handle_building_map(msg):
             async def save(building_map: BuildingMap):
@@ -510,6 +536,21 @@ class RmfGateway:
         for session_id in additional_session_ids:
             msg.session_id = session_id
             self._adapter_lift_req.publish(msg)
+
+    def request_station(
+        self,
+        station_name: str,
+        station_type: int,
+        station_mode: int,
+    ):
+        msg = RmfStationRequest(
+            time=self._ros_node.get_clock().now().to_msg(),
+            machine_name="",
+            station_name=station_name,
+            station_type=station_type,
+            mode=station_mode,
+        )
+        self._station_req.publish(msg)
 
     def respond_to_delivery_alert(
         self,

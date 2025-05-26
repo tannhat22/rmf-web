@@ -22,6 +22,8 @@ import {
   Ingestor,
   IngestorsApi,
   IngestorState,
+  StationsApi,
+  StationState,
   Lift,
   LiftsApi,
   LiftState,
@@ -45,6 +47,7 @@ export interface RmfApi {
   liftsApi: LiftsApi;
   dispensersApi: DispensersApi;
   ingestorsApi: IngestorsApi;
+  stationsApi: StationsApi;
   fleetsApi: FleetsApi;
   tasksApi: TasksApi;
   alertsApi: AlertsApi;
@@ -63,6 +66,8 @@ export interface RmfApi {
   getDispenserStateObs(guid: string): Observable<DispenserState>;
   ingestorsObs: Observable<Ingestor[]>;
   getIngestorStateObs(guid: string): Observable<IngestorState>;
+  // stationsObs: Observable<Station[]>;
+  getStationStateObs(name: string): Observable<StationState>;
   fleetsObs: Observable<FleetState[]>;
   getFleetStateObs(name: string): Observable<FleetState>;
   getTaskStateObs(taskId: string): Observable<TaskState>;
@@ -81,6 +86,7 @@ export class DefaultRmfApi implements RmfApi {
   liftsApi: LiftsApi;
   dispensersApi: DispensersApi;
   ingestorsApi: IngestorsApi;
+  stationsApi: StationsApi;
   fleetsApi: FleetsApi;
   tasksApi: TasksApi;
   alertsApi: AlertsApi;
@@ -131,6 +137,7 @@ export class DefaultRmfApi implements RmfApi {
     this.liftsApi = new LiftsApi(apiConfig, undefined, axiosInst);
     this.dispensersApi = new DispensersApi(apiConfig, undefined, axiosInst);
     this.ingestorsApi = new IngestorsApi(apiConfig, undefined, axiosInst);
+    this.stationsApi = new StationsApi(apiConfig, undefined, axiosInst);
     this.fleetsApi = new FleetsApi(apiConfig, undefined, axiosInst);
     this.tasksApi = new TasksApi(apiConfig, undefined, axiosInst);
     this.alertsApi = new AlertsApi(apiConfig, undefined, axiosInst);
@@ -293,6 +300,17 @@ export class DefaultRmfApi implements RmfApi {
       );
     }
     return this._ingestorStateObsStore[guid];
+  }
+
+  // stationsObs: Observable<Station[]>;
+  private _stationStateObsStore: Record<string, Observable<StationState>> = {};
+  getStationStateObs(name: string): Observable<StationState> {
+    if (!this._stationStateObsStore[name]) {
+      this._stationStateObsStore[name] = this._convertSioToRxObs((sioClient, handler) =>
+        sioClient.subscribeStationState(name, handler)
+      );
+    }
+    return this._stationStateObsStore[name];
   }
 
   // NOTE: This only emits once and doesn't update when the fleet changes.

@@ -25,6 +25,7 @@ const MapPage = Loadable(lazy(() => import('pages/map/map')));
 const RobotsPage = Loadable(lazy(() => import('pages/devices/robots-page')));
 const DoorsPage = Loadable(lazy(() => import('pages/devices/doors-page')));
 const LiftsPage = Loadable(lazy(() => import('pages/devices/lifts-page')));
+const StationsPage = Loadable(lazy(() => import('pages/devices/stations-page')));
 const TasksPage = Loadable(lazy(() => import('pages/tasks/tasks')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -69,6 +70,10 @@ const MainRoutes = {
         {
           path: PATH_DEVICE.lifts,
           element: <LiftsPage />,
+        },
+        {
+          path: PATH_DEVICE.stations,
+          element: <StationsPage />,
         },
         {
           path: PATH_DASHBOARD.tasks,

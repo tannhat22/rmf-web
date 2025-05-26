@@ -13,6 +13,7 @@ const vn = {
   Tasks: 'Nhiệm vụ',
   Doors: 'Cửa',
   Lifts: 'Thang máy',
+  Stations: 'Trạm hàng',
   Home: 'Trang chủ',
   Notification: 'Thông báo',
   Logout: 'Đăng xuất',

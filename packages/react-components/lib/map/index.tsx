@@ -4,6 +4,7 @@ export * from './door-three-maker';
 export * from './image-maker';
 export * from './lift-three-maker';
 export * from './robot-three-maker';
+export * from './station-three-maker';
 export * from './shape-three-rendering';
 export * from './text-maker';
 export * from './utils';

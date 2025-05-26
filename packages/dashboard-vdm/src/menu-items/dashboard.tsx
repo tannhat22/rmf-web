@@ -13,6 +13,7 @@ import {
   AssignmentTurnedInOutlined,
   DoorSlidingOutlined,
   ElevatorOutlined,
+  ShoppingCartOutlined,
 } from '@mui/icons-material';
 
 // type
@@ -33,6 +34,7 @@ const icons = {
   AssignmentTurnedInOutlined,
   DoorSlidingOutlined,
   ElevatorOutlined,
+  ShoppingCartOutlined,
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -86,6 +88,14 @@ const dashboard: NavItemType = {
           type: 'item',
           url: PATH_DEVICE.lifts,
           icon: icons.ElevatorOutlined,
+          breadcrumbs: true,
+        },
+        {
+          id: 'stations',
+          title: 'Stations',
+          type: 'item',
+          url: PATH_DEVICE.stations,
+          icon: icons.ShoppingCartOutlined,
           breadcrumbs: true,
         },
       ],

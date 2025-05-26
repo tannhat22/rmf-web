@@ -31,6 +31,7 @@ export const PATH_DEVICE = {
   robots: path(PATH_DASHBOARD.devices, 'robots'),
   doors: path(PATH_DASHBOARD.devices, 'doors'),
   lifts: path(PATH_DASHBOARD.devices, 'lifts'),
+  stations: path(PATH_DASHBOARD.devices, 'stations'),
 };
 
 export const PATH_MAINTENANCE = {

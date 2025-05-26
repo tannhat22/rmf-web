@@ -16,6 +16,7 @@ from api_server.models import (
     Lift,
     LiftState,
     Pagination,
+    StationState,
     User,
 )
 from api_server.models import tortoise_models as ttm
@@ -112,6 +113,17 @@ class RmfRepository:
         if ingestor_state is None:
             return None
         return IngestorState.model_validate(ingestor_state.data)
+
+    async def get_station_state(self, station_name: str) -> StationState | None:
+        station_state = await ttm.StationState.get_or_none(id_=station_name)
+        if station_state is None:
+            return None
+        return StationState.model_validate(station_state.data)
+
+    async def save_station_state(self, station_state: StationState) -> None:
+        await ttm.StationState.update_or_create(
+            {"data": station_state.model_dump()}, id_=station_state.station_name
+        )
 
     async def save_beacon_state(self, beacon_state: BeaconState) -> None:
         d = beacon_state.model_dump()

@@ -3,6 +3,7 @@ class RmfTopics:
     lift_states = "lift_states"
     dispenser_states = "dispenser_states"
     ingestor_states = "ingestor_states"
+    station_states = "station_states"
     fleet_states = "fleet_states"
     task_summaries = "task_summaries"
     building_map = "building_map"
