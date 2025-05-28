@@ -13,7 +13,7 @@ import React from 'react';
 import { StationState as RmfStationState } from 'rmf-models/ros/machine_fleet_msgs/msg';
 
 import { StationControls } from './station-controls';
-import { stationModeToString } from './station-utils';
+import { stationTypeToString, stationModeToString } from './station-utils';
 
 export interface StationTableData {
   index: number;
@@ -108,6 +108,14 @@ export function StationDataGridTable({
       filterable: true,
     },
     {
+      field: 'type',
+      headerName: 'Type',
+      width: 90,
+      valueGetter: (params: GridValueGetterParams) => stationTypeToString(params.row.stationType),
+      flex: 1,
+      filterable: true,
+    },
+    {
       field: 'levelName',
       headerName: 'Current Floor',
       width: 150,
@@ -123,6 +131,7 @@ export function StationDataGridTable({
       width: 150,
       editable: false,
       flex: 1,
+      valueGetter: (params: GridValueGetterParams) => params.row.stationState.mode,
       renderCell: StationState,
       filterable: true,
     },
@@ -157,7 +166,7 @@ export function StationDataGridTable({
       onRowClick={handleEvent}
       initialState={{
         sorting: {
-          sortModel: [{ field: 'name', sort: 'asc' }],
+          sortModel: [{ field: 'type', sort: 'asc' }],
         },
       }}
       disableVirtualization={true}

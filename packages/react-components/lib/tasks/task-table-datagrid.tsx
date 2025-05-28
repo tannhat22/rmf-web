@@ -211,7 +211,7 @@ export function TaskDataGridTable({
 
         return TaskRequester(cellValues.row.state.booking.requester, scheduled, prioritized);
       },
-      flex: 1,
+      flex: 1.2,
       filterOperators: getMinimalStringFilterOperators,
       filterable: true,
     },
