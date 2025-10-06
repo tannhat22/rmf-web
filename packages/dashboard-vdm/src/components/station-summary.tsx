@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
@@ -14,6 +15,7 @@ import {
   stationTypeToString,
   stationModeToString,
   StationTableData,
+  StationControls,
 } from 'react-components';
 
 import { StationRequest as RmfStationRequest } from 'rmf-models/ros/machine_fleet_msgs/msg';
@@ -141,6 +143,21 @@ export const StationSummary = ({ onClose, station }: StationSummaryProps): JSX.E
           );
         })}
       </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        <StationControls
+          stationType={stationData.stationType}
+          currentMode={stationData.currentMode}
+          onRequestSubmit={async (_ev, stationType, stationMode) => {
+            return rmfApi?.stationsApi.postStationRequestStationsStationNameRequestPost(
+              station.vertex.name,
+              {
+                station_type: stationType,
+                station_mode: stationMode,
+              }
+            );
+          }}
+        />
+      </DialogActions>
     </Dialog>
   );
 };
