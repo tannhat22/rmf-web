@@ -47,14 +47,15 @@ export const Stations = React.memo(({ station, onStationClick }: StationsProps):
 
   return (
     <>
-      {station && stationState && (
+      {station && (
         <StationThreeMaker
           position={[station.vertex.x, station.vertex.y, 0]}
           color={color}
           text={station.vertex.name}
           circleShape={false}
-          onStationClick={(ev: ThreeEvent<MouseEvent>) =>
-            onStationClick && onStationClick(ev, station)
+          onStationClick={
+            stationState &&
+            ((ev: ThreeEvent<MouseEvent>) => onStationClick && onStationClick(ev, station))
           }
         />
       )}

@@ -533,9 +533,9 @@ class RmfGateway:
         )
         self._adapter_lift_req.publish(msg)
 
-        for session_id in additional_session_ids:
-            msg.session_id = session_id
-            self._adapter_lift_req.publish(msg)
+        # for session_id in additional_session_ids:
+        #     msg.session_id = session_id
+        #     self._adapter_lift_req.publish(msg)
 
     def request_station(
         self,
