@@ -230,8 +230,14 @@ export class DefaultRmfApi implements RmfApi {
     });
   }
 
+  /**
+   * @param refCount when false the source subscription is kept alive forever so
+   * the last value is always ready for the next subscriber. Only safe for stores
+   * keyed by something finite, like a device name.
+   */
   private _convertSioToRxObs<T>(
-    sioSubscribe: (sioClient: SioClient, handler: (data: T) => void) => SioSubscription
+    sioSubscribe: (sioClient: SioClient, handler: (data: T) => void) => SioSubscription,
+    refCount = false
   ): Observable<T> {
     return this._sioClient.pipe(
       switchMap((sioClient) => {
@@ -251,7 +257,7 @@ export class DefaultRmfApi implements RmfApi {
           };
         });
       }),
-      shareReplay(1)
+      shareReplay({ bufferSize: 1, refCount })
     );
   }
 
@@ -325,12 +331,29 @@ export class DefaultRmfApi implements RmfApi {
     return this._fleetStateObsStore[name];
   }
 
+  // Unlike the stores above this one is keyed by task id, which is unbounded
+  // over time, so it cannot hold on to its entries. Each one is reference
+  // counted: the socket.io subscription is dropped and the entry is evicted
+  // once nothing is listening to that task anymore.
   private _taskStateObsStore: Record<string, Observable<TaskState>> = {};
   getTaskStateObs(taskId: string): Observable<TaskState> {
     if (!this._taskStateObsStore[taskId]) {
-      this._taskStateObsStore[taskId] = this._convertSioToRxObs((sioClient, handler) =>
-        sioClient.subscribeTaskState(taskId, handler)
+      const shared = this._convertSioToRxObs<TaskState>(
+        (sioClient, handler) => sioClient.subscribeTaskState(taskId, handler),
+        true
       );
+      let subscriberCount = 0;
+      this._taskStateObsStore[taskId] = new Observable<TaskState>((subscriber) => {
+        subscriberCount += 1;
+        const sub = shared.subscribe(subscriber);
+        return () => {
+          sub.unsubscribe();
+          subscriberCount -= 1;
+          if (subscriberCount === 0) {
+            delete this._taskStateObsStore[taskId];
+          }
+        };
+      });
     }
     return this._taskStateObsStore[taskId];
   }

@@ -1,11 +1,11 @@
 import { Box, styled, Typography, useMediaQuery } from '@mui/material';
-import { Line } from '@react-three/drei';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { BuildingMap, FleetState, Level, Lift } from 'api-client';
 import Debug from 'debug';
 import React, { ChangeEvent, Suspense } from 'react';
 import {
   ColorManager,
+  DisposableLine,
   findSceneBoundingBoxFromThreeFiber,
   getPlaces,
   Place,
@@ -351,16 +351,28 @@ export const Map = styled((props: MapProps) => {
           ];
 
           setCurrentLevelOfRobots((prevState) => {
-            if (!robotState.location?.map && prevState.robotName) {
+            const levelName = robotState.location?.map;
+
+            if (!levelName) {
+              if (!(robotName in prevState)) {
+                return prevState;
+              }
               console.warn(`Map: Fail to update robot level for ${robotId} (missing map)`);
               const updatedState = { ...prevState };
               delete updatedState[robotName];
               return updatedState;
             }
 
+            // robots stay on the same level almost every update, returning the
+            // same object keeps the whole three.js tree from re-rendering 2x a
+            // second for nothing.
+            if (prevState[robotName] === levelName) {
+              return prevState;
+            }
+
             return {
               ...prevState,
-              [robotName]: robotState.location?.map || '',
+              [robotName]: levelName,
             };
           });
         });
@@ -696,7 +708,7 @@ export const Map = styled((props: MapProps) => {
           })}
         {!disabledLayers['Trajectories'] &&
           trajectories.map((trajData) => (
-            <Line
+            <DisposableLine
               key={trajData.trajectory.id}
               points={trajData.trajectory.segments.map((seg) => new Vector3(seg.x[0], seg.x[1], 4))}
               color={trajData.color}

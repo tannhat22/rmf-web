@@ -1,5 +1,6 @@
 export * from './circle-shape';
 export * from './cube-maker';
+export * from './disposable-line';
 export * from './door-three-maker';
 export * from './image-maker';
 export * from './lift-three-maker';

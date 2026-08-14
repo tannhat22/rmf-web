@@ -1,7 +1,8 @@
-import { Circle, Line } from '@react-three/drei';
+import { Circle } from '@react-three/drei';
 import { MeshProps, ThreeEvent } from '@react-three/fiber';
 import { Euler, Vector3 } from 'three';
 
+import { DisposableLine } from './disposable-line';
 import { RobotData } from './robot-three-maker';
 
 interface CircleShapeProps extends MeshProps {
@@ -21,7 +22,7 @@ export const CircleShape = ({
   onPointerOver,
   onPointerOut,
 }: CircleShapeProps): JSX.Element => {
-  const SCALED_RADIUS = 0.7;
+  const SCALED_RADIUS = 0.6;
 
   const rotatedX = position.x + SCALED_RADIUS * Math.cos(rotation.z);
   const rotatedY = position.y + SCALED_RADIUS * Math.sin(rotation.z);
@@ -38,7 +39,7 @@ export const CircleShape = ({
       >
         <meshBasicMaterial color={robot.color} />
       </Circle>
-      <Line
+      <DisposableLine
         points={[position.x, position.y, position.z, rotatedX, rotatedY, position.z]}
         color="black"
         linewidth={2}

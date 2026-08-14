@@ -1,8 +1,13 @@
-import { Line, Text } from '@react-three/drei';
+import { Text } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import { LiftState } from 'api-client';
+import React from 'react';
 import { LiftState as RmfLiftState } from 'rmf-models/ros/rmf_lift_msgs/msg';
 import { BufferAttribute, BufferGeometry, Euler, Vector3 } from 'three';
+
+import { DisposableLine } from './disposable-line';
+
+const TRIANGLE_VERTICES = new Float32Array([0, 1, 0, -0.5, -0.5, 0, 0.5, -0.5, 0]);
 
 // Gets the text to insert to the lift, the text depend on the current mode,
 // motion state and the current and destination floor of the lift.
@@ -39,13 +44,19 @@ interface LiftShapeMakerProps {
 }
 
 const LiftShapeMaker = ({ motionState, fontPath }: LiftShapeMakerProps) => {
-  const vertices = new Float32Array([0, 1, 0, -0.5, -0.5, 0, 0.5, -0.5, 0]);
+  // a geometry handed to `<mesh>` through a prop is not owned by r3f, so it is
+  // neither reused across renders nor disposed on unmount unless we do it.
+  const triangleGeometry = React.useMemo(() => {
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new BufferAttribute(TRIANGLE_VERTICES, 3));
+    return geometry;
+  }, []);
+
+  React.useEffect(() => () => triangleGeometry.dispose(), [triangleGeometry]);
 
   const generateTriangleShape = (rotation: Euler) => {
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new BufferAttribute(vertices, 3));
     return (
-      <mesh geometry={geometry} rotation={rotation}>
+      <mesh geometry={triangleGeometry} rotation={rotation}>
         <meshBasicMaterial color="red" />
       </mesh>
     );
@@ -60,7 +71,7 @@ const LiftShapeMaker = ({ motionState, fontPath }: LiftShapeMakerProps) => {
       [-0.5, 0.5, 0],
     ].map((point) => new Vector3(...point));
 
-    return <Line points={points} color="black" linewidth={1} />;
+    return <DisposableLine points={points} color="black" linewidth={1} />;
   };
 
   const generateTextShape = (fontPath?: string) => {
