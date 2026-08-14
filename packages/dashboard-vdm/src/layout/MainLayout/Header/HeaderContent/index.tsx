@@ -9,7 +9,7 @@ import Search from './Search';
 // import Message from './Message';
 import Profile from './Profile';
 import Localization from './Localization';
-import Notification from './Notification';
+// import Notification from './Notification';
 import MobileSection from './MobileSection';
 import SwitchThemeMode from './SwitchThemeMode';
 import NewTask from './NewTask';
@@ -40,7 +40,7 @@ const HeaderContent = () => {
 
       <NewTask />
       {!downLG && localization}
-      <Notification />
+      {/* <Notification /> */}
       {/* <Message /> */}
       {!downLG && <SwitchThemeMode />}
       {!downLG && <Profile />}

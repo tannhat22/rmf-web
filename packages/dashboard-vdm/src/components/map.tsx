@@ -11,6 +11,7 @@ import {
   Place,
   ReactThreeFiberImageMaker,
   RobotData,
+  RobotStatusInfo,
   RobotTableData,
   ShapeThreeRendering,
   TextThreeRendering,
@@ -68,6 +69,7 @@ export const Map = styled((props: MapProps) => {
     'Doors labels': true,
     Robots: false,
     'Robots labels': false,
+    'Robot status': false,
     Trajectories: false,
   });
   const [openRobotSummary, setOpenRobotSummary] = React.useState(false);
@@ -303,6 +305,9 @@ export const Map = styled((props: MapProps) => {
   const { current: robotLocations } = React.useRef<
     Record<string, [number, number, number, string]>
   >({});
+  // kept apart from `robotsStore`, that one is built once per robot and cached
+  // so anything put in it would freeze at its first value.
+  const { current: robotStatuses } = React.useRef<Record<string, RobotStatusInfo>>({});
   // updates the robot location
   React.useEffect(() => {
     const sub = rmfApi.fleetsObs
@@ -327,6 +332,13 @@ export const Map = styled((props: MapProps) => {
         }
         Object.entries(fleetState.robots).forEach(([robotName, robotState]) => {
           const robotId = getRobotId(fleetName, robotName);
+          robotStatuses[robotId] = {
+            status: robotState.status ?? undefined,
+            battery: robotState.battery,
+            taskId: robotState.task_id,
+            issues: robotState.issues?.map((issue) => issue.category ?? 'unknown') ?? [],
+            decommissioned: robotState.commission?.dispatch_tasks === false,
+          };
           if (!robotState.location) {
             console.warn(`Map: Fail to update robot location for ${robotId} (missing location)`);
             return;
@@ -354,7 +366,7 @@ export const Map = styled((props: MapProps) => {
         });
       });
     return () => sub.unsubscribe();
-  }, [rmfApi, robotLocations]);
+  }, [rmfApi, robotLocations, robotStatuses]);
 
   //Accumulate values over time to persist between tabs
   React.useEffect(() => {
@@ -675,6 +687,8 @@ export const Map = styled((props: MapProps) => {
                     setSelectedRobot(robot);
                   }}
                   robotLabel={!disabledLayers['Robots labels']}
+                  statusInfo={robotStatuses[robotId]}
+                  showStatus={!disabledLayers['Robot status']}
                 />
               );
             }

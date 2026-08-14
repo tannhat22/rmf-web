@@ -2,11 +2,11 @@ import { TableContainer } from '@mui/material';
 import { BuildingMap, Lift } from 'api-client';
 import React from 'react';
 import { LiftDataGridTable, LiftTableData } from 'react-components';
-import { LiftRequest as RmfLiftRequest } from 'rmf-models/ros/rmf_lift_msgs/msg';
 import { throttleTime } from 'rxjs';
 
 import { useRmfApi } from '../hooks/use-rmf-api';
 import { getApiErrorMessage } from '../utils/api';
+import { submitLiftRequest } from '../utils/lifts';
 import { AppEvents } from './app-events';
 import { LiftSummary } from './lift-summary';
 
@@ -46,27 +46,8 @@ export const LiftsTable = () => {
                     sessionId: liftState.session_id,
                     lift: lift,
                     liftState: liftState,
-                    onRequestSubmit: async (_ev, doorState, requestType, destination) => {
-                      const fleet_session_ids: string[] = [];
-                      if (requestType === RmfLiftRequest.REQUEST_END_SESSION) {
-                        const fleets = (await rmfApi.fleetsApi.getFleetsFleetsGet()).data;
-                        for (const fleet of fleets) {
-                          if (!fleet.robots) {
-                            continue;
-                          }
-                          for (const robotName of Object.keys(fleet.robots)) {
-                            fleet_session_ids.push(`${fleet.name}/${robotName}`);
-                          }
-                        }
-                      }
-
-                      return rmfApi?.liftsApi.postLiftRequestLiftsLiftNameRequestPost(lift.name, {
-                        destination,
-                        door_mode: doorState,
-                        request_type: requestType,
-                        additional_session_ids: fleet_session_ids,
-                      });
-                    },
+                    onRequestSubmit: async (_ev, doorState, requestType, destination) =>
+                      submitLiftRequest(rmfApi, lift.name, doorState, requestType, destination),
                   },
                 ],
               };

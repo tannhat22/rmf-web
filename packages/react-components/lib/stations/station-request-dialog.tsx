@@ -1,7 +1,7 @@
 import { Autocomplete, styled } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import React from 'react';
-// import { StationRequest as RmfStationRequest } from 'rmf-models/ros/machine_fleet_msgs/msg';
+import { StationRequest as RmfStationRequest } from 'rmf-models/ros/machine_fleet_msgs/msg';
 
 import { ConfirmationDialog, ConfirmationDialogProps } from '../confirmation-dialog';
 import { requestStationModeToString } from './station-utils';
@@ -70,7 +70,13 @@ export const StationRequestDialog = ({
   onRequestSubmit,
   onClose,
 }: StationRequestDialogProps): JSX.Element => {
-  const [stationMode, setStationMode] = React.useState(currentMode);
+  // a request is only made to flip the station state, so default the select to
+  // the opposite of the current mode and save the user a click.
+  const [stationMode, setStationMode] = React.useState(
+    currentMode === RmfStationRequest.MODE_FILLED
+      ? RmfStationRequest.MODE_EMPTY
+      : RmfStationRequest.MODE_FILLED,
+  );
 
   // Error states
   const [stationModeError, setStationModeError] = React.useState('');

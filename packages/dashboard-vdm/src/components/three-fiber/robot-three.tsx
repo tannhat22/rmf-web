@@ -1,7 +1,7 @@
 import robotoFont from '@fontsource/roboto/files/roboto-latin-400-normal.woff';
 import { ThreeEvent } from '@react-three/fiber';
 import React from 'react';
-import { RobotData, RobotThreeMaker } from 'react-components';
+import { RobotData, RobotStatusInfo, RobotThreeMaker } from 'react-components';
 import { Euler, Vector3 } from 'three';
 
 interface RobotThreeProps {
@@ -9,9 +9,18 @@ interface RobotThreeProps {
   robotLocation: [number, number, number];
   onRobotClick?: (ev: ThreeEvent<MouseEvent>, robot: RobotData) => void;
   robotLabel: boolean;
+  statusInfo?: RobotStatusInfo;
+  showStatus: boolean;
 }
 
-export const RobotThree = ({ robot, robotLocation, onRobotClick, robotLabel }: RobotThreeProps) => {
+export const RobotThree = ({
+  robot,
+  robotLocation,
+  onRobotClick,
+  robotLabel,
+  statusInfo,
+  showStatus,
+}: RobotThreeProps) => {
   const STANDAR_Z_POSITION = 5;
   const CIRCLE_SEGMENT = 64;
 
@@ -31,6 +40,8 @@ export const RobotThree = ({ robot, robotLocation, onRobotClick, robotLabel }: R
         circleSegment={CIRCLE_SEGMENT}
         fontPath={robotoFont}
         robotLabel={robotLabel}
+        statusInfo={statusInfo}
+        showStatus={showStatus}
       />
     </React.Fragment>
   );

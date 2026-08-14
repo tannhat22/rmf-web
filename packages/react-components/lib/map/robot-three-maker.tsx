@@ -3,7 +3,9 @@ import { MeshProps, ThreeEvent, useLoader } from '@react-three/fiber';
 import React from 'react';
 import { Color, Euler, Texture, TextureLoader, Vector3 } from 'three';
 
+import { robotStatusToUpperCase } from '../robots/utils';
 import { CircleShape } from './circle-shape';
+import { RobotStatusInfo, robotStatusColor, RobotStatusRing } from './robot-status-three';
 import { debounce } from './shape-three-rendering';
 import { TextThreeRendering } from './text-maker';
 
@@ -27,6 +29,8 @@ interface RobotThreeMakerProps {
   circleSegment: number;
   fontPath?: string;
   robotLabel: boolean;
+  statusInfo?: RobotStatusInfo;
+  showStatus?: boolean;
 }
 
 interface RobotImageMakerProps extends MeshProps {
@@ -88,18 +92,38 @@ export const RobotThreeMaker = ({
   circleSegment,
   fontPath,
   robotLabel,
+  statusInfo,
+  showStatus = false,
 }: RobotThreeMakerProps): JSX.Element => {
   const [isHovered, setIsHovered] = React.useState(false);
 
-  const debouncedHandlePointerOver = debounce(() => {
-    setIsHovered(true);
-  }, 300);
+  // the debounced handlers have to survive re-renders, otherwise each render
+  // builds a fresh timer that the other handler can no longer cancel. Robots
+  // re-render on every state update, so without this the tooltip gets stuck.
+  const debouncedHandlePointerOver = React.useMemo(
+    () =>
+      debounce(() => {
+        setIsHovered(true);
+      }, 300),
+    [],
+  );
 
-  const debouncedHandlePointerOut = debounce(() => {
-    setIsHovered(false);
-  }, 300);
+  const debouncedHandlePointerOut = React.useMemo(
+    () =>
+      debounce(() => {
+        setIsHovered(false);
+      }, 300),
+    [],
+  );
 
   const scaleFactor = isHovered ? 2 : 1.0;
+
+  const statusColor = robotStatusColor(statusInfo);
+  const statusLabel = statusInfo?.decommissioned
+    ? 'DECOMMISSIONED'
+    : statusInfo?.status
+      ? robotStatusToUpperCase(statusInfo.status)
+      : 'UNKNOWN';
 
   return (
     <>
@@ -108,19 +132,34 @@ export const RobotThreeMaker = ({
           <Html zIndexRange={[1]}>
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                padding: '0.2rem 0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                padding: '0.3rem 0.5rem',
                 borderRadius: '4px',
+                borderLeft: `3px solid ${statusColor}`,
                 fontSize: '0.6rem',
+                whiteSpace: 'nowrap',
                 transform: `scale(${scaleFactor})`,
                 transition: 'transform 0.3s',
               }}
             >
-              {robot.name}
+              <div style={{ fontWeight: 'bold' }}>{robot.name}</div>
+              {statusInfo && (
+                <>
+                  <div style={{ color: statusColor, fontWeight: 'bold' }}>{statusLabel}</div>
+                  {statusInfo.battery != null && (
+                    <div>{`Battery: ${(statusInfo.battery * 100).toFixed(0)}%`}</div>
+                  )}
+                  {statusInfo.taskId && <div>{`Task: ${statusInfo.taskId}`}</div>}
+                  {statusInfo.issues && statusInfo.issues.length > 0 && (
+                    <div>{`Issues: ${statusInfo.issues.join(', ')}`}</div>
+                  )}
+                </>
+              )}
             </div>
           </Html>
         </mesh>
       )}
+      {showStatus && <RobotStatusRing position={position} statusInfo={statusInfo} radius={0.65} />}
       {robotLabel && fontPath && fontPath.length > 0 ? (
         <Text
           color="black"

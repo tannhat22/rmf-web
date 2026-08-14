@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
@@ -9,10 +10,17 @@ import {
 } from '@mui/material';
 import { Lift } from 'api-client';
 import React from 'react';
-import { base, doorStateToString, liftModeToString, LiftTableData } from 'react-components';
+import {
+  base,
+  doorStateToString,
+  liftModeToString,
+  LiftControls,
+  LiftTableData,
+} from 'react-components';
 
 import { useRmfApi } from '../hooks/use-rmf-api';
 import { getApiErrorMessage } from '../utils/api';
+import { submitLiftRequest } from '../utils/lifts';
 
 interface LiftSummaryProps {
   onClose: () => void;
@@ -143,6 +151,15 @@ export const LiftSummary = ({ onClose, lift }: LiftSummaryProps): JSX.Element =>
           );
         })}
       </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        <LiftControls
+          availableLevels={lift.levels}
+          currentLevel={liftData.currentFloor}
+          onRequestSubmit={async (_ev, doorState, requestType, destination) =>
+            submitLiftRequest(rmfApi, lift.name, doorState, requestType, destination)
+          }
+        />
+      </DialogActions>
     </Dialog>
   );
 };
