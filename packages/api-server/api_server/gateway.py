@@ -2,10 +2,11 @@
 
 import asyncio
 import base64
+import concurrent.futures
 import hashlib
 import logging
 from datetime import datetime
-from typing import Any, cast
+from typing import Any, Coroutine, cast
 
 import rclpy
 import rclpy.client
@@ -161,8 +162,23 @@ class RmfGateway:
         )
 
         self._subscriptions: list[Subscription] = []
+        # keeps a strong reference to in-flight tasks, the event loop only holds
+        # weak ones so without this they can be garbage collected mid-flight.
+        self._pending: set[concurrent.futures.Future] = set()
 
         self._subscribe_all()
+
+    def _dispatch(self, coro: Coroutine) -> None:
+        """
+        Schedules a coroutine on the event loop from the ros spin thread.
+
+        Ros callbacks run on the spin thread, `loop.create_task` is not
+        thread-safe and does not keep the task alive, which shows up as
+        "Task was destroyed but it is pending!".
+        """
+        fut = asyncio.run_coroutine_threadsafe(coro, self._loop)
+        self._pending.add(fut)
+        fut.add_done_callback(self._pending.discard)
 
     async def call_service(self, client: rclpy.client.Client, req, timeout=1) -> Any:
         """
@@ -207,7 +223,7 @@ class RmfGateway:
                 self._rmf_events.door_states.on_next(door_state)
                 logging.debug("%s", door_state)
 
-            self._loop.create_task(save(DoorState.model_validate(msg)))
+            self._dispatch(save(DoorState.model_validate(msg)))
 
         door_states_sub = self._ros_node.create_subscription(
             RmfDoorState,
@@ -224,7 +240,7 @@ class RmfGateway:
                 logging.debug("%s", lift_state)
 
             dic = message_to_ordereddict(msg)
-            self._loop.create_task(save(LiftState(**dic)))
+            self._dispatch(save(LiftState(**dic)))
 
         lift_states_sub = self._ros_node.create_subscription(
             RmfLiftState,
@@ -240,7 +256,7 @@ class RmfGateway:
                 self._rmf_events.dispenser_states.on_next(dispenser_state)
                 logging.debug("%s", dispenser_state)
 
-            self._loop.create_task(save(DispenserState.model_validate(msg)))
+            self._dispatch(save(DispenserState.model_validate(msg)))
 
         dispenser_states_sub = self._ros_node.create_subscription(
             RmfDispenserState,
@@ -256,7 +272,7 @@ class RmfGateway:
                 self._rmf_events.ingestor_states.on_next(ingestor_state)
                 logging.debug("%s", ingestor_state)
 
-            self._loop.create_task(save(IngestorState.model_validate(msg)))
+            self._dispatch(save(IngestorState.model_validate(msg)))
 
         ingestor_states_sub = self._ros_node.create_subscription(
             RmfIngestorState,
@@ -275,7 +291,7 @@ class RmfGateway:
             stations = msg.pickup_stations + msg.dropoff_stations
             for station in stations:
                 dic = message_to_ordereddict(station)
-                self._loop.create_task(save(StationState(**dic)))
+                self._dispatch(save(StationState(**dic)))
 
         station_states_sub = self._ros_node.create_subscription(
             FleetStationState,
@@ -292,7 +308,7 @@ class RmfGateway:
                 logging.debug("%s", building_map)
 
             bm = self._process_building_map(cast(RmfBuildingMap, msg))
-            self._loop.create_task(save(bm))
+            self._dispatch(save(bm))
 
         map_sub = self._ros_node.create_subscription(
             RmfBuildingMap,
@@ -321,7 +337,7 @@ class RmfGateway:
                 activated=msg.activated,
                 level=msg.level,
             )
-            self._loop.create_task(save(bs))
+            self._dispatch(save(bs))
 
         beacon_sub = self._ros_node.create_subscription(
             RmfBeaconState,
@@ -341,7 +357,9 @@ class RmfGateway:
                 action=DeliveryAlert.Action.from_rmf_value(msg.action.value),
                 message=msg.message,
             )
-            self._rmf_events.delivery_alerts.on_next(da)
+            self._loop.call_soon_threadsafe(
+                self._rmf_events.delivery_alerts.on_next, da
+            )
             logging.debug("%s", da)
 
         delivery_alert_request_sub = self._ros_node.create_subscription(
@@ -401,7 +419,7 @@ class RmfGateway:
                 logging.debug("%s", alert)
 
             logging.info(f"Received alert: {alert}")
-            self._loop.create_task(create_alert(alert))
+            self._dispatch(create_alert(alert))
 
         alert_sub = self._ros_node.create_subscription(
             RmfAlert,
@@ -460,7 +478,7 @@ class RmfGateway:
                 logging.debug("%s", created_response)
 
             logging.info(f"Received response [{msg.response}] for alert id [{msg.id}]")
-            self._loop.create_task(create_response(msg.id, msg.response))
+            self._dispatch(create_response(msg.id, msg.response))
 
         alert_response_sub = self._ros_node.create_subscription(
             RmfAlertResponse,
@@ -485,7 +503,9 @@ class RmfGateway:
                 unix_millis_time=round(datetime.now().timestamp() * 1000),
                 trigger=msg.data,
             )
-            self._rmf_events.fire_alarm_trigger.on_next(fire_alarm_trigger_state)
+            self._loop.call_soon_threadsafe(
+                self._rmf_events.fire_alarm_trigger.on_next, fire_alarm_trigger_state
+            )
 
         fire_alarm_trigger_sub = self._ros_node.create_subscription(
             BoolMsg,

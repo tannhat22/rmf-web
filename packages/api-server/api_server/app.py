@@ -43,6 +43,7 @@ from .models import (
 from .models import tortoise_models as ttm
 from .repositories import TaskRepository
 from .rmf_io import RmfEvents
+from .task_cleanup import schedule_task_cleanup
 from .types import is_coroutine
 
 
@@ -142,6 +143,11 @@ async def lifespan(_app: FastIO):
         scheduled += 1
     default_logger.info(f"loaded {scheduled} tasks")
     default_logger.info("successfully started scheduler")
+
+    # held for the lifetime of the app, the event loop only keeps weak
+    # references so a running cleanup would otherwise be collected midway.
+    cleanup_jobs = schedule_task_cleanup(get_scheduler(), default_logger)
+    shutdown_cbs.append(lambda: [t.cancel() for t in cleanup_jobs])
 
     default_logger.info("started app")
 

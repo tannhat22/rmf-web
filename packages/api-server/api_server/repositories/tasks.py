@@ -187,7 +187,11 @@ class TaskRepository:
                 .offset(pagination.offset)
                 .order_by(*order_fields)
             )
-            need_group_by = True
+            # only needed when sorting by labels, grouping without it forces a join
+            # with the labels table and a filesort over the json `data` column, which
+            # blows up mysql's sort buffer.
+            if len(annotations) > 0:
+                need_group_by = True
 
         if need_group_by:
             query = query.group_by("id_", "labels__state_id")
