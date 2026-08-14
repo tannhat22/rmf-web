@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=RMF VDM
+Comment=Run ROS2 launch for RMF VDM
+Exec=/home/tannhat/nhat_ws/projects/rmf-web/scripts/rmf_app/run.sh
+Icon=/home/tannhat/nhat_ws/projects/rmf-web/scripts/rmf_app/robot_amr.png
+Terminal=true
+Type=Application
+StartupWMClass=rmf_script.desktop
+Categories=Utility;
