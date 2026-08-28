@@ -42,4 +42,27 @@ config = {
     # as the system timezone, as well as the client UI timezone. Cross-timezone
     # scheduling is currently not supported.
     "timezone": "UTC",
+    # Giá trị mutex_claimant_id bắt đầu để gán cho vendor
+    "mutex_claimant_id": 1000000000,
+    "mutex_default_ttl_seconds": 30.0,
+    "mutex_max_hold_seconds": 1800.0,
+    "mutex_heartbeat_seconds": 2.0,
+    "vendor_base_url": "http://10.7.11.107:8181",
+    "vendor_continue_task_path": "/rcms/services/rest/hikRpcService/continueTask",
+    "vendor_agv_status_path": "/rcms/services/rest/hikRpcService/getAgvStatus",
+    "vendor_check_agv_status": False,
+    # Sent as clientCode on every call, so their logs can tell who is calling.
+    "vendor_client_code": "rmf_api_server",
+    # Sent as tokenCode. RCS-2000 issues this; leave empty if their deployment
+    # does not check it.
+    "vendor_token_code": "",
+    "vendor_request_timeout_seconds": 5.0,
+    "vendor_watchdog_seconds": 10.0,
+    "vendor_max_state_failures": 3,
+    "vendor_continue_retries": 5,
+    "vendor_continue_retry_delay_seconds": 1.0,
+    "vendor_agv_released_states": ["7", "9"],
+    "vendor_point_to_mutex_group": {
+        "P_COE_WAIT": "zone_coe",
+    },
 }

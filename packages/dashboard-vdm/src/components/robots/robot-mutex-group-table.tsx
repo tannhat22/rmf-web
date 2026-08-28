@@ -7,12 +7,24 @@ import { useRmfApi } from '../../hooks/use-rmf-api';
 
 const RefreshMutexGroupTableInterval = 3000;
 
+// A mutex group can also be held by a system outside of RMF, through
+// /mutex_groups. Those holders are not robots, so they are labelled with this
+// prefix rather than the fleet/robot identifier used everywhere else, and they
+// are released through a different endpoint.
+const ExternalHolderPrefix = 'external: ';
+
+interface MutexGroupRow extends MutexGroupData {
+  // Set only while a system outside of RMF holds the group. Doubles as the flag
+  // that decides which release endpoint the unlock button has to call.
+  externalRequester?: string;
+}
+
 export const RobotMutexGroupsTable = () => {
   const rmfApi = useRmfApi();
   const appController = useAppController();
 
-  const [mutexGroups, setMutexGroups] = React.useState<Record<string, MutexGroupData>>({});
-  const [selectedMutexGroup, setSelectedMutexGroup] = React.useState<MutexGroupData | null>(null);
+  const [mutexGroups, setMutexGroups] = React.useState<Record<string, MutexGroupRow>>({});
+  const [selectedMutexGroup, setSelectedMutexGroup] = React.useState<MutexGroupRow | null>(null);
 
   const robotIdentifierDelimiter = '/';
 
@@ -40,8 +52,20 @@ export const RobotMutexGroupsTable = () => {
 
   React.useEffect(() => {
     const refreshMutexGroupTable = async () => {
-      const fleets = (await rmfApi.fleetsApi.getFleetsFleetsGet()).data;
-      const updatedMutexGroups: Record<string, MutexGroupData> = {};
+      const [fleets, leases] = await Promise.all([
+        rmfApi.fleetsApi.getFleetsFleetsGet().then((resp) => resp.data),
+        // Leases are a bonus on top of the fleet view, so a server without them
+        // should still leave the robot side of the table working.
+        rmfApi.mutexGroupsApi
+          .getLeasesMutexGroupsLeasesGet()
+          .then((resp) => resp.data)
+          .catch((e) => {
+            console.error(`Unable to read mutex group leases: ${(e as Error).message}`);
+            return [];
+          }),
+      ]);
+
+      const updatedMutexGroups: Record<string, MutexGroupRow> = {};
       for (const fleet of fleets) {
         if (!fleet.name || !fleet.robots) {
           continue;
@@ -82,6 +106,23 @@ export const RobotMutexGroupsTable = () => {
         }
       }
 
+      // Fold in the holders that are not RMF robots. A granted lease is the
+      // holder; a waiting one is queueing behind whichever robot holds it.
+      for (const lease of leases) {
+        const label = `${ExternalHolderPrefix}${lease.requester}`;
+        const row = (updatedMutexGroups[lease.group] ??= {
+          name: lease.group,
+          lockedBy: undefined,
+          requestedBy: [],
+        });
+        if (lease.state === 'granted') {
+          row.lockedBy = label;
+          row.externalRequester = lease.requester;
+        } else {
+          row.requestedBy.push(label);
+        }
+      }
+
       // Filter intermediate mutex groups which are not locked, but just
       // requested by robots
       for (const mutexGroupName of Object.keys(updatedMutexGroups)) {
@@ -112,6 +153,29 @@ export const RobotMutexGroupsTable = () => {
     if (!selectedMutexGroup || !selectedMutexGroup.lockedBy) {
       return;
     }
+
+    if (selectedMutexGroup.externalRequester) {
+      const requester = selectedMutexGroup.externalRequester;
+      try {
+        await rmfApi.mutexGroupsApi.forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(
+          selectedMutexGroup.name
+        );
+        appController.showAlert(
+          'success',
+          `Released mutex group ${selectedMutexGroup.name} from ${requester}`
+        );
+      } catch (e) {
+        appController.showAlert(
+          'error',
+          `Failed to release mutex group ${selectedMutexGroup.name} from ${requester}: ${
+            (e as Error).message
+          }`
+        );
+      }
+      setSelectedMutexGroup(null);
+      return;
+    }
+
     const fleet = getFleetFromRobotIdentifier(selectedMutexGroup.lockedBy);
     const robot = getRobotFromRobotIdentifier(selectedMutexGroup.lockedBy);
     if (!fleet || !robot) {
@@ -144,7 +208,7 @@ export const RobotMutexGroupsTable = () => {
       <MutexGroupTable
         mutexGroups={Object.values(mutexGroups)}
         onMutexGroupClick={(_ev, mutexGroup) => {
-          setSelectedMutexGroup(mutexGroup);
+          setSelectedMutexGroup(mutexGroups[mutexGroup.name] ?? null);
         }}
       />
       <ConfirmationDialog
@@ -156,7 +220,14 @@ export const RobotMutexGroupsTable = () => {
         onClose={() => setSelectedMutexGroup(null)}
         onSubmit={handleUnlockMutexGroup}
       >
-        {selectedMutexGroup && selectedMutexGroup.lockedBy ? (
+        {selectedMutexGroup && selectedMutexGroup.externalRequester ? (
+          <Typography>
+            Confirm unlock mutex group [{selectedMutexGroup.name}] held by [
+            {selectedMutexGroup.externalRequester}]? That system is outside RMF, so RMF does not
+            know where its robot is and nothing else is keeping it apart from RMF robots. Check that
+            it has left the area first.
+          </Typography>
+        ) : selectedMutexGroup && selectedMutexGroup.lockedBy ? (
           <Typography>
             Confirm unlock mutex group [{selectedMutexGroup.name}] for [
             {selectedMutexGroup.lockedBy}]?

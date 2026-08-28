@@ -12,6 +12,7 @@ import rclpy
 import rclpy.client
 import rclpy.node
 import rclpy.qos
+from builtin_interfaces.msg import Time as RosTime
 from fastapi import HTTPException
 from machine_fleet_msgs.msg import FleetStationState
 from machine_fleet_msgs.msg import StationRequest as RmfStationRequest
@@ -30,6 +31,8 @@ from rmf_fleet_msgs.msg import DeliveryAlertAction as RmfDeliveryAlertAction
 from rmf_fleet_msgs.msg import DeliveryAlertCategory as RmfDeliveryAlertCategory
 from rmf_fleet_msgs.msg import DeliveryAlertTier as RmfDeliveryAlertTier
 from rmf_fleet_msgs.msg import MutexGroupManualRelease as RmfMutexGroupManualRelease
+from rmf_fleet_msgs.msg import MutexGroupRequest as RmfMutexGroupRequest
+from rmf_fleet_msgs.msg import MutexGroupStates as RmfMutexGroupStates
 from rmf_ingestor_msgs.msg import IngestorState as RmfIngestorState
 from rmf_lift_msgs.msg import LiftRequest as RmfLiftRequest
 from rmf_lift_msgs.msg import LiftState as RmfLiftState
@@ -66,6 +69,7 @@ from .models import (
     FireAlarmTriggerState,
     IngestorState,
     LiftState,
+    MutexGroupStates,
     StationState,
 )
 from .repositories import CachedFilesRepository
@@ -145,6 +149,21 @@ class RmfGateway:
             rclpy.qos.QoSProfile(
                 history=rclpy.qos.HistoryPolicy.KEEP_LAST,
                 depth=10,
+                reliability=rclpy.qos.ReliabilityPolicy.RELIABLE,
+                durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL,
+            ),
+        )
+
+        # The mutex group supervisor subscribes with RELIABLE + TRANSIENT_LOCAL +
+        # KEEP_LAST(100). A publisher that does not match the durability is
+        # silently never connected, so keep this profile in step with
+        # rmf_fleet_adapter's Node.cpp.
+        self._mutex_group_request = self._ros_node.create_publisher(
+            RmfMutexGroupRequest,
+            "mutex_group_request",
+            rclpy.qos.QoSProfile(
+                history=rclpy.qos.HistoryPolicy.KEEP_LAST,
+                depth=100,
                 reliability=rclpy.qos.ReliabilityPolicy.RELIABLE,
                 durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL,
             ),
@@ -520,6 +539,28 @@ class RmfGateway:
         )
         self._subscriptions.append(fire_alarm_trigger_sub)
 
+        def handle_mutex_group_states(msg: RmfMutexGroupStates):
+            states = MutexGroupStates.model_validate(msg)
+            self._loop.call_soon_threadsafe(
+                self._rmf_events.mutex_group_states.on_next, states
+            )
+
+        # The supervisor is transient local, so subscribing replays up to the
+        # last 100 states in one burst. Consumers must not read those as the
+        # current assignment, see MutexBroker.
+        mutex_group_states_sub = self._ros_node.create_subscription(
+            RmfMutexGroupStates,
+            "mutex_group_states",
+            handle_mutex_group_states,
+            rclpy.qos.QoSProfile(
+                history=rclpy.qos.HistoryPolicy.KEEP_LAST,
+                depth=100,
+                reliability=rclpy.qos.ReliabilityPolicy.RELIABLE,
+                durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL,
+            ),
+        )
+        self._subscriptions.append(mutex_group_states_sub)
+
     async def __aexit__(self, *exc):
         for sub in self._subscriptions:
             sub.destroy()
@@ -607,6 +648,33 @@ class RmfGateway:
         msg.fleet = fleet
         msg.robot = robot
         self._mutex_group_release.publish(msg)
+
+    def request_mutex_group(
+        self,
+        group: str,
+        claimant: int,
+        claim_time: RosTime,
+        lock: bool,
+    ):
+        """
+        Claim or release a mutex group on behalf of an agent that is not an RMF
+        robot. `claim_time` must stay fixed for the whole lifetime of a claim:
+        changing it makes the supervisor treat the request as a new claim and
+        sends it to the back of the queue.
+        """
+        msg = RmfMutexGroupRequest()
+        msg.group = group
+        msg.claimant = claimant
+        msg.claim_time = claim_time
+        msg.mode = (
+            RmfMutexGroupRequest.MODE_LOCK
+            if lock
+            else RmfMutexGroupRequest.MODE_RELEASE
+        )
+        self._mutex_group_request.publish(msg)
+
+    def now(self) -> RosTime:
+        return self._ros_node.get_clock().now().to_msg()
 
     def reset_fire_alarm_trigger(self):
         reset_msg = BoolMsg()

@@ -23,6 +23,9 @@ DASHBOARD_PORT="${DASHBOARD_PORT:-3000}"
 RMF_SERVER_USE_SIM_TIME="${RMF_SERVER_USE_SIM_TIME:-false}"
 
 # --- bổ sung PATH ---
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Khi chạy từ icon ngoài desktop, terminal do gnome-terminal-server sinh ra
 # KHÔNG đọc ~/.bashrc, nên PATH chỉ có mức tối thiểu của phiên desktop và thiếu

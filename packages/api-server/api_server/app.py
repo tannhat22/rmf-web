@@ -15,6 +15,7 @@ from fastapi.openapi.docs import (
 from fastapi.staticfiles import StaticFiles
 from tortoise import Tortoise
 
+from api_server.mutex_broker import get_mutex_broker
 from api_server.repositories.cached_files import get_cached_file_repo
 from api_server.rmf_io.events import (
     get_alert_events,
@@ -26,6 +27,8 @@ from api_server.rmf_io.events import (
 )
 from api_server.rmf_io.rmf_service import get_tasks_service
 from api_server.scheduler import get_scheduler
+from api_server.vendor_client import get_vendor_client
+from api_server.vendor_watchdog import get_vendor_watchdog
 
 from . import gateway, ros, routes
 from .app_config import app_config
@@ -100,6 +103,13 @@ async def lifespan(_app: FastIO):
     await stack.enter_async_context(ros.get_ros_node)
     await stack.enter_async_context(gateway.get_rmf_gateway)
     await stack.enter_async_context(get_tasks_service)
+    # After the gateway, it publishes through it, and before the app serves so
+    # that no request can reach a broker that is not heartbeating yet.
+    await stack.enter_async_context(get_mutex_broker)
+    # The watchdog reaches for both of these as it starts, so they have to be
+    # standing up first.
+    await stack.enter_async_context(get_vendor_client)
+    await stack.enter_async_context(get_vendor_watchdog)
 
     # shutdown event is not called when the app crashes, this can cause the app to be
     # "locked up" as some dependencies like tortoise does not allow python to exit until
@@ -238,6 +248,15 @@ app.include_router(
     routes.fleets_router, prefix="/fleets", dependencies=[Depends(user_dep)]
 )
 app.include_router(routes.rios_router, prefix="/rios", dependencies=[Depends(user_dep)])
+app.include_router(
+    routes.mutex_groups_router, prefix="/mutex_groups", dependencies=[Depends(user_dep)]
+)
+# One url for both ends of a shared zone: the vendor's task templates post the
+# same agvCallback body at each end, and its `method` field says which end it is.
+# Deliberately left unauthenticated: the third party fleet calls this from its
+# task templates and has no way to carry a keycloak token. Keep it off any
+# network the plant does not control.
+app.include_router(routes.vendor_mutex_router, prefix="/vendor_mutex")
 app.include_router(
     routes.admin_router, prefix="/admin", dependencies=[Depends(user_dep)]
 )

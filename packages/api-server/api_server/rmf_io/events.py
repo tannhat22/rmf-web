@@ -18,6 +18,7 @@ class RmfEvents:
         self.fire_alarm_trigger = BehaviorSubject[mdl.FireAlarmTriggerState | None](
             None
         )
+        self.mutex_group_states = BehaviorSubject[mdl.MutexGroupStates | None](None)
 
 
 @singleton_dep

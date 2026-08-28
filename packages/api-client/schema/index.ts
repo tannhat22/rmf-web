@@ -2118,6 +2118,100 @@ export default {
         },
       },
     },
+    '/mutex_groups/leases': {
+      get: {
+        tags: ['MutexGroups'],
+        summary: 'Get Leases',
+        description: 'Every zone this server currently holds for a third party system.',
+        operationId: 'get_leases_mutex_groups_leases_get',
+        responses: {
+          '200': {
+            description: 'Successful Response',
+            content: {
+              'application/json': {
+                schema: {
+                  items: { $ref: '#/components/schemas/MutexLease' },
+                  type: 'array',
+                  title: 'Response Get Leases Mutex Groups Leases Get',
+                },
+              },
+            },
+          },
+        },
+        security: [{ OpenIdConnect: [] }],
+      },
+    },
+    '/mutex_groups/groups/{group}/force_release': {
+      post: {
+        tags: ['MutexGroups'],
+        summary: 'Force Release Group',
+        description:
+          'Take a mutex group back from the third party system holding it. This is the\ncounterpart of `/fleets/{name}/unlock_mutex_group`, which can only release a\ngroup held by an RMF robot.\n\nThe third party robot is not in the traffic schedule, so RMF has no idea\nwhere it is and nothing else is keeping it apart from RMF robots. Releasing\nwhile it is still inside the area removes the only thing holding them apart.\nConfirm it has left before calling this.\n\n404 if this server holds no lease on the group. That includes the case where\nan RMF robot holds it, use the fleets endpoint for that.',
+        operationId: 'force_release_group_mutex_groups_groups__group__force_release_post',
+        security: [{ OpenIdConnect: [] }],
+        parameters: [
+          { name: 'group', in: 'path', required: true, schema: { type: 'string', title: 'Group' } },
+        ],
+        responses: {
+          '200': {
+            description: 'Successful Response',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/MutexLease' } },
+            },
+          },
+          '422': {
+            description: 'Validation Error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/HTTPValidationError' } },
+            },
+          },
+        },
+      },
+    },
+    '/mutex_groups/states': {
+      get: {
+        tags: ['MutexGroups'],
+        summary: 'Get Mutex Group States',
+        description:
+          'Who holds what, straight from the RMF supervisor, robots and third parties\nalike. `claimant` is a traffic participant id, or 2**64-1 when the group is\nfree. Kept for diagnosing a stuck zone from outside the dashboard.',
+        operationId: 'get_mutex_group_states_mutex_groups_states_get',
+        responses: {
+          '200': {
+            description: 'Successful Response',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/MutexGroupStates' } },
+            },
+          },
+        },
+        security: [{ OpenIdConnect: [] }],
+      },
+    },
+    '/vendor_mutex/agv_callback': {
+      post: {
+        tags: ['VendorMutex'],
+        summary: 'Vendor Agv Callback',
+        description: 'One url for both ends of a shared zone, told apart by `method`.',
+        operationId: 'vendor_agv_callback_vendor_mutex_agv_callback_post',
+        requestBody: {
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/AgvCallback' } } },
+          required: true,
+        },
+        responses: {
+          '200': {
+            description: 'Successful Response',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/AgvCallbackResponse' } },
+            },
+          },
+          '422': {
+            description: 'Validation Error',
+            content: {
+              'application/json': { schema: { $ref: '#/components/schemas/HTTPValidationError' } },
+            },
+          },
+        },
+      },
+    },
     '/admin/users': {
       get: {
         tags: ['Admin'],
@@ -2651,6 +2745,31 @@ export default {
         type: 'object',
         required: ['name', 'x_offset', 'y_offset', 'yaw', 'scale', 'encoding', 'data'],
         title: 'AffineImage',
+      },
+      AgvCallback: {
+        properties: {
+          reqCode: { type: 'string', title: 'Reqcode', default: '' },
+          taskCode: { type: 'string', title: 'Taskcode', default: '' },
+          robotCode: { type: 'string', title: 'Robotcode', default: '' },
+          currentPositionCode: { type: 'string', title: 'Currentpositioncode', default: '' },
+          method: { type: 'string', title: 'Method', default: '' },
+        },
+        additionalProperties: true,
+        type: 'object',
+        title: 'AgvCallback',
+        description:
+          "What the vendor's fleet manager posts to us.\n\nTheir deployment sends more fields than their manual lists, and the manual\nitself is inconsistent in places, so this deliberately names only what we\nact on and keeps everything else untouched. Rejecting a callback because it\ncarried a field we had never heard of would leave one of their robots\nstanding at a waiting point.\n\nField names follow their wire format rather than ours; the aliases keep\npython naming on this side.",
+      },
+      AgvCallbackResponse: {
+        properties: {
+          code: { type: 'string', title: 'Code', default: '0' },
+          message: { type: 'string', title: 'Message', default: 'successful' },
+          reqCode: { type: 'string', title: 'Reqcode', default: '' },
+        },
+        type: 'object',
+        title: 'AgvCallbackResponse',
+        description:
+          'Their side reads success from `code` in the body, not from the http status,\nand matches the answer to the request through `reqCode`.',
       },
       AlertParameter: {
         properties: {
@@ -3443,6 +3562,33 @@ export default {
         required: ['seq', 'tier', 'unix_millis_time', 'text'],
         title: 'LogEntry',
       },
+      MutexGroupAssignment: {
+        properties: {
+          group: { type: 'string', title: 'Group' },
+          claimant: {
+            type: 'integer',
+            maximum: 1.8446744073709552e19,
+            minimum: 0.0,
+            title: 'Claimant',
+          },
+          claim_time: { $ref: '#/components/schemas/Time' },
+        },
+        type: 'object',
+        required: ['group', 'claimant', 'claim_time'],
+        title: 'MutexGroupAssignment',
+      },
+      MutexGroupStates: {
+        properties: {
+          assignments: {
+            items: { $ref: '#/components/schemas/MutexGroupAssignment' },
+            type: 'array',
+            title: 'Assignments',
+          },
+        },
+        type: 'object',
+        required: ['assignments'],
+        title: 'MutexGroupStates',
+      },
       MutexGroups: {
         properties: {
           locked: {
@@ -3460,6 +3606,55 @@ export default {
         type: 'object',
         title: 'MutexGroups',
       },
+      MutexLease: {
+        properties: {
+          lease_id: { type: 'string', title: 'Lease Id' },
+          group: { type: 'string', title: 'Group' },
+          requester: { type: 'string', title: 'Requester' },
+          agv_code: {
+            anyOf: [{ type: 'string' }, { type: 'null' }],
+            title: 'Agv Code',
+            description:
+              'The third party robot the lease was opened for, and the key the lease is tracked by. That system never sees the lease id, and its robot id is the one handle in the exchange that cannot change while the robot is inside the zone.',
+          },
+          task_code: {
+            anyOf: [{ type: 'string' }, { type: 'null' }],
+            title: 'Task Code',
+            description:
+              "Whichever of that system's tasks the robot was running when we last heard from it. Refreshed on every callback and reported for the operator's benefit only; one robot can run several tasks without leaving the zone, so this is no use as a key.",
+          },
+          state: { $ref: '#/components/schemas/MutexLeaseState' },
+          expires_in_seconds: {
+            type: 'number',
+            title: 'Expires In Seconds',
+            description:
+              'Seconds left before the lease is dropped. The watchdog resets this every time the third party system confirms the task is still running, so it only runs out when they stop answering.',
+          },
+          held_for_seconds: {
+            type: 'number',
+            title: 'Held For Seconds',
+            description: 'Seconds since the lease was created, granted or not.',
+          },
+          max_hold_seconds: {
+            type: 'number',
+            title: 'Max Hold Seconds',
+            description:
+              'Hard ceiling on the lifetime of the lease. RMF robots wait for a mutex group indefinitely, so a lease is force released at this point however alive the task still looks.',
+          },
+        },
+        type: 'object',
+        required: [
+          'lease_id',
+          'group',
+          'requester',
+          'state',
+          'expires_in_seconds',
+          'held_for_seconds',
+          'max_hold_seconds',
+        ],
+        title: 'MutexLease',
+      },
+      MutexLeaseState: { type: 'string', enum: ['waiting', 'granted'], title: 'MutexLeaseState' },
       Pagination: {
         properties: {
           limit: { type: 'integer', title: 'Limit' },
@@ -4752,7 +4947,7 @@ export default {
     securitySchemes: {
       OpenIdConnect: {
         type: 'openIdConnect',
-        openIdConnectUrl: 'http://10.7.11.9:8080/realms/rmf-web/.well-known/openid-configuration',
+        openIdConnectUrl: 'http://10.7.11.35:8080/realms/rmf-web/.well-known/openid-configuration',
       },
     },
   },

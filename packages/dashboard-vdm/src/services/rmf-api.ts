@@ -27,6 +27,7 @@ import {
   Lift,
   LiftsApi,
   LiftState,
+  MutexGroupsApi,
   SioClient,
   Subscription as SioSubscription,
   TasksApi,
@@ -53,6 +54,7 @@ export interface RmfApi {
   alertsApi: AlertsApi;
   adminApi: AdminApi;
   deliveryAlertsApi: DeliveryAlertsApi;
+  mutexGroupsApi: MutexGroupsApi;
   negotiationStatusManager?: NegotiationStatusManager;
   trajectoryManager?: RobotTrajectoryManager;
 
@@ -92,6 +94,7 @@ export class DefaultRmfApi implements RmfApi {
   alertsApi: AlertsApi;
   adminApi: AdminApi;
   deliveryAlertsApi: DeliveryAlertsApi;
+  mutexGroupsApi: MutexGroupsApi;
   negotiationStatusManager?: NegotiationStatusManager;
   trajectoryManager?: RobotTrajectoryManager;
 
@@ -143,6 +146,7 @@ export class DefaultRmfApi implements RmfApi {
     this.alertsApi = new AlertsApi(apiConfig, undefined, axiosInst);
     this.adminApi = new AdminApi(apiConfig, undefined, axiosInst);
     this.deliveryAlertsApi = new DeliveryAlertsApi(apiConfig, undefined, axiosInst);
+    this.mutexGroupsApi = new MutexGroupsApi(apiConfig, undefined, axiosInst);
 
     this.buildingMapObs = this._convertSioToRxObs((sioClient, handler) =>
       sioClient.subscribeBuildingMap(handler)

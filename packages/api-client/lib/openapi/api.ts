@@ -170,6 +170,70 @@ export interface AffineImage {
   data: string;
 }
 /**
+ * What the vendor\'s fleet manager posts to us.  Their deployment sends more fields than their manual lists, and the manual itself is inconsistent in places, so this deliberately names only what we act on and keeps everything else untouched. Rejecting a callback because it carried a field we had never heard of would leave one of their robots standing at a waiting point.  Field names follow their wire format rather than ours; the aliases keep python naming on this side.
+ * @export
+ * @interface AgvCallback
+ */
+export interface AgvCallback {
+  [key: string]: any;
+
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallback
+   */
+  reqCode?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallback
+   */
+  taskCode?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallback
+   */
+  robotCode?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallback
+   */
+  currentPositionCode?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallback
+   */
+  method?: string;
+}
+/**
+ * Their side reads success from `code` in the body, not from the http status, and matches the answer to the request through `reqCode`.
+ * @export
+ * @interface AgvCallbackResponse
+ */
+export interface AgvCallbackResponse {
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallbackResponse
+   */
+  code?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallbackResponse
+   */
+  message?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgvCallbackResponse
+   */
+  reqCode?: string;
+}
+/**
  *
  * @export
  * @interface AlertParameter
@@ -1571,6 +1635,44 @@ export interface ModelError {
 /**
  *
  * @export
+ * @interface MutexGroupAssignment
+ */
+export interface MutexGroupAssignment {
+  /**
+   *
+   * @type {string}
+   * @memberof MutexGroupAssignment
+   */
+  group: string;
+  /**
+   *
+   * @type {number}
+   * @memberof MutexGroupAssignment
+   */
+  claimant: number;
+  /**
+   *
+   * @type {Time}
+   * @memberof MutexGroupAssignment
+   */
+  claim_time: Time;
+}
+/**
+ *
+ * @export
+ * @interface MutexGroupStates
+ */
+export interface MutexGroupStates {
+  /**
+   *
+   * @type {Array<MutexGroupAssignment>}
+   * @memberof MutexGroupStates
+   */
+  assignments: Array<MutexGroupAssignment>;
+}
+/**
+ *
+ * @export
  * @interface MutexGroups
  */
 export interface MutexGroups {
@@ -1587,6 +1689,81 @@ export interface MutexGroups {
    */
   requesting?: Array<string> | null;
 }
+/**
+ *
+ * @export
+ * @interface MutexLease
+ */
+export interface MutexLease {
+  /**
+   *
+   * @type {string}
+   * @memberof MutexLease
+   */
+  lease_id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MutexLease
+   */
+  group: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MutexLease
+   */
+  requester: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MutexLease
+   */
+  agv_code?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof MutexLease
+   */
+  task_code?: string | null;
+  /**
+   *
+   * @type {MutexLeaseState}
+   * @memberof MutexLease
+   */
+  state: MutexLeaseState;
+  /**
+   * Seconds left before the lease is dropped. The watchdog resets this every time the third party system confirms the task is still running, so it only runs out when they stop answering.
+   * @type {number}
+   * @memberof MutexLease
+   */
+  expires_in_seconds: number;
+  /**
+   * Seconds since the lease was created, granted or not.
+   * @type {number}
+   * @memberof MutexLease
+   */
+  held_for_seconds: number;
+  /**
+   * Hard ceiling on the lifetime of the lease. RMF robots wait for a mutex group indefinitely, so a lease is force released at this point however alive the task still looks.
+   * @type {number}
+   * @memberof MutexLease
+   */
+  max_hold_seconds: number;
+}
+
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export const MutexLeaseState = {
+  Waiting: 'waiting',
+  Granted: 'granted',
+} as const;
+
+export type MutexLeaseState = (typeof MutexLeaseState)[keyof typeof MutexLeaseState];
+
 /**
  *
  * @export
@@ -8999,6 +9176,319 @@ export class LiftsApi extends BaseAPI {
 }
 
 /**
+ * MutexGroupsApi - axios parameter creator
+ * @export
+ */
+export const MutexGroupsApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     * Take a mutex group back from the third party system holding it. This is the counterpart of `/fleets/{name}/unlock_mutex_group`, which can only release a group held by an RMF robot.  The third party robot is not in the traffic schedule, so RMF has no idea where it is and nothing else is keeping it apart from RMF robots. Releasing while it is still inside the area removes the only thing holding them apart. Confirm it has left before calling this.  404 if this server holds no lease on the group. That includes the case where an RMF robot holds it, use the fleets endpoint for that.
+     * @summary Force Release Group
+     * @param {string} group
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost: async (
+      group: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'group' is not null or undefined
+      assertParamExists('forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost', 'group', group);
+      const localVarPath = `/mutex_groups/groups/{group}/force_release`.replace(
+        `{${'group'}}`,
+        encodeURIComponent(String(group)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication OpenIdConnect required
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Every zone this server currently holds for a third party system.
+     * @summary Get Leases
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getLeasesMutexGroupsLeasesGet: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/mutex_groups/leases`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication OpenIdConnect required
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Who holds what, straight from the RMF supervisor, robots and third parties alike. `claimant` is a traffic participant id, or 2**64-1 when the group is free. Kept for diagnosing a stuck zone from outside the dashboard.
+     * @summary Get Mutex Group States
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getMutexGroupStatesMutexGroupsStatesGet: async (
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/mutex_groups/states`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication OpenIdConnect required
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * MutexGroupsApi - functional programming interface
+ * @export
+ */
+export const MutexGroupsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = MutexGroupsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Take a mutex group back from the third party system holding it. This is the counterpart of `/fleets/{name}/unlock_mutex_group`, which can only release a group held by an RMF robot.  The third party robot is not in the traffic schedule, so RMF has no idea where it is and nothing else is keeping it apart from RMF robots. Releasing while it is still inside the area removes the only thing holding them apart. Confirm it has left before calling this.  404 if this server holds no lease on the group. That includes the case where an RMF robot holds it, use the fleets endpoint for that.
+     * @summary Force Release Group
+     * @param {string} group
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(
+      group: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MutexLease>> {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(
+          group,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap[
+          'MutexGroupsApi.forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost'
+        ]?.[localVarOperationServerIndex]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Every zone this server currently holds for a third party system.
+     * @summary Get Leases
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getLeasesMutexGroupsLeasesGet(
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MutexLease>>> {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getLeasesMutexGroupsLeasesGet(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap['MutexGroupsApi.getLeasesMutexGroupsLeasesGet']?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     * Who holds what, straight from the RMF supervisor, robots and third parties alike. `claimant` is a traffic participant id, or 2**64-1 when the group is free. Kept for diagnosing a stuck zone from outside the dashboard.
+     * @summary Get Mutex Group States
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getMutexGroupStatesMutexGroupsStatesGet(
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MutexGroupStates>> {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getMutexGroupStatesMutexGroupsStatesGet(options);
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap['MutexGroupsApi.getMutexGroupStatesMutexGroupsStatesGet']?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * MutexGroupsApi - factory interface
+ * @export
+ */
+export const MutexGroupsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = MutexGroupsApiFp(configuration);
+  return {
+    /**
+     * Take a mutex group back from the third party system holding it. This is the counterpart of `/fleets/{name}/unlock_mutex_group`, which can only release a group held by an RMF robot.  The third party robot is not in the traffic schedule, so RMF has no idea where it is and nothing else is keeping it apart from RMF robots. Releasing while it is still inside the area removes the only thing holding them apart. Confirm it has left before calling this.  404 if this server holds no lease on the group. That includes the case where an RMF robot holds it, use the fleets endpoint for that.
+     * @summary Force Release Group
+     * @param {string} group
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(
+      group: string,
+      options?: any,
+    ): AxiosPromise<MutexLease> {
+      return localVarFp
+        .forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(group, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Every zone this server currently holds for a third party system.
+     * @summary Get Leases
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getLeasesMutexGroupsLeasesGet(options?: any): AxiosPromise<Array<MutexLease>> {
+      return localVarFp
+        .getLeasesMutexGroupsLeasesGet(options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Who holds what, straight from the RMF supervisor, robots and third parties alike. `claimant` is a traffic participant id, or 2**64-1 when the group is free. Kept for diagnosing a stuck zone from outside the dashboard.
+     * @summary Get Mutex Group States
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getMutexGroupStatesMutexGroupsStatesGet(options?: any): AxiosPromise<MutexGroupStates> {
+      return localVarFp
+        .getMutexGroupStatesMutexGroupsStatesGet(options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * MutexGroupsApi - object-oriented interface
+ * @export
+ * @class MutexGroupsApi
+ * @extends {BaseAPI}
+ */
+export class MutexGroupsApi extends BaseAPI {
+  /**
+   * Take a mutex group back from the third party system holding it. This is the counterpart of `/fleets/{name}/unlock_mutex_group`, which can only release a group held by an RMF robot.  The third party robot is not in the traffic schedule, so RMF has no idea where it is and nothing else is keeping it apart from RMF robots. Releasing while it is still inside the area removes the only thing holding them apart. Confirm it has left before calling this.  404 if this server holds no lease on the group. That includes the case where an RMF robot holds it, use the fleets endpoint for that.
+   * @summary Force Release Group
+   * @param {string} group
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MutexGroupsApi
+   */
+  public forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(
+    group: string,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return MutexGroupsApiFp(this.configuration)
+      .forceReleaseGroupMutexGroupsGroupsGroupForceReleasePost(group, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Every zone this server currently holds for a third party system.
+   * @summary Get Leases
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MutexGroupsApi
+   */
+  public getLeasesMutexGroupsLeasesGet(options?: RawAxiosRequestConfig) {
+    return MutexGroupsApiFp(this.configuration)
+      .getLeasesMutexGroupsLeasesGet(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Who holds what, straight from the RMF supervisor, robots and third parties alike. `claimant` is a traffic participant id, or 2**64-1 when the group is free. Kept for diagnosing a stuck zone from outside the dashboard.
+   * @summary Get Mutex Group States
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof MutexGroupsApi
+   */
+  public getMutexGroupStatesMutexGroupsStatesGet(options?: RawAxiosRequestConfig) {
+    return MutexGroupsApiFp(this.configuration)
+      .getMutexGroupStatesMutexGroupsStatesGet(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
  * RIOsApi - axios parameter creator
  * @export
  */
@@ -12590,6 +13080,153 @@ export class TasksApi extends BaseAPI {
   ) {
     return TasksApiFp(this.configuration)
       .updateScheduleTaskScheduledTasksTaskIdUpdatePost(taskId, postScheduledTaskRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * VendorMutexApi - axios parameter creator
+ * @export
+ */
+export const VendorMutexApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     * One url for both ends of a shared zone, told apart by `method`.
+     * @summary Vendor Agv Callback
+     * @param {AgvCallback} agvCallback
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    vendorAgvCallbackVendorMutexAgvCallbackPost: async (
+      agvCallback: AgvCallback,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'agvCallback' is not null or undefined
+      assertParamExists('vendorAgvCallbackVendorMutexAgvCallbackPost', 'agvCallback', agvCallback);
+      const localVarPath = `/vendor_mutex/agv_callback`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      localVarHeaderParameter['Content-Type'] = 'application/json';
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        agvCallback,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * VendorMutexApi - functional programming interface
+ * @export
+ */
+export const VendorMutexApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = VendorMutexApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * One url for both ends of a shared zone, told apart by `method`.
+     * @summary Vendor Agv Callback
+     * @param {AgvCallback} agvCallback
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async vendorAgvCallbackVendorMutexAgvCallbackPost(
+      agvCallback: AgvCallback,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AgvCallbackResponse>> {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.vendorAgvCallbackVendorMutexAgvCallbackPost(
+          agvCallback,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap['VendorMutexApi.vendorAgvCallbackVendorMutexAgvCallbackPost']?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+  };
+};
+
+/**
+ * VendorMutexApi - factory interface
+ * @export
+ */
+export const VendorMutexApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = VendorMutexApiFp(configuration);
+  return {
+    /**
+     * One url for both ends of a shared zone, told apart by `method`.
+     * @summary Vendor Agv Callback
+     * @param {AgvCallback} agvCallback
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    vendorAgvCallbackVendorMutexAgvCallbackPost(
+      agvCallback: AgvCallback,
+      options?: any,
+    ): AxiosPromise<AgvCallbackResponse> {
+      return localVarFp
+        .vendorAgvCallbackVendorMutexAgvCallbackPost(agvCallback, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * VendorMutexApi - object-oriented interface
+ * @export
+ * @class VendorMutexApi
+ * @extends {BaseAPI}
+ */
+export class VendorMutexApi extends BaseAPI {
+  /**
+   * One url for both ends of a shared zone, told apart by `method`.
+   * @summary Vendor Agv Callback
+   * @param {AgvCallback} agvCallback
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof VendorMutexApi
+   */
+  public vendorAgvCallbackVendorMutexAgvCallbackPost(
+    agvCallback: AgvCallback,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return VendorMutexApiFp(this.configuration)
+      .vendorAgvCallbackVendorMutexAgvCallbackPost(agvCallback, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
